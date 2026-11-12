@@ -12,6 +12,11 @@
       "command_to_postcondition_s": 84.2,
       "keys": 36,
       "key_execution_s": 3.795,
+      "command_raw_hex": "a526010100000002000000000125002804e201a400000c30b3da13b5ff5d40a66c6a",
+      "auth_raw_hex": "a526010200000003000000020000000000000000000000004c87a950ec58c7d8b785",
+      "refused_without_auth": "AUTH_REQUIRED",
+      "critical_reasons": ["NONZERO_P40_ACTIVATION", "FRAME_CRITICAL_FLAG"],
+      "postcondition": { "program": 40, "verb": 37, "noun": 0, "r1": 1250, "r2": 420, "r3": 3120 },
       "note": "Includes a deliberate execute attempt without AUTH (refused AUTH_REQUIRED) and the agent's model time between tool calls. Misses the 10 s target."
     },
     "v25_n81_non_critical": {

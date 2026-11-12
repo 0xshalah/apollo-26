@@ -30,6 +30,6 @@ Jangan menulis “kebal 100%”, “bebas exploit”, “100% CRC”, “0 dB at
 - Program P00 dan P40 sederhana.
 - VERB V25, V34, dan V37 saja.
 - Tidak menjalankan Luminary 99 atau Colossus 249.
-- Tidak ada landing page terpisah sebelum alur utama selesai.
+- Landing page di `/` diizinkan operator pada 12 Nov 2026 walau alur suara HP → laptop belum berhasil. Syaratnya: status ditulis jujur di hero dan FAQ, dan semua angka dibaca dari `docs/metrics.json` / `docs/test-summary.json`, termasuk target yang meleset.
 
 Sumber kebenaran produk: `PRD.md`. Jadwal dan keputusan: `TASK.md`.

@@ -3,7 +3,7 @@
 **An authenticated acoustic command link between a 2026 ground station and an AGC-inspired 1969 DSKY, flown by a Kiro agent through MCP.**
 Kiroween 2026 · Frankenstein category · MIT License
 
-Ground station on GitHub Pages: <https://0xshalah.github.io/apollo-26/ground/> · Build log with Kiro: [`docs/kiro-journal.md`](docs/kiro-journal.md)
+Landing page: <https://0xshalah.github.io/apollo-26/> · Ground station: <https://0xshalah.github.io/apollo-26/ground/> · Build log with Kiro: [`docs/kiro-journal.md`](docs/kiro-journal.md)
 
 > **Status: active development.** This is a software demonstration on an emulator. It is not flight software, it does not run the original Apollo programs (Luminary/Colossus), and it is not certified for anything.
 
