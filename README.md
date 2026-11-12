@@ -3,6 +3,8 @@
 **An authenticated acoustic command link between a 2026 ground station and an AGC-inspired 1969 DSKY, flown by a Kiro agent through MCP.**
 Kiroween 2026 · Frankenstein category · MIT License
 
+Ground station on GitHub Pages: <https://0xshalah.github.io/apollo-26/ground/> · Build log with Kiro: [`docs/kiro-journal.md`](docs/kiro-journal.md)
+
 > **Status: active development.** This is a software demonstration on an emulator. It is not flight software, it does not run the original Apollo programs (Luminary/Colossus), and it is not certified for anything.
 
 ## What it does
@@ -31,9 +33,21 @@ Then open <http://127.0.0.1:8026/console/>. The sample WAV contains one authenti
 
 Other inputs: `--loopback` (POST a WAV to `/loopback`) or `--device <index|name>` for a real microphone.
 
+Critical-command demo with loopback (P40 needs an operator AUTH):
+
+```powershell
+.venv\Scripts\python scripts\make_sample_wav.py --out p40.wav --seq 2 --verb 37 --noun 0 --program 40 --critical
+.venv\Scripts\python scripts\make_sample_wav.py --out auth.wav --seq 3 --auth-ref 2
+.venv\Scripts\python -m acoustic.daemon --loopback          # keep this terminal open
+curl.exe -sS -X POST --data-binary "@p40.wav" http://127.0.0.1:8026/loopback
+curl.exe -sS -X POST --data-binary "@auth.wav" http://127.0.0.1:8026/loopback
+```
+
+Sequence numbers are global and must increase; adjust `--seq` if the daemon has already accepted higher numbers.
+
 ## Using it from Kiro
 
-`.kiro/settings/mcp.json` registers the `apollo26` MCP server (`scripts/mcp.cmd`). Start the daemon first, then ask Kiro to start Flight Watch. Read-only tools are auto-approved; **`execute_dsky_sequence` is never auto-approved** (a test enforces this).
+`.kiro/settings/mcp.json` registers the `apollo26` MCP server (`scripts/mcp.cmd`). If it shows as disabled, enable it in the Kiro MCP panel. Start the daemon in your own terminal first, then ask Kiro to start Flight Watch. While Flight Watch is live, the `flight-mode-shell-guard` hook blocks the agent's shell tools. Read-only tools are auto-approved; **`execute_dsky_sequence` is never auto-approved** (a test enforces this).
 
 | Kiro feature | Where |
 | :-- | :-- |
@@ -53,7 +67,23 @@ cd web-dashboard; npm ci; npm run lint; npm run typecheck; npm test -- --run; np
 
 Covered properties: frame round-trip (P1), clean and noisy audio round-trip (P2, P3 at SNR ≥ 15 dB), bit flips rejected (P4), random audio never yields a frame (P5), wrong HMAC and replays rejected (P6), critical commands without matching AUTH never actuate (P7), ones' complement invariants (P8), Python ↔ TypeScript encoder equality (P9). End-to-end abuse scenarios from `docs/threat-model.md` run against the real daemon and MCP tool layer.
 
-What is and is not yet verified is tracked honestly in [`docs/evidence-matrix.md`](docs/evidence-matrix.md). In particular: physical speaker-to-microphone decoding, end-to-end latency, and resource usage are **not measured yet**.
+Full-profile run, fixed seed: [`docs/pbt-report.md`](docs/pbt-report.md). 132 tests passed; P1, P4, P6, P7, P8 and the stateful AGC machine ran 10,000 examples each; the audio-heavy modem properties ran P2 = 500, P3 = 300, P5 = 1,000. The daemon publishes the summary in [`docs/test-summary.json`](docs/test-summary.json) to the console's test panel.
+
+## Measured so far
+
+From [`docs/metrics.json`](docs/metrics.json) (Windows 10 21H1 laptop, Intel, 8 logical CPUs, Python 3.12, `scripts/measure_metrics.py`). Status words follow [`docs/evidence-matrix.md`](docs/evidence-matrix.md).
+
+| What | Result | Status |
+| :-- | :-- | :-- |
+| Loopback decode + validation + inbox write, 20 frames | 20/20 accepted; median 0.59 s, max 0.89 s | measured |
+| Daemon idle while listening to the microphone (30 s) | 3.5% of one core; working set 54 MB (private commit 296 MB) | measured |
+| Live Kiro agent path, P40 + AUTH, one run | 84 s from COMMAND accepted to postcondition (includes a deliberate refused attempt); target 10 s **not met** | measured |
+| Same-laptop speaker → microphone over the air, 20 frames | **0/20 detected**; the laptop microphone captured almost no energy at 1200/2200 Hz | failed |
+| Phone → laptop at 0.5 m | not run yet | target |
+
+Over-the-air decoding has **not** been demonstrated yet. The demo path that works today is WAV or loopback input into the same daemon pipeline.
+
+![Mission console connected to a live daemon after one loopback frame](docs/images/console-live.png)
 
 ## Known limitations
 

@@ -117,6 +117,7 @@ async def start_daemon(
     listeners: bool = True,
     static_dir: Path | None = None,
     loopback_source: Any = None,
+    test_summary: dict[str, Any] | None = None,
 ) -> Daemon:
     daemon = Daemon(
         paths=DaemonPaths(telemetry_dir),
@@ -130,6 +131,7 @@ async def start_daemon(
         static_dir=static_dir,
         loopback_source=loopback_source,
         comp_acty_ticks=False,
+        test_summary=test_summary,
     )
     await daemon.start()
     return daemon

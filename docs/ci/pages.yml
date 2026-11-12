@@ -1,0 +1,56 @@
+# Builds the static ground station / console with basePath=/apollo-26 and deploys it to GitHub Pages.
+# The daemon-hosted copy (web-dashboard/out/, basePath "") is built locally and committed separately.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web-dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web-dashboard/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint, typecheck, test
+        run: npm run lint && npm run typecheck && npm test
+      - name: Build static export for Pages
+        env:
+          NEXT_PUBLIC_BASE_PATH: /apollo-26
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web-dashboard/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

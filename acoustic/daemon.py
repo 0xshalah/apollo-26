@@ -83,6 +83,7 @@ _LOG = logging.getLogger("apollo26.daemon")
 DEFAULT_HTTP_PORT: Final = 8026
 DEFAULT_RPC_PORT: Final = 8027
 IDENTITY_SCHEMA_VERSION: Final = "1.0"
+AUDIT_BACKFILL_LIMIT: Final = 500
 _READ_BUDGET_BYTES: Final = 56 * 1024
 _SPECTRUM_FFT: Final = 2048
 _SPECTRUM_MAX_HZ: Final = 4000.0
@@ -174,6 +175,36 @@ def _read_identity(path: Path) -> str | None:
     return str(uuid.UUID(data["sequence_epoch"]))
 
 
+def load_test_summary(path: Path, schemas: ContractSchemas) -> dict[str, Any] | None:
+    """Read the test-runner summary (``scripts/write_test_summary.py`` output) once at startup.
+
+    Returns ``None`` when the file is absent or does not match the ``test.summary``
+    event contract; the console then shows UNMEASURED instead of a guessed result.
+    """
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        _LOG.info("no test summary at %s; console shows UNMEASURED", path)
+        return None
+    except (OSError, json.JSONDecodeError) as error:
+        _LOG.warning("ignoring unreadable test summary %s: %s", path, error)
+        return None
+    probe = {
+        "schema_version": "1.0",
+        "event_id": 1,
+        "timestamp": "2026-01-01T00:00:00.000Z",
+        "type": "test.summary",
+        "data": data,
+    }
+    try:
+        schemas.validate_ws_event(probe)
+    except ContractViolation as error:
+        _LOG.warning("ignoring test summary %s that violates the event contract: %s", path, error)
+        return None
+    return dict(data)
+
+
 def provision_sequence(paths: DaemonPaths, last_accepted_seq: int, new_epoch: str) -> Path | None:
     """Explicit reprovisioning: archive old evidence, start a new epoch, write sequence.
 
@@ -224,6 +255,7 @@ class Daemon:
         loopback_source: LoopbackSource | None = None,
         comp_acty_ticks: bool = True,
         new_epoch: str | None = None,
+        test_summary: dict[str, Any] | None = None,
     ) -> None:
         self._paths = paths
         self._keys = keys
@@ -238,6 +270,7 @@ class Daemon:
         self._loopback = loopback_source
         self._comp_acty_ticks = comp_acty_ticks
         self._new_epoch = new_epoch or str(uuid.uuid4())
+        self._test_summary = None if test_summary is None else dict(test_summary)
         self._epoch = ""
         self._sequence = FileSequenceStore(paths.sequence_file)
         self._telemetry = TelemetryStore(paths.inbox, paths.rejected, schemas, self._instance_id)
@@ -389,10 +422,17 @@ class Daemon:
         }
 
     def _initial_events(self) -> list[dict[str, Any]]:
-        return [
+        events = [
             self.bus.make_event("system.status", self._system_status()),
             self.bus.make_event("agc.state", self.agc.ws_state()),
         ]
+        if self._test_summary is not None:
+            events.append(self.bus.make_event("test.summary", dict(self._test_summary)))
+        # Audit backfill: accepted frames of the current epoch, oldest first, bounded to the
+        # console's 500-row window. Rejected frames are only on disk and are not backfilled.
+        for record in self._accepted[-AUDIT_BACKFILL_LIMIT:]:
+            events.append(self.bus.make_event("telemetry.frame", record))
+        return events
 
     def _publish_status(self) -> None:
         self.bus.publish("system.status", self._system_status())
@@ -743,6 +783,12 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser.add_argument("--contracts-dir", type=Path, default=Path("contracts"))
     parser.add_argument("--static-dir", type=Path, default=Path("web-dashboard") / "out")
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
+    parser.add_argument(
+        "--test-summary",
+        type=Path,
+        default=Path("docs") / "test-summary.json",
+        help="test-runner summary published to the console as test.summary",
+    )
     parser.add_argument("--sample-rate", type=int, choices=(44100, 48000), help="microphone rate")
     parser.add_argument(
         "--serve-after-input",
@@ -797,6 +843,7 @@ async def _run(args: argparse.Namespace, keys: KeyMaterial) -> int:
         static_dir=args.static_dir,
         loopback_source=loopback,
         comp_acty_ticks=not one_shot,
+        test_summary=None if one_shot else load_test_summary(args.test_summary, schemas),
     )
     await daemon.start()
     try:

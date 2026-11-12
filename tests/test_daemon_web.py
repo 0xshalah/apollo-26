@@ -103,3 +103,73 @@ async def test_websocket_events_are_schema_valid_and_carry_real_frames(
     assert ("REJECTED", "CRC") in verdicts
     assert any(item["frame"] and item["frame"]["seq"] == 7 for item in frames if item["verdict"] == "ACCEPTED")
     assert rejected_records(tmp_path / "telemetry")
+
+
+def test_ui_req_test_summary_loader_accepts_only_contract_valid_reports(tmp_path: Path) -> None:
+    from acoustic.daemon import load_test_summary
+
+    valid = {"profile": "full", "passed": 128, "failed": 0, "skipped": 0, "report_path": "docs/pbt-report.md"}
+    good = tmp_path / "good.json"
+    good.write_text(json.dumps(valid), encoding="utf-8")
+    assert load_test_summary(good, SCHEMAS) == valid
+
+    padded = tmp_path / "padded.json"
+    padded.write_text(json.dumps({**valid, "duration_s": 1.0}), encoding="utf-8")
+    assert load_test_summary(padded, SCHEMAS) is None
+
+    negative = tmp_path / "negative.json"
+    negative.write_text(json.dumps({**valid, "failed": -1}), encoding="utf-8")
+    assert load_test_summary(negative, SCHEMAS) is None
+
+    broken = tmp_path / "broken.json"
+    broken.write_text("{not json", encoding="utf-8")
+    assert load_test_summary(broken, SCHEMAS) is None
+    assert load_test_summary(tmp_path / "missing.json", SCHEMAS) is None
+
+
+async def test_ui_req_console_receives_test_summary_from_report(tmp_path: Path, static_dir: Path) -> None:
+    telemetry = tmp_path / "telemetry"
+    provision(telemetry)
+    summary = {"profile": "full", "passed": 3, "failed": 1, "skipped": 2, "report_path": "docs/pbt-report.md"}
+    instance = await start_daemon(telemetry, ManualClock(), static_dir=static_dir, test_summary=summary)
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.ws_connect(_url(instance, "/ws")) as ws:
+                events = await _collect(ws, {"test.summary"})
+        published = [event for event in events if event["type"] == "test.summary"]
+        assert len(published) == 1
+        SCHEMAS.validate_ws_event(published[0])
+        assert published[0]["data"] == summary
+    finally:
+        await instance.stop()
+
+
+async def test_ui_req_no_test_summary_event_without_report(daemon: Daemon) -> None:
+    async with aiohttp.ClientSession() as session:
+        async with session.ws_connect(_url(daemon, "/ws")) as ws:
+            events = await _collect(ws, {"agc.state", "system.status"})
+            # A summary would be sent right after the initial snapshot; allow time for it.
+            with pytest.raises(TimeoutError):
+                async with asyncio.timeout(0.5):
+                    message = await ws.receive()
+                    events.append(json.loads(message.data))
+    assert all(event["type"] != "test.summary" for event in events)
+
+
+async def test_ui_req_console_backfills_frames_accepted_before_it_connected(daemon: Daemon) -> None:
+    await transmit(daemon, command_bytes(3))
+    await transmit(daemon, command_bytes(4))
+    async with aiohttp.ClientSession() as session:
+        async with session.ws_connect(_url(daemon, "/ws")) as ws:
+            events: list[dict[str, Any]] = []
+            async with asyncio.timeout(3.0):
+                while sum(1 for e in events if e["type"] == "telemetry.frame") < 2:
+                    message = await ws.receive()
+                    events.append(json.loads(message.data))
+    for event in events:
+        SCHEMAS.validate_ws_event(event)
+    frames = [e["data"] for e in events if e["type"] == "telemetry.frame"]
+    assert [f["frame"]["seq"] for f in frames] == [3, 4]
+    assert all(f["verdict"] == "ACCEPTED" for f in frames)
+    ids = [e["event_id"] for e in events]
+    assert ids == sorted(ids) and len(set(ids)) == len(ids)

@@ -12,16 +12,16 @@ Tugas implementasi rinci per fitur dibuat lewat **alur Spec Kiro** di `.kiro/spe
 
 | Milestone | Tanggal | Estimasi | Gerbang (harus terbukti) | Status |
 | :-- | :-- | --: | :-- | :-- |
-| M0 Persiapan & kontrak | 12–13 Nov | 8,5 j | Repo publik + MIT, Python & Node jalan, kontrak terkunci | 🟨 tinggal repo GitHub publik |
-| M1 Spike risiko | 13–14 Nov | 2,75 j | Keputusan hook & kanal akustik tercatat | 🟨 tinggal uji nada HP → mic |
-| M2 Acoustic Link | 14–19 Nov | 27,5 j | Frame dari HP masuk `telemetry/inbox/` | 🟨 lolos dengan audio sintetis & WAV; belum dari HP |
-| M3 AGC Emulator | 17–23 Nov | 20,5 j | `V37 E 40 E` → P40 aktif, R1–R3 benar | ✅ |
-| M4 MCP Bridge | 23–27 Nov | 21,5 j | Suara → agen → DSKY ≤ 10 detik; serangan ditolak | 🟨 serangan ditolak di tes; belum diuji dengan sesi Kiro nyata & latensi belum diukur |
-| M5 Console (Next.js) | 26 Nov–1 Des | 24,5 j | Semua panel memakai data asli; build statis disajikan daemon | 🟨 build & tes lolos; belum disambung ke daemon nyata |
+| M0 Persiapan & kontrak | 12–13 Nov | 8,5 j | Repo publik + MIT, Python & Node jalan, kontrak terkunci | ✅ repo publik, MIT terdeteksi |
+| M1 Spike risiko | 13–14 Nov | 2,75 j | Keputusan hook & kanal akustik tercatat | 🟥 uji speaker→mic laptop sendiri 0/20; uji HP → mic belum; pemicu T1 aktif |
+| M2 Acoustic Link | 14–19 Nov | 27,5 j | Frame dari HP masuk `telemetry/inbox/` | 🟨 WAV & loopback 20/20; over-air belum berhasil |
+| M3 AGC Emulator | 17–23 Nov | 20,5 j | `V37 E 40 E` → P40 aktif, R1–R3 benar | ✅ (juga di sesi live) |
+| M4 MCP Bridge | 23–27 Nov | 21,5 j | Suara → agen → DSKY ≤ 10 detik; serangan ditolak | 🟨 sesi Kiro live lolos (V25 & P40+AUTH); latensi agen 84 s, target 10 s meleset |
+| M5 Console (Next.js) | 26 Nov–1 Des | 24,5 j | Semua panel memakai data asli; build statis disajikan daemon | 🟨 tersambung ke daemon nyata (status, DSKY, audit, ringkasan tes); spektrum mic belum terlihat |
 | M6 Submisi | 1–3 Des | 16,5 j | Devpost terkirim | ⬜ |
 | **Total** | | **≈ 121,75 j** | | |
 
-**Status 12 Nov (akhir hari):** suite Python 122 lulus (termasuk `slow`) + 4 tes stdio/config/hook; frontend 56 tes + P9 10.000 kasus lulus; CLI nyata memproses `sample_burst.wav`. Rincian bukti: `docs/evidence-matrix.md`.
+**Status 12 Nov (akhir hari):** suite Python 132 lulus (termasuk `slow`); profil penuh di `docs/pbt-report.md`; frontend 56 tes + P9 10.000 kasus lulus; sesi Kiro live lolos untuk V25 dan P40+AUTH; metrik di `docs/metrics.json`. Belum: dekode lewat udara, video, Devpost. Rincian bukti: `docs/evidence-matrix.md`.
 
 **Kapasitas:** asumsi 1 orang × ±5 jam efektif/hari × 22 hari ≈ 110 jam. Sekitar 4 jam fondasi dokumentasi sudah selesai; sisa rencana tetap melebihi kapasitas. Tangga pemotongan (§4) adalah bagian dari rencana, bukan rencana darurat.
 
@@ -53,7 +53,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
   - `winget install OpenJS.NodeJS.LTS`; selesai bila `node --version` dan `npm --version` jalan. Hanya untuk development; juri tidak memerlukannya.
 - [x] **0.2 Virtual env & dependensi** · 0,5 j · ↳ 0.1
   - `.venv/` + `requirements.txt` (`numpy`, `sounddevice`, `mcp`, `hypothesis`, `pytest`) dengan versi dikunci; `pip install -r requirements.txt` sukses.
-- [ ] **0.3 Repo GitHub publik** · 0,5 j
+- [x] **0.3 Repo GitHub publik** · 0,5 j — <https://github.com/0xshalah/apollo-26>, API GitHub: `public`, lisensi `MIT`
   - `git init`, repo publik `apollo-26`, `LICENSE` MIT; lisensi tampil di bagian *About*.
 - [x] **0.4 `.gitignore` aman** · 0,25 j · ↳ 0.3
   - Mengabaikan `.venv/`, `.env`, isi `telemetry/inbox/` & `telemetry/rejected/` (folder tetap via `.gitkeep`). **Tidak** mengabaikan `.kiro/`. Cek: `git check-ignore .kiro` tidak mengeluarkan apa pun.
@@ -64,7 +64,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 - [x] **0.6a Kontrak & assurance docs** · 4 j
   - `contracts/acoustic-frame-v1.md`, dua JSON Schema, golden vectors, `docs/state-machines.md`, `threat-model.md`, dan `evidence-matrix.md` dibuat.
   - JSON valid secara sintaks; golden vectors masih berstatus independen dan wajib diverifikasi Python + TypeScript.
-- [ ] **0.7 Commit pertama** · 0,25 j · ↳ 0.3–0.6a
+- [x] **0.7 Commit pertama** · 0,25 j · ↳ 0.3–0.6a — commit `4ff0864`, 12 Nov
   - PRD, TASK, LICENSE, steering ter-push. Ini juga jejak waktu bahwa proyek dimulai setelah 30 Okt 2026.
 
 ### M1 — Spike risiko (13–14 Nov)
@@ -77,7 +77,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
   - HP memutar nada 1200 dan 2200 Hz; laptop merekam 48 kHz; Goertzel membedakan keduanya.
   - Catat SNR dan deviasi Hz pada jarak 0,3 m, 0,5 m, 1 m.
   - Selesai bila: kedua nada terbedakan pada 0,5 m. Bila gagal, lihat pemicu T1 (§4).
-- [ ] **1.3 Perangkat audio Windows** · 0,5 j · ↳ 0.2
+- [x] **1.3 Perangkat audio Windows** · 0,5 j · ↳ 0.2 — default input "Microphone Array (Realtek)" dan output "Speakers (Realtek)" mendukung 48 kHz mono (MME)
   - `sounddevice.query_devices()` menampilkan mikrofon; 48 kHz didukung (atau catat fallback 44,1 kHz).
 
 ### M2 — Acoustic Link (14–19 Nov) · spec `acoustic-link`
@@ -87,11 +87,11 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 - [x] **2.2 ⛔ `acoustic/frame.py`** · 3 j · ↳ 2.1
   - Encode/decode frame 34 byte, CRC-16/CCITT-FALSE, HMAC-SHA256 dipotong 8 byte, `COMMAND`/`AUTH`, `seq`/`ref_seq`, validasi urut sesuai kontrak.
   - Verifikasi **vektor uji** di `contracts/vectors/frames.json`; vektor yang sama wajib dipakai encoder TypeScript di 5.3.
-- [ ] **2.3 PBT P1, P4, P6** · 2 j · ↳ 2.2
+- [x] **2.3 PBT P1, P4, P6** · 2 j · ↳ 2.2 — profil penuh 10.000 contoh/properti lulus (`docs/pbt-report.md`)
   - `pytest tests/test_frame.py` lolos dengan profil penuh (10.000 kasus/properti).
 - [x] **2.4 ⛔ `acoustic/modem.py`** · 5 j · ↳ 2.2
   - Modulator Bell-202 fase kontinu, 8N1, preamble ≥ 250 ms, 300 baud default; demodulator Goertzel + sinkronisasi bit.
-- [ ] **2.5 PBT P2, P3, P5** · 3 j · ↳ 2.4
+- [x] **2.5 PBT P2, P3, P5** · 3 j · ↳ 2.4 — P2 500, P3 300, P5 1.000 contoh lulus; waktu generate 48 s / 30 s / 5 s (`docs/pbt-report.md`)
   - Lolos dengan jumlah kasus PRD §9; waktu jalan profil penuh dicatat.
 - [x] **2.6 ⛔ `acoustic/daemon.py`** · 4 j · ↳ 2.4
   - Capture kontinu dengan buffer cincin; frame valid → `telemetry/inbox/<seq>.json`; ditolak → `telemetry/rejected/` beserta alasan (FR-2, FR-3).
@@ -135,7 +135,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 - [x] **4.3 PBT P7** · 2 j · ↳ 4.2
 - [x] **4.4 ⛔ `mcp-server/server.py`** · 4 j · ↳ 4.2
   - Tool: `read_telemetry_frames`, `await_telemetry_frame`, `inspect_agc_status`, `plan_dsky_sequence`, `execute_dsky_sequence`, `verify_crc16`.
-- [ ] **4.5 Registrasi MCP** · 1,5 j · ↳ 4.4
+- [x] **4.5 Registrasi MCP** · 1,5 j · ↳ 4.4 — operator memasang `.kiro/settings/mcp.json`; await/inspect/plan/execute/read dipanggil dari sesi Kiro live 12 Nov
   - `.kiro/settings/mcp.json`; tiap tool dipanggil sekali dari chat Kiro dan hasilnya benar.
   - Status 12 Nov: agen tidak diizinkan menulis `.kiro/settings/`. Template siap di `docs/kiro-mcp.json` (execute tidak di-auto-approve, dicek oleh tes). Operator menyalinnya lewat *Kiro: Open workspace MCP config (JSON)*. Server stdio sudah lolos tes `tests/test_mcp_stdio.py`.
 - [x] **4.6 ⛔ Hooks** · 2 j · ↳ 4.5
@@ -176,11 +176,11 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 
 ### M6 — Video & Submisi (1–3 Des)
 
-- [ ] **6.1 Laporan PBT penuh** · 1 j
+- [x] **6.1 Laporan PBT penuh** · 1 j — `docs/pbt-report.md` dari `scripts/pbt_full.cmd` (132 passed, seed 2026)
   - Hasil disimpan di `docs/pbt-report.md` (jumlah kasus, waktu, seed).
-- [ ] **6.2 Ukur metrik nyata** · 2 j
+- [x] **6.2 Ukur metrik nyata** · 2 j — `docs/metrics.json` via `scripts/measure_metrics.py`; over-air dan agen meleset target, dicatat apa adanya
   - Latensi deterministik, latensi via agen, keandalan dekode, RAM/CPU; ditulis apa adanya, termasuk yang meleset dari target.
-- [ ] **6.3 README** · 3 j
+- [x] **6.3 README** · 3 j — quick start, demo P40+AUTH, tabel "Measured so far", screenshot console live; link video masih kosong
   - Konsep, arsitektur, instalasi, mode WAV untuk juri, batasan yang diakui (PRD §2.3), link video.
 - [ ] **6.4 Uji clone bersih** · 1,5 j · ↳ 6.3
   - Clone ke folder baru, ikuti README dari nol **tanpa Node.js**, jalankan mode WAV sampai DSKY ter-update di `/console`. Perbaiki setiap langkah yang macet.
@@ -188,13 +188,13 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
   - Alur PRD §11, dua perangkat, tanpa musik berhak cipta; unggah ke YouTube **publik**; cek durasi < 3:00.
 - [ ] **6.6 Audit repo** · 0,5 j
   - Publik, MIT terdeteksi, `.kiro/` lengkap (4 spec, 5 steering, 3 hook, `mcp.json`), tidak ada kunci asli (`git log -p | Select-String APOLLO26_` hanya berisi contoh).
-- [ ] **6.7 Naskah Devpost** · 2 j
+- [ ] **6.7 Naskah Devpost** · 2 j — draf di `docs/devpost.md`; naskah video di `docs/video-script.md`
   - Deskripsi, kategori Frankenstein, *built with*, dan penjelasan penggunaan Kiro yang merujuk file nyata di `.kiro/` dan `docs/kiro-journal.md`.
 - [ ] **6.8 ⛔ Submit** · 0,5 j · **paling lambat 3 Des**; sisakan 4 Des sebagai cadangan.
 
 ### Sepanjang proyek
 
-- [ ] **J.1 Jurnal Kiro** · ±10 menit per milestone
+- [x] **J.1 Jurnal Kiro** · ±10 menit per milestone — `docs/kiro-journal.md` (tanpa screenshot)
   - Di akhir setiap milestone, tulis 3–5 poin dan 1–2 screenshot di `docs/kiro-journal.md`: spec yang dibuat, hook yang terpicu, PBT yang menangkap bug. Bahan langsung untuk video, Devpost, dan blog.
 
 ### Bonus (setelah submisi)
@@ -244,4 +244,5 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 | 12 Nov | Tes live P40 kritis lolos | COMMAND seq 2 (V37 P40, dv 312,0 ft/s) HELD; execute tanpa AUTH ditolak `AUTH_REQUIRED`; AUTH seq 3 MATCHED; EXECUTED 36/36, P40 aktif, R1/R2/R3 = 1250/420/3120. 84,2 s dari COMMAND diterima sampai execute selesai (satu run, termasuk tes negatif). Daemon harus dijalankan di terminal operator: terminal background Kiro menutup proses di antara giliran. |
 | 12 Nov | Frame v1 menjadi 34 byte | `frame_type` dan `ref_seq` menghilangkan ambiguitas AUTH; HMAC 64-bit eksplisit untuk demo. |
 | 12 Nov | Gunakan gaya visual PRD, bukan palet mockup lama | Cosmic Void + Lunar Titanium + Apollo Electrum Gold + DSKY Phosphor lebih autentik dan khas; Italiana hanya untuk judul besar, Syne untuk UI, Space Mono untuk telemetri. |
+| 12 Nov | Uji akustik speaker → mic laptop yang sama gagal (0/20) | `scripts/measure_metrics.py`: 20 frame dari speaker Realtek, mic array Realtek, tidak ada yang terdeteksi. Rekaman probe: energi pita 1100–1300 Hz hanya 0,5–1% dan 2100–2300 Hz 0,1–0,2% dari total; energi dominan 170–850 Hz. Tidak terdekode pada ambang amplitudo 0,05 sampai 0,002. Dugaan: pemrosesan suara (array/SST) pada mic laptop menekan nada stabil; belum dibuktikan. Pemicu T1 aktif: uji HP → laptop, matikan *audio enhancements*, atau mic eksternal. Jalur loopback tetap 20/20. |
 | _14 Nov_ | _Jarak & volume demo akustik_ | _diisi dari hasil 1.2_ |

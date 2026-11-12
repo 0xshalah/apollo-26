@@ -11,15 +11,15 @@ Dokumen ini mencegah requirement hilang dan klaim tanpa bukti. Perbarui setelah 
 
 UI dan materi kompetisi **hanya boleh menyajikan angka sebagai fakta** jika statusnya `MEASURED` atau `VERIFIED`. Selain itu gunakan label `TARGET` atau `UNMEASURED`.
 
-## Requirements
-| ID | Ringkasan | Design owner | Implementasi | Verifikasi | Bukti | Status |
-| :-- | :-- | :-- | :-- | :-- | :-- | :-- |
-Bukti terakhir (12 Nov 2026, Windows 11, Python 3.12.10, Node 26.13.1):
-- `scripts\pytest.cmd` (semua tes, termasuk `slow`, catalog 1.2): **128 passed**, exit 0 (`telemetry\state\last-pytest.txt`).
+## Bukti terakhir
+12 Nov 2026, Windows 10 21H1 / build 19043, Python 3.12.10, Node 26.13.1:
+- `scripts\pytest.cmd` (semua tes, termasuk `slow`, profil `dev`): **132 passed**, exit 0.
+- `scripts\pbt_full.cmd` (profil `full`, `max_examples=10000`, seed 2026): lihat `docs/pbt-report.md`; ringkasan `docs/test-summary.json` dipublikasikan daemon ke panel tes console.
 - Sesi Kiro live (12 Nov): V25 N81 seq 1 EXECUTED 29/29; P40 seq 2 ditolak `AUTH_REQUIRED` tanpa AUTH, lalu EXECUTED 36/36 dengan AUTH seq 3. Sumber: hasil tool MCP dan log daemon.
 - `web-dashboard`: `npm run lint && npm run typecheck && npm test -- --run && npm run build` exit 0 (56 tes); `npm run test:full` (P9, 10.000 kasus/properti) exit 0. Log: `web-dashboard/logs/`.
 - CLI nyata: `scripts\smoke_cli.cmd` — `sample_burst.wav` diterima sebagai seq 1, pemutaran ulang ditolak `REPLAY`.
-- Belum ada pengujian akustik fisik (speaker → mikrofon); semua tes audio memakai PCM sintetis dari modem asli.
+- Uji akustik fisik pertama (speaker → mikrofon laptop yang sama, 20 frame): 0/20 terdeteksi (`docs/metrics.json`). Semua tes otomatis audio memakai PCM sintetis dari modem asli.
+- `/console` diuji di Chrome headless terhadap daemon nyata: status, DSKY, ringkasan tes, dan baris audit dari frame loopback tampil (`docs/images/console-live.png`).
 
 ## Requirements
 | ID | Ringkasan | Design owner | Implementasi | Verifikasi | Bukti | Status |
@@ -50,18 +50,18 @@ Bukti terakhir (12 Nov 2026, Windows 11, Python 3.12.10, Node 26.13.1):
 | P8 | Invariant ones' complement | `tests/test_word.py`, `tests/test_agc_stateful.py` | VERIFIED |
 | P9 | Python–TypeScript encoder setara | `web-dashboard/tests/p9-frame.test.ts` | VERIFIED |
 
-Catatan jumlah kasus: profil `dev` Hypothesis = 100 contoh/properti (dipakai hook); profil `full` (`HYPOTHESIS_PROFILE=full`) = 10.000 contoh dan **belum** dijalankan untuk seluruh suite Python. Jangan menyebut "10.000 kasus" untuk P1–P8 sebelum laporan `full` disimpan di `docs/pbt-report.md`.
+Catatan jumlah kasus: profil `dev` Hypothesis = 100 contoh/properti (dipakai hook dan CI); profil `full` dijalankan 12 Nov (`docs/pbt-report.md`, 132 passed, exit 0). P1, P4, P6, P7, P8 dan mesin stateful AGC = 10.000 contoh lulus per properti; properti modem memakai batas sendiri: P2 = 500, P3 = 300, P5 = 1.000. Jangan menyebut "10.000 kasus" untuk P2, P3, P5.
 
 ## Competition claims
 | Claim | Target | Metode | Evidence path | Status | Copy yang boleh tampil sekarang |
 | :-- | :-- | :-- | :-- | :-- | :-- |
 | Command path tidak membuka socket keluar | 0 di luar `127.0.0.1` | listener bind test + host guard test | `test_listeners_bind_only_to_loopback`, `test_dns_rebinding_*` | IMPLEMENTED (listener terverifikasi; inspeksi socket keluar belum) | `Listeners bind only to 127.0.0.1 (tested)` |
 | Frame korup/palsu dieksekusi | 0 pada suite | P4/P6/P7 + E2E abuse | `tests/test_e2e_flight_watch.py` | VERIFIED (dev profile) | `Corrupted, forged, and replayed frames are rejected in tests` |
-| Latensi deterministik | ≤2.0 s | nada pertama → inbox timestamp | `docs/metrics.json` | PLANNED | `TARGET ≤2.0 s` |
-| Latensi penuh via agen | ≤10 s | nada pertama → AGC postcondition | `docs/metrics.json` | PLANNED | `TARGET ≤10 s` |
-| Decode pada 0.5 m | ≥95% dari 20 frame | controlled trial | `docs/metrics.json` | PLANNED | `TARGET ≥95% at 0.5 m` |
-| RAM daemon | ≤256 MB | process measurement | `docs/metrics.json` | PLANNED | `TARGET ≤256 MB` |
-| CPU idle listening | ≤10% | process measurement | `docs/metrics.json` | PLANNED | `TARGET ≤10%` |
+| Latensi deterministik | ≤2.0 s | nada pertama → inbox timestamp | `docs/metrics.json` (`loopback_processing`) | MEASURED (loopback 20/20: proses median 0,588 s, maks 0,892 s); over-air **belum diukur**, estimasi turunan 1,97 s | `Loopback decode + validation: median 0.59 s over 20 frames (measured)` |
+| Latensi penuh via agen | ≤10 s | COMMAND diterima → AGC postcondition | `docs/metrics.json` (`agent_path_live`) | MEASURED, **meleset**: 84,2 s (1 run P40+AUTH, termasuk percobaan tanpa AUTH yang sengaja ditolak) | `Agent path: 84 s in one live run (target 10 s not met)` |
+| Decode pada 0.5 m | ≥95% dari 20 frame | controlled trial | `docs/metrics.json` (`acoustic_self_test`) | FAILED (speaker → mic laptop yang sama: 0/20 terdeteksi); uji HP 0,5 m belum dijalankan | `Over-the-air decoding not yet demonstrated` |
+| RAM daemon | ≤256 MB | process measurement | `docs/metrics.json` (`resources_idle`) | MEASURED: working set 53,5 MB idle, puncak 55,8 MB; private commit 295,5 MB | `Daemon working set ≈54 MB (measured)` |
+| CPU idle listening | ≤10% | process measurement | `docs/metrics.json` (`resources_idle`) | MEASURED: rata-rata 3,49% satu core (0,44% mesin 8 thread) selama 30 s | `Idle listening: 3.5% of one core (measured)` |
 
 ## Change rule
 Jika requirement berubah:

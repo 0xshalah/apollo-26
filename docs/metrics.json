@@ -1,0 +1,310 @@
+{
+  "schema_version": "1.0",
+  "agent_path_live": {
+    "status": "MEASURED",
+    "runs": 1,
+    "source": "MCP tool results in the live Kiro Flight Watch session of 2026-11-12 (TASK.md decision log)",
+    "path": "loopback WAV -> daemon -> MCP await/inspect/plan/execute (agent) -> AGC postcondition",
+    "p40_critical_with_auth": {
+      "command_received_at": "2026-11-12T09:24:44.924Z",
+      "auth_received_at": "2026-11-12T09:24:45.579Z",
+      "execution_finished_at": "2026-11-12T09:26:09.128Z",
+      "command_to_postcondition_s": 84.2,
+      "keys": 36,
+      "key_execution_s": 3.795,
+      "note": "Includes a deliberate execute attempt without AUTH (refused AUTH_REQUIRED) and the agent's model time between tool calls. Misses the 10 s target."
+    },
+    "v25_n81_non_critical": {
+      "keys": 29,
+      "key_execution_s": 3.036,
+      "note": "Frame arrived before the MCP server was enabled, so command-to-postcondition time is not meaningful for this run."
+    }
+  },
+  "environment": {
+    "measured_at": "2026-11-12T10:48:23+00:00",
+    "platform": "Windows-10-10.0.19043-SP0",
+    "python": "3.12.10",
+    "cpu": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "logical_cpus": 8,
+    "telemetry_dir": "telemetry\\state\\metrics-run-20261112T104804Z"
+  },
+  "resources_idle": {
+    "status": "MEASURED",
+    "rss_mb": 53.5,
+    "private_mb": 295.5,
+    "peak_wset_mb": 53.5,
+    "seconds": 30.0,
+    "mean_percent_of_one_core": 3.49,
+    "max_percent_of_one_core": 7.8,
+    "mean_percent_of_machine": 0.44,
+    "logical_cpus": 8
+  },
+  "acoustic_self_test": {
+    "status": "MEASURED",
+    "path": "same-laptop speaker -> microphone over the air (not the 0.5 m phone trial)",
+    "frames_sent": 20,
+    "frames_accepted": 0,
+    "frames_rejected": 0,
+    "frames_not_detected": 20,
+    "amplitude": 0.6,
+    "output_device": "Speakers (Realtek(R) Audio)",
+    "input_device": "Microphone Array (Realtek(R) Au",
+    "latency_first_tone_to_received_s": {
+      "min": null,
+      "median": null,
+      "max": null
+    },
+    "latency_note": "first_tone = playback call time + lead silence + PortAudio output latency; includes the frame's air time (preamble + 34 bytes at 300 baud, 8N1).",
+    "per_frame": [
+      {
+        "seq": 1,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 2,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 3,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 4,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 5,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 6,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 7,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 8,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 9,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 10,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 11,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 12,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 13,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 14,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 15,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 16,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 17,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 18,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 19,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      },
+      {
+        "seq": 20,
+        "air_time_s": 1.383,
+        "outcome": "NOT_DETECTED",
+        "reasons": []
+      }
+    ]
+  },
+  "resources_during_decode": {
+    "status": "MEASURED",
+    "mean_percent_of_one_core": 3.08,
+    "max_percent_of_one_core": 4.1,
+    "mean_percent_of_machine": 0.38,
+    "peak_rss_mb": 54.7
+  },
+  "loopback_processing": {
+    "status": "MEASURED",
+    "path": "HTTP POST of a 48 kHz WAV to the daemon's /loopback endpoint (same pipeline as microphone input, no air channel)",
+    "frames_sent": 20,
+    "frames_accepted": 20,
+    "processing_s": {
+      "min": 0.4508,
+      "median": 0.5875,
+      "max": 0.892
+    },
+    "processing_note": "POST start -> daemon received_at; includes WAV parse, FSK demodulation of the whole burst, CRC/HMAC/sequence validation, and atomic inbox write.",
+    "air_time_s": 1.383,
+    "derived_over_air_latency_s": 1.971,
+    "derived_note": "DERIVED upper estimate, not measured over the air: air time of one frame (preamble + 34 bytes, 8N1, 300 baud) + median loopback processing. Processing already includes the upload and every demodulation pass over the burst; with a live microphone the passes run during the air time, and a frame is decoded at the first 0.25 s hop after its stop bit.",
+    "cpu_during_trial": {
+      "mean_percent_of_one_core": 70.59,
+      "mean_percent_of_machine": 8.82
+    },
+    "peak_rss_mb": 55.8,
+    "per_frame": [
+      {
+        "seq": 1,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.4508
+      },
+      {
+        "seq": 2,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5995
+      },
+      {
+        "seq": 3,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5121
+      },
+      {
+        "seq": 4,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6288
+      },
+      {
+        "seq": 5,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5755
+      },
+      {
+        "seq": 6,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6302
+      },
+      {
+        "seq": 7,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5177
+      },
+      {
+        "seq": 8,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6655
+      },
+      {
+        "seq": 9,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6691
+      },
+      {
+        "seq": 10,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.7018
+      },
+      {
+        "seq": 11,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5094
+      },
+      {
+        "seq": 12,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5358
+      },
+      {
+        "seq": 13,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5201
+      },
+      {
+        "seq": 14,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6515
+      },
+      {
+        "seq": 15,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.4781
+      },
+      {
+        "seq": 16,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5594
+      },
+      {
+        "seq": 17,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6172
+      },
+      {
+        "seq": 18,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.5262
+      },
+      {
+        "seq": 19,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.892
+      },
+      {
+        "seq": 20,
+        "outcome": "ACCEPTED",
+        "post_to_received_s": 0.6181
+      }
+    ]
+  }
+}
