@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import metricsJson from '../../../docs/metrics.json';
 import summaryJson from '../../../docs/test-summary.json';
+import { LandingMotion } from '@/components/landing/LandingMotion';
+import { ProtocolDrawing } from '@/components/landing/ProtocolDrawing';
 import { Chip, type Tone } from '@/components/Panel';
 import { fromHex } from '@/lib/frame';
 import { signed5 } from '@/lib/format';
@@ -93,6 +95,7 @@ function Section({
 function OrbitDiagram() {
   return (
     <svg
+      data-orbit
       viewBox="0 0 760 440"
       aria-hidden="true"
       className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-auto w-full text-rule-2 opacity-55"
@@ -249,15 +252,6 @@ const PIPELINE = [
   },
 ];
 
-const SPEC = [
-  ['Frame', '34 bytes: type, seq, ref_seq, flags, VERB/NOUN/PROG, R1, R2, delta-v'],
-  ['Integrity', 'CRC-16/CCITT-FALSE'],
-  ['Authentication', '64-bit truncated HMAC-SHA256; separate operator key for AUTH'],
-  ['Replay', 'Global sequence counter, atomically persisted by the daemon'],
-  ['Modem', `Bell-202 FSK · ${MARK_HZ}/${SPACE_HZ} Hz · ${BAUD} baud · 8N1`],
-  ['Command path', 'Daemon, MCP server and emulator bind to 127.0.0.1 only (tested)'],
-];
-
 const GATE_STEPS = [
   ['01', 'Await', 'Only daemon-accepted COMMAND and AUTH frames enter Flight Watch.'],
   ['02', 'Inspect', 'Read one coherent AGC snapshot. KEY REL and OPR ERR must be clear.'],
@@ -379,7 +373,7 @@ export function Landing() {
   const secondaryEvidence = rows.filter((_, index) => ![0, 1, 3].includes(index));
 
   return (
-    <>
+    <LandingMotion>
       <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6">
         <div className="mx-auto flex max-w-[78rem] items-center gap-4 rounded-card border border-rule-2 bg-paper-3/90 px-3 py-2 backdrop-blur">
           <Link href="/" className="inline-flex min-h-11 items-center gap-2 px-1 text-[1.0625rem] font-medium tracking-tight text-ink">
@@ -416,9 +410,9 @@ export function Landing() {
           className="landing-hero relative isolate mx-auto grid min-h-[calc(100dvh-5rem)] max-w-[90rem] gap-12 overflow-hidden px-4 pb-24 pt-16 sm:px-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(38rem,1.18fr)] lg:items-center lg:px-12 lg:pt-20"
         >
           <OrbitDiagram />
-          <div className="max-w-[38rem]">
+          <div data-hero-item className="max-w-[38rem]">
             <p className="font-mono text-xs text-accent">KIROWEEN 2026 / FRANKENSTEIN</p>
-            <h1 id="hero-head" className="mt-5 max-w-[14ch] text-[3.25rem] leading-[0.98] tracking-[-0.045em] text-ink sm:text-[4.75rem]">
+            <h1 id="hero-head" className="mt-5 max-w-[14ch] text-[3.25rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[4.75rem]">
               Emergency guidance, carried by sound.
             </h1>
             <p className="mt-6 max-w-[42ch] text-[1.125rem] leading-relaxed text-ink-2">
@@ -454,7 +448,7 @@ export function Landing() {
               </div>
             </dl>
           </div>
-          <div className="relative lg:translate-y-6">
+          <div data-hero-item className="relative lg:translate-y-6">
             <div aria-hidden className="absolute -inset-4 -z-10 rounded-card border border-rule/60" />
             <LiveRunCard />
           </div>
@@ -478,14 +472,7 @@ export function Landing() {
               </li>
             ))}
           </ol>
-          <dl className="mt-8 grid gap-px overflow-hidden rounded-card border border-rule bg-rule md:grid-cols-2">
-            {SPEC.map(([label, value]) => (
-              <div key={label} className="grid gap-2 bg-paper px-5 py-4 sm:grid-cols-[8rem_minmax(0,1fr)]">
-                <dt className="text-sm text-muted">{label}</dt>
-                <dd className="font-mono text-xs leading-relaxed text-ink-2">{value}</dd>
-              </div>
-            ))}
-          </dl>
+          <ProtocolDrawing rawHex={metrics.agent_path_live.p40_critical_with_auth.command_raw_hex} />
         </Section>
 
         <Section
@@ -697,6 +684,6 @@ copy .env.example .env
           </p>
         </div>
       </footer>
-    </>
+    </LandingMotion>
   );
 }

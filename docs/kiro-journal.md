@@ -54,3 +54,11 @@ After the fixes:
 - The agent's own latency is part of the protocol. Timing windows sized for code (5 s, 30 s) failed with an LLM in the loop; the fix was to widen windows and keep exact state checks, not to relax the checks.
 - Tests with an injected `ManualClock` were correct and still missed a platform clock bug. One real-clock test now covers the boundary.
 - Background terminals started by the agent do not survive between turns; the operator runs the daemon in their own terminal during live sessions.
+
+## 12 Nov — curated design-skill pass
+
+- Audited fourteen suggested design repositories instead of installing them all. The selected roles and licensing notes are in `docs/design-sources.md`; the visual contract now also has a portable Google-format `DESIGN.md`.
+- Taste Skill and Impeccable shaped the page around one real product object: the recorded P40 run. Hallmark checks kept the first action visible, tokens centralized, content available without JavaScript, and evidence honest.
+- Added `gsap` 3.15.1 and `@gsap/react` 2.1.2 (exact versions). `LandingMotion.tsx` scopes selectors and cleanup through `useGSAP`, animates only transform/opacity, and skips all motion for `prefers-reduced-motion`.
+- Added `ProtocolDrawing.tsx`, a proportional 34-byte frame anatomy generated from the normative TypeScript `FIELD_LAYOUT` and the recorded COMMAND bytes. Offsets, lengths, field values and the 34-byte total are not duplicated constants.
+- React Bits and Magic UI were visual references only; no component code was copied. OpenDesign, Scroll World and Canvas UI were not integrated because their tooling/media/WebGL cost did not fit the static, evidence-led page.
