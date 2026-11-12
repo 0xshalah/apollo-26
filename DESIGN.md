@@ -61,7 +61,7 @@ Mode: **Operate**. Keep the form compact and explicit. The operator chooses one 
 
 ## Mission console
 
-Mode: **Operate**. Prioritize scanability: navigation rail, KPI ribbon derived from received frames, spectrum, system state, filterable audit ledger, test evidence, diagnostics, and a pinned read-only DSKY. Missing facts show `AWAITING`, `UNMEASURED`, or `—`; stale data stays visible with a `STALE` label.
+Mode: **Operate**. Prioritize scanability: navigation rail; sticky command header with frame window, latest sequence, AGC display and Flight Watch; KPI ribbon; real spectrum or an explicit unmeasured frequency reference; latest-link snapshot with validation gates; filterable audit ledger; system, test and diagnostic panels; pinned read-only DSKY. COMMAND fields never substitute for AGC state. Missing facts show `AWAITING`, `UNMEASURED`, or `—`; stale data stays visible with a `STALE` label.
 
 ## Material and behavior
 

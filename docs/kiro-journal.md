@@ -62,3 +62,11 @@ After the fixes:
 - Added `gsap` 3.15.1 and `@gsap/react` 2.1.2 (exact versions). `LandingMotion.tsx` scopes selectors and cleanup through `useGSAP`, animates only transform/opacity, and skips all motion for `prefers-reduced-motion`.
 - Added `ProtocolDrawing.tsx`, a proportional 34-byte frame anatomy generated from the normative TypeScript `FIELD_LAYOUT` and the recorded COMMAND bytes. Offsets, lengths, field values and the 34-byte total are not duplicated constants.
 - React Bits and Magic UI were visual references only; no component code was copied. OpenDesign, Scroll World and Canvas UI were not integrated because their tooling/media/WebGL cost did not fit the static, evidence-led page.
+
+## 13 Nov — mission console and README quality pass
+
+- Upgraded `/console` as an Operate surface rather than adding landing-page motion: a sticky command header now projects frame window, latest sequence, AGC display and Flight Watch from reducer state.
+- Replaced the empty spectrum hole with a labelled 1200/2200 Hz protocol ruler. It explicitly says `not measured` and never draws power bars until a real `audio.spectrum` event arrives.
+- Added a latest-link snapshot sourced from the newest `telemetry.frame`: verdict, reason, source, all six validation gates, payload fields and raw frame. It never uses COMMAND payload as AGC state.
+- A real-daemon browser pass used three accepted frames and one rejected replay. The first 375px capture found a clipped command header; replacing breakpoint flex with a deterministic two-row grid fixed it.
+- Rewrote README around reviewer intent: recorded result, architecture, working quick start, safety boundaries, Kiro evidence, verification, measured failures, protocol scope and project map.

@@ -4,8 +4,10 @@ import { useEffect, useReducer } from 'react';
 import { AppShell, type ShellSection } from '@/components/AppShell';
 import { Chip } from '@/components/Panel';
 import { AuditLedger } from '@/components/console/AuditLedger';
+import { ConsoleHeader } from '@/components/console/ConsoleHeader';
 import { DskyInstrument, DskySheet } from '@/components/console/Dsky';
 import { KpiStrip } from '@/components/console/KpiStrip';
+import { LinkSnapshotPanel } from '@/components/console/LinkSnapshotPanel';
 import { SpectrumPanel } from '@/components/console/SpectrumPanel';
 import { DiagnosticsPanel, SystemStatusPanel, TestSummaryPanel } from '@/components/console/StatusPanels';
 import {
@@ -104,6 +106,7 @@ export function ConsoleClient() {
 
   const disconnected = state.connection.kind !== 'connected';
   const conn = connectionLabel(state.connection);
+  const latest = state.audit.length > 0 ? state.audit[state.audit.length - 1] : null;
 
   return (
     <AppShell
@@ -117,13 +120,7 @@ export function ConsoleClient() {
     >
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_21.75rem]">
         <main id="main" className="min-w-0">
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-rule bg-paper-3 px-4 py-3 sm:px-6">
-            <h1 className="text-[1.35rem] text-ink">Mission console</h1>
-            <p className="max-w-prose text-xs text-muted">
-              Read-only view of the local daemon at <span className="font-mono">{WS_PATH}</span>. Every event is validated
-              against the contract schemas; missing data shows as UNMEASURED or DISCONNECTED.
-            </p>
-          </div>
+          <ConsoleHeader state={state} />
 
           <KpiStrip rows={state.audit} disconnected={disconnected} />
 
@@ -135,17 +132,20 @@ export function ConsoleClient() {
               </p>
             ) : null}
 
-            <div className="grid grid-cols-1 gap-6 min-[90rem]:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+            <div className="grid grid-cols-1 gap-6 min-[90rem]:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
               <SpectrumPanel spectrum={state.spectrum} disconnected={disconnected} />
-              <SystemStatusPanel system={state.system} disconnected={disconnected} />
+              <LinkSnapshotPanel latest={latest} disconnected={disconnected} />
             </div>
 
-            <AuditLedger
-              rows={state.audit}
-              selectedId={state.selectedAuditEventId}
-              onSelect={(id) => dispatch({ type: 'select', eventId: id })}
-              connection={state.connection}
-            />
+            <div className="grid grid-cols-1 items-start gap-6 min-[90rem]:grid-cols-[minmax(0,1fr)_18rem]">
+              <AuditLedger
+                rows={state.audit}
+                selectedId={state.selectedAuditEventId}
+                onSelect={(id) => dispatch({ type: 'select', eventId: id })}
+                connection={state.connection}
+              />
+              <SystemStatusPanel system={state.system} disconnected={disconnected} />
+            </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <TestSummaryPanel tests={state.tests} disconnected={disconnected} />
@@ -157,6 +157,7 @@ export function ConsoleClient() {
           <div className="sticky top-4">
             <div className="mb-4 flex items-center justify-between border-b border-rule pb-2">
               <h2 className="text-[0.9375rem] text-ink">DSKY Block II (1969)</h2>
+              <span className="font-mono text-[0.65rem] text-muted">AGC SUBSET</span>
             </div>
             <DskyInstrument agc={state.agc} disconnected={disconnected} />
           </div>

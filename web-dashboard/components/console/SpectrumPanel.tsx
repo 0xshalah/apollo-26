@@ -20,16 +20,45 @@ export function SpectrumPanel({ spectrum, disconnected }: { spectrum: PanelValue
   return (
     <Panel id="spectrum" title={`Acoustic spectrum, Bell-202 (${MARK_HZ} / ${SPACE_HZ} Hz)`} aside={status}>
       {spectrum.kind === 'loading' ? (
-        <div className="grid min-h-48 place-items-center rounded-pill border border-rule-2 bg-paper-3 p-6 text-center">
-          <p className="max-w-sm text-sm text-muted">
-            {disconnected ? 'DISCONNECTED. ' : ''}No audio.spectrum event received. The daemon publishes the spectrum only while it
-            listens to a microphone; nothing is plotted until it sends one.
-          </p>
-        </div>
+        <SpectrumReference disconnected={disconnected} />
       ) : (
         <SpectrumPlot data={spectrum.value} eventId={spectrum.eventId} timestamp={spectrum.timestamp} stale={spectrum.kind === 'stale'} />
       )}
     </Panel>
+  );
+}
+
+/** Normative frequency ruler only. It deliberately contains no power bars or measured values. */
+function SpectrumReference({ disconnected }: { disconnected: boolean }) {
+  const min = 800;
+  const max = 2600;
+  const left = (frequency: number) => `${((frequency - min) / (max - min)) * 100}%`;
+  return (
+    <div className="rounded-pill border border-rule-2 bg-paper-3 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-mono text-xs text-muted">REFERENCE FREQUENCIES</p>
+        <Chip tone="muted">not measured</Chip>
+      </div>
+      <div className="relative mt-8 h-28 border-b border-rule-2" aria-hidden="true">
+        {[MARK_HZ, SPACE_HZ].map((frequency) => (
+          <div key={frequency} className="absolute inset-y-0 -translate-x-1/2" style={{ left: left(frequency) }}>
+            <div className="h-full border-l border-dashed border-cool/70" />
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-tag bg-cool-soft px-2 py-0.5 font-mono text-xs text-cool">
+              {frequency} Hz
+            </span>
+            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-muted">
+              {frequency === MARK_HZ ? 'mark · bit 1' : 'space · bit 0'}
+            </span>
+          </div>
+        ))}
+        <span className="absolute -bottom-6 left-0 font-mono text-[0.65rem] text-muted">{min} Hz</span>
+        <span className="absolute -bottom-6 right-0 font-mono text-[0.65rem] text-muted">{max} Hz</span>
+      </div>
+      <p className="mt-10 text-sm text-muted">
+        {disconnected ? 'DISCONNECTED. ' : ''}No audio.spectrum event has arrived. These two markers are protocol references, not a
+        generated or measured spectrum.
+      </p>
+    </div>
   );
 }
 
