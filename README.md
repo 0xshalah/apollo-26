@@ -1,14 +1,15 @@
-<div align="center">
+<h1 align="center">Apollo-26</h1>
 
-# Apollo-26
+<p align="center"><strong>An authenticated acoustic command link from a 2026 web ground station to a 1969-style DSKY, flown by a Kiro agent through a code-enforced MCP safety gate.</strong></p>
 
-### An authenticated acoustic command link from a 2026 web ground station to a 1969-style DSKY, flown by a Kiro agent through a code-enforced MCP safety gate.
+<p align="center"><strong>Kiroween 2026 · Frankenstein · MIT License</strong></p>
 
-**Kiroween 2026 · Frankenstein · MIT License**
-
-[Live landing page](https://0xshalah.github.io/apollo-26/) · [Ground station](https://0xshalah.github.io/apollo-26/ground/) · [Evidence matrix](docs/evidence-matrix.md) · [Kiro journal](docs/kiro-journal.md)
-
-</div>
+<p align="center">
+  <a href="https://0xshalah.github.io/apollo-26/">Live landing page</a> ·
+  <a href="https://0xshalah.github.io/apollo-26/ground/">Ground station</a> ·
+  <a href="docs/evidence-matrix.md">Evidence matrix</a> ·
+  <a href="docs/kiro-journal.md">Kiro journal</a>
+</p>
 
 ![Apollo-26 landing page: recorded P40 run beside the mission briefing](docs/images/landing-hero.png)
 
