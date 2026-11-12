@@ -376,7 +376,7 @@ Reconnect uses capped exponential backoff with jitter. Proposed defaults are 500
 
 ### DSKY projection
 
-`DskyDock` formats event integers with fixed-width Space Mono output and projects the four lamp booleans. It never uses audit COMMAND values as an AGC substitute. Before the first AGC event, each register reads `—` and the instrument states “Awaiting AGC state.” On disconnect it preserves the last snapshot with a visible “STALE” label and non-color cue.
+`DskyDock` formats event integers with fixed-width mono output and projects the four lamp booleans. It never uses audit COMMAND values as an AGC substitute. Before the first AGC event, each register reads `—` and the instrument states “Awaiting AGC state.” On disconnect it preserves the last snapshot with a visible “STALE” label and non-color cue.
 
 Desktop keeps the right pinned dock. Below 80rem it becomes a controlled slide-over with a persistent compact status bar. Below 48rem it becomes a bottom sheet capped to the viewport, with focus containment, close button, Escape handling, body-scroll control, and focus restoration. The dock is non-interactive apart from open/close behavior.
 
@@ -413,17 +413,11 @@ The table keeps the mockup's sticky first column, horizontal table-region scroll
 
 Tailwind theme names the approved tokens:
 
-| Token | Value | Use |
-| :-- | :-- | :-- |
-| `cosmic-void` | `#050608` | page and deepest instrument background |
-| `lunar-900` | `#0a0d12` | primary panel surface |
-| `lunar-800` | `#0f141c` | raised/selected surface |
-| `electrum` | `#e6c875` | focus, primary action, key status |
-| `phosphor` | `#00ff88` | DSKY readout and positive instrument state |
+Changed 12 Nov 2026 (operator decision): the visual language now follows the archived dashboard mockup in full. Tokens are `paper`, `paper-2`, `paper-3`, `ink`, `ink-2`, `muted`, `rule`, `rule-2`, `accent` (amber, with `accent-ink`/`accent-soft`), `cool` (blue), `ok` (green), and `bad` (red), each with a `-soft` tint where used for pills. Exact oklch values and roles are in `.kiro/steering/design-system.md`.
 
-Italiana is limited to large route headings. Syne labels navigation, controls, and tables. Space Mono renders bytes, timestamps, telemetry, DSKY digits, and measured values. All files are local and loaded through `next/font/local`.
+Host Grotesk renders interface text and headings; Atkinson Hyperlegible Mono renders bytes, timestamps, telemetry, DSKY digits, and measured values. Both are downloaded at build time by `next/font/google` and served from the export.
 
-Panels use one-pixel hairlines. Corner ticks frame only primary instruments: ground frame preview, console spectrum or selected-frame inspector, and DSKY bezel. Error and warning colors must pass contrast and always pair with text/icon/state labels.
+Cards use 8px radius and one-pixel borders; controls 6px; tags 4px. Warning and error colors always pair with text/state labels.
 
 English is the initial and fallback language. A translation system is not required for v1.
 
@@ -434,7 +428,7 @@ English is the initial and fallback language. A translation system is not requir
 - A skip link targets the main route content.
 - Native form labels, descriptions, errors, tables, buttons, and landmarks are preferred over ARIA reconstruction.
 - Async form, connection, and transmission messages use appropriately scoped polite/assertive live regions.
-- Focus rings use electrum with sufficient separation from dark surfaces.
+- Focus rings use the amber accent with sufficient separation from dark surfaces.
 - Status always has text in addition to color or lamp illumination.
 - Motion is limited to state transition support. `prefers-reduced-motion: reduce` removes interpolation, animated entry, and auto-scroll.
 

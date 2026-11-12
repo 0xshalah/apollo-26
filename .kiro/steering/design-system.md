@@ -5,64 +5,67 @@ fileMatchPattern: ["web-dashboard/**/*.ts","web-dashboard/**/*.tsx","web-dashboa
 
 # Apollo-26 Design System
 
-Concept: Celestial Brutalism and Swiss Aerospace Luxury (PRD §8). The UI is an instrument panel: dark, flat, hairline-ruled, dense with real data, and quiet when there is no data. Tokens live in `web-dashboard/app/globals.css` (`@theme`). This file is the rule source; the CSS is the implementation.
+Source: the archived dashboard mockup `docs/archive/mockups/dashboard-page.html` ("Console" theme: graphite, grotesk sans, amber accent). The operator chose it over the earlier PRD §8 style on 12 Nov 2026. Its visual language is adopted in full; its sample numbers, keypad, and out-of-scope verbs are not. Tokens live in `web-dashboard/app/globals.css` (`@theme`). This file is the rule source; the CSS is the implementation.
 
 ## Color tokens
 
 | Token | Value | Tailwind | Role |
 | :-- | :-- | :-- | :-- |
-| Cosmic Void | `#050608` | `void` | Page background, deepest wells, text on electrum fills |
-| Lunar Titanium 900 | `#0a0d12` | `lunar-900` | Primary panel surface |
-| Lunar Titanium 800 | `#0f141c` | `lunar-800` | Raised or selected surface, inputs, table header |
-| Apollo Electrum Gold | `#e6c875` | `electrum` | Text, focus ring, primary action, warnings (as filled chip) |
-| DSKY Phosphor | `#00ff88` | `phosphor` | DSKY digits, bytes, live/accepted state, spectrum bars |
+| Paper | `oklch(13.5% 0.009 250)` | `paper` | Page background, KPI cells, DSKY digit cells |
+| Paper 2 | `oklch(17.5% 0.010 250)` | `paper-2` | Panel/card surface, hover |
+| Paper 3 | `oklch(10.5% 0.008 250)` | `paper-3` | Sidebar, top bars, inputs, table header, wells |
+| Ink / Ink 2 | `oklch(96% …)` / `oklch(84% …)` | `ink`, `ink-2` | Primary / secondary text |
+| Muted | `oklch(69% 0.011 250)` | `muted` | Labels, notes, placeholders |
+| Rule / Rule 2 | `oklch(26.5% …)` / `oklch(39% …)` | `rule`, `rule-2` | Hairlines / card and control borders |
+| Accent (amber) | `oklch(83% 0.155 80)` | `accent`, `accent-ink`, `accent-soft` | Primary action, selected control, focus ring, warnings |
+| Cool (blue) | `oklch(78% 0.125 245)` | `cool`, `cool-soft` | Info, selected row, raw bytes/hex, spectrum bars, lit COMP/UPLINK lamps |
+| OK (green) | `oklch(78% 0.155 150)` | `ok`, `ok-soft` | Accepted/PASS/LIVE, DSKY digits, field bytes |
+| Bad (red) | `oklch(70% 0.17 25)` | `bad`, `bad-soft` | Rejected/FAIL/DISCONNECTED, lit KEY REL/OPR ERR lamps |
 
 Rules:
-- These five values are the entire palette. Every other tone is one of them at reduced opacity (`electrum/70` muted text, `electrum/15` hairlines). Do not add hex values, Tailwind default palette colors, or gradients.
-- Muted text must stay at `electrum/60` or higher on `void`/`lunar-*` to keep WCAG AA contrast.
-- Phosphor means "a measured or live value from the system". Do not use it for decoration, headings, or buttons.
-- Warning/failed/rejected states use a filled electrum chip with void text plus an explicit word (`REJECTED`, `FAILED`, `STALE`). Color is never the only cue.
+- `--color-*: initial` removes the Tailwind default palette. Use only these tokens; no raw hex or extra colors in components.
+- Status is always text plus color (`Accepted`, `Rejected`, `PASS`, `FAIL`, `STALE`). Color is never the only cue.
+- Green means a measured or live value from the system; amber means "act here" or "attention". Do not use either as decoration.
 
 ## Typography
 
 | Role | Family | Tailwind | Use |
 | :-- | :-- | :-- | :-- |
-| Display | Italiana | `font-display` | Route `h1`, panel-group titles, DSKY sheet title. Large sizes only (≥ 1.5rem). |
-| UI | Syne | `font-ui` (body default) | Labels, navigation, buttons, table headers, prose |
-| Telemetry | Space Mono | `font-mono` + `tabular` | Bytes, hex, bits, seq numbers, timestamps, DSKY digits, measured values |
+| UI and headings | Host Grotesk 400/500 | `font-sans` (body default) | Everything that is not telemetry. Headings weight 500, tracking −0.025em. |
+| Telemetry | Atkinson Hyperlegible Mono 400/500 | `font-mono` + `tabular` | Bytes, hex, bits, seq, event ids, timestamps, DSKY digits, measured values |
 
-- Fonts load through `next/font/google`, which downloads them at build time and serves them from `out/`. No runtime font or CDN request.
-- Labels: uppercase Syne, `text-xs`, letter-spacing `0.14em`–`0.18em`.
-- Numbers that can change use `font-mono tabular` (tabular numerals, slashed zero) so columns do not shift.
+- Fonts load through `next/font/google` (downloaded at build time, served from `out/`). No runtime font or CDN request.
+- Sentence-case labels in `text-xs` medium `muted`; no letter-spaced uppercase labels.
+- Sizes follow the mockup scale: 0.75 / 0.84 / 0.94 / 1.125 / 1.35 / 1.65 rem.
 
-## Shape and rules
+## Shape
 
-- Hairlines: 1px borders in `electrum/10`–`electrum/25`. Grids of cells use `gap-px` over an `electrum/10`–`electrum/15` background.
-- No border radius, shadows, blur, or glassmorphism.
-- Corner ticks (`.ticks`) frame primary instruments only: the ground frame preview, the console spectrum, the selected-frame inspector, and the DSKY bezel. Never on ordinary panels.
-- Panels use the `Panel` component: hairline box, uppercase title bar, `p-4` body.
+- Radius: `rounded-card` 8px (panels, ledger card, DSKY bezel, home cards), `rounded-pill` 6px (buttons, inputs, segmented controls, wells), `rounded-tag` 4px (pills, nav keys).
+- Borders: 1px `rule-2` on cards and controls, `rule` for internal hairlines. Cell grids use `gap-px` over `bg-rule`.
+- No drop shadows except inset accents (3px amber left bar on the current nav item, 2px cool bar on a selected row, 2px amber underline on a pressed segment). Backdrop blur only behind the DSKY sheet.
 
 ## Components
 
-- `Chip`: text-labelled state. Tones: `ok` (phosphor outline), `warn` (electrum fill), `info` (electrum outline), `muted`.
-- DSKY: PROG/VERB/NOUN two-digit cells, R1–R3 as `+00000`, four lamps (`COMP ACTY`, `UPLINK ACTY`, `KEY REL`, `OPR ERR`) with `ON`/`OFF` text. Read-only on `/console`; no keypad.
-- Audit table: sticky first column with the row-select button, horizontal scroll confined to the labelled table region, `N/A` for null gates, `UNMEASURED` for missing SNR.
+- Shared classes in `globals.css`: `.btn`, `.btn-amber` (primary), `.input`, `.seg-group` (segmented control; `aria-pressed` or a checked radio marks the active segment).
+- `Panel`: `rounded-card` `paper-2` card, title row with a `rule` hairline, `p-4` body.
+- `Chip`: tinted pill. Tones `ok`, `warn` (amber), `bad`, `info` (cool), `muted`.
+- `AppShell`: mockup sidebar on `paper-3` with brand mark, route links (TX/RX keys), numbered "On this page" links, and a "Daemon link" status card at the bottom.
+- KPI ribbon: four `paper` cells separated by `rule` hairlines, mono values, muted notes.
+- Audit ledger card: title row with verdict `.seg-group`, toolbar row with search, table with `paper-3` header and sticky `EVT-n` first column.
+- DSKY dock: `paper-3` column, bezel with PROG/VERB/NOUN and R1–R3 in green mono, lamps as bordered pills with `ON`/`OFF` text. Read-only; no keypad.
 
-## Data honesty
+## Data honesty (unchanged from product rules)
 
 - Every dynamic value comes from the encoded frame (`/ground`) or a schema-valid WebSocket event (`/console`).
 - Before data arrives: `AWAITING`, `UNMEASURED`, or `—`. After disconnect: retained values marked `STALE`, plus a `DISCONNECTED` banner.
-- No placeholder numbers, sample rows, timers that animate data, random values, or generated waveforms.
+- No placeholder numbers, sample rows, timers that animate data, random values, or generated waveforms. The mockup's sample values (for example SNR, latency, coverage figures) are not reproduced.
 - Never render the banned claims listed in `product.md` (for example V97/V06/V16, 1200 baud, "100%", "0 dB", Luminary/Colossus as running software).
 
 ## Interaction and accessibility
 
-- Focus: 2px electrum outline, 2px offset, via `:focus-visible`.
-- Touch targets: `min-h-11` (44px) on every button, link, input, and select.
+- Focus: 2px amber outline, 2px offset, via `:focus-visible`.
+- Touch targets stay at 44px (`min-h-11` / `.btn` / `.input`), slightly taller than the mockup's 36px controls.
 - Skip link to `#main`; one `h1` per route; native labels, `aria-describedby` for hints and errors; `role="status"` (polite) for connection and transmission state; `role="alert"` only for disconnection.
 - `prefers-reduced-motion: reduce` disables transitions and smooth scroll globally. Do not add animation that carries meaning.
-- Layout: every route uses `AppShell`. From `lg` up it is a 15rem left rail (brand, route links, numbered "On this page" section links, daemon-link status at the bottom); below `lg` it collapses to a top bar and the section links are hidden. The status slot renders once (no duplicated live regions).
-- `/console` order: title row, KPI strip (session counters derived only from received `telemetry.frame` rows), spectrum + system status (side by side from 90rem), frame audit log with verdict filter and search, then test evidence + diagnostics. The DSKY is a pinned right dock at `xl` (80rem) and above, and a native `<dialog>` sheet with a sticky quick bar below that; it stays read-only with no keypad.
-- Single column below `lg` on `/ground`. Must work at 375px with no page-level horizontal scroll.
-- Layout follows the archived mockup (`docs/archive/mockups/dashboard-page.html`, chosen 12 Nov 2026); its palette, fonts, rounded corners and invented numbers are not used.
+- Layout: every route uses `AppShell` (15.25rem rail from `lg`; compact top bar below). `/console`: top bar, KPI ribbon, spectrum + system status (side by side from 90rem), audit ledger, test evidence + diagnostics; DSKY is a right dock from `xl` (80rem) and a `<dialog>` sheet with a sticky quick bar below that. `/ground`: top bar, compose + keys left, transmit + preview right from `lg`. Must work at 375px with no page-level horizontal scroll.
 - English is the only UI language in v1.

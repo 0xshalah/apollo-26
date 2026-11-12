@@ -28,16 +28,16 @@ const SECTIONS: readonly ShellSection[] = [
   { id: 'diagnostics', label: 'Contract diagnostics' },
 ];
 
-function connectionLabel(c: ConnectionState): { text: string; tone: 'ok' | 'warn' | 'muted' } {
+function connectionLabel(c: ConnectionState): { text: string; tone: 'ok' | 'bad' | 'muted' } {
   switch (c.kind) {
     case 'connected':
       return { text: 'CONNECTED', tone: 'ok' };
     case 'connecting':
       return { text: c.attempt === 0 ? 'CONNECTING' : `RECONNECTING (attempt ${c.attempt})`, tone: 'muted' };
     case 'disconnected':
-      return { text: `DISCONNECTED · retry in ${(c.nextRetryMs / 1000).toFixed(1)} s`, tone: 'warn' };
+      return { text: `DISCONNECTED · retry in ${(c.nextRetryMs / 1000).toFixed(1)} s`, tone: 'bad' };
     case 'unsupported':
-      return { text: 'DISCONNECTED · WebSocket unavailable', tone: 'warn' };
+      return { text: 'DISCONNECTED · WebSocket unavailable', tone: 'bad' };
   }
 }
 
@@ -115,46 +115,49 @@ export function ConsoleClient() {
         </span>
       }
     >
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <main id="main" className="min-w-0 px-4 py-6 sm:px-6">
-          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-electrum/15 pb-4">
-            <h1 className="font-display text-4xl sm:text-5xl">Mission console</h1>
-            <p className="max-w-prose text-sm text-electrum/75">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_21.75rem]">
+        <main id="main" className="min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-rule bg-paper-3 px-4 py-3 sm:px-6">
+            <h1 className="text-[1.35rem] text-ink">Mission console</h1>
+            <p className="max-w-prose text-xs text-muted">
               Read-only view of the local daemon at <span className="font-mono">{WS_PATH}</span>. Every event is validated
               against the contract schemas; missing data shows as UNMEASURED or DISCONNECTED.
             </p>
           </div>
-          {disconnected && state.connection.kind !== 'connecting' ? (
-            <p role="alert" className="mt-4 border border-electrum bg-lunar-800 p-3 text-sm">
-              DISCONNECTED from the daemon. Values shown are the last received and marked STALE. Open this page from the
-              daemon (http://127.0.0.1) to connect.
-            </p>
-          ) : null}
 
           <KpiStrip rows={state.audit} disconnected={disconnected} />
 
-          <div className="mt-6 grid grid-cols-1 gap-6 min-[90rem]:grid-cols-[minmax(0,1fr)_19rem]">
-            <SpectrumPanel spectrum={state.spectrum} disconnected={disconnected} />
-            <SystemStatusPanel system={state.system} disconnected={disconnected} />
-          </div>
+          <div className="space-y-6 p-4 sm:p-6">
+            {disconnected && state.connection.kind !== 'connecting' ? (
+              <p role="alert" className="rounded-card border border-bad bg-bad-soft p-3 text-sm text-ink">
+                DISCONNECTED from the daemon. Values shown are the last received and marked STALE. Open this page from the
+                daemon (http://127.0.0.1) to connect.
+              </p>
+            ) : null}
 
-          <div className="mt-6">
+            <div className="grid grid-cols-1 gap-6 min-[90rem]:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+              <SpectrumPanel spectrum={state.spectrum} disconnected={disconnected} />
+              <SystemStatusPanel system={state.system} disconnected={disconnected} />
+            </div>
+
             <AuditLedger
               rows={state.audit}
               selectedId={state.selectedAuditEventId}
               onSelect={(id) => dispatch({ type: 'select', eventId: id })}
               connection={state.connection}
             />
-          </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-            <TestSummaryPanel tests={state.tests} disconnected={disconnected} />
-            <DiagnosticsPanel diagnostics={state.diagnostics} ignored={state.ignoredOutOfOrder} />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <TestSummaryPanel tests={state.tests} disconnected={disconnected} />
+              <DiagnosticsPanel diagnostics={state.diagnostics} ignored={state.ignoredOutOfOrder} />
+            </div>
           </div>
         </main>
-        <aside aria-label="DSKY" className="hidden border-l border-electrum/15 bg-lunar-900 p-5 xl:block">
-          <div className="sticky top-5">
-            <h2 className="mb-3 font-display text-2xl">DSKY</h2>
+        <aside aria-label="DSKY" className="hidden border-l border-rule bg-paper-3 p-4 xl:block">
+          <div className="sticky top-4">
+            <div className="mb-4 flex items-center justify-between border-b border-rule pb-2">
+              <h2 className="text-[0.9375rem] text-ink">DSKY Block II (1969)</h2>
+            </div>
             <DskyInstrument agc={state.agc} disconnected={disconnected} />
           </div>
         </aside>

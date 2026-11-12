@@ -1,37 +1,66 @@
 @import 'tailwindcss';
 
-/* Design tokens: see .kiro/steering/design-system.md. Only these five colors are used;
-   every other tone is one of them at reduced opacity. */
+/* Design tokens: see .kiro/steering/design-system.md. Values are copied from the archived
+   dashboard mockup (docs/archive/mockups/dashboard-page.html), chosen by the operator on 12 Nov 2026. */
 @theme {
-  --color-void: #050608;
-  --color-lunar-900: #0a0d12;
-  --color-lunar-800: #0f141c;
-  --color-electrum: #e6c875;
-  --color-phosphor: #00ff88;
+  --color-*: initial;
+  --color-paper: oklch(13.5% 0.009 250);
+  --color-paper-2: oklch(17.5% 0.01 250);
+  --color-paper-3: oklch(10.5% 0.008 250);
+  --color-ink: oklch(96% 0.005 250);
+  --color-ink-2: oklch(84% 0.008 250);
+  --color-muted: oklch(69% 0.011 250);
+  --color-rule: oklch(26.5% 0.011 250);
+  --color-rule-2: oklch(39% 0.013 250);
+  --color-accent: oklch(83% 0.155 80);
+  --color-accent-ink: oklch(17% 0.04 75);
+  --color-accent-soft: oklch(26.5% 0.05 80);
+  --color-focus: oklch(83% 0.155 80);
+  --color-cool: oklch(78% 0.125 245);
+  --color-cool-soft: oklch(26.5% 0.05 245);
+  --color-ok: oklch(78% 0.155 150);
+  --color-ok-soft: oklch(23% 0.035 150);
+  --color-bad: oklch(70% 0.17 25);
+  --color-bad-soft: oklch(23.5% 0.035 25);
+  --color-transparent: transparent;
 
-  --font-display: var(--font-italiana), 'Times New Roman', serif;
-  --font-ui: var(--font-syne), system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), ui-monospace, 'Cascadia Mono', monospace;
+  --font-sans: var(--font-host-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-atkinson-mono), ui-monospace, monospace;
+
+  --radius-card: 8px;
+  --radius-pill: 6px;
+  --radius-tag: 4px;
 }
 
 @layer base {
   html {
-    background: var(--color-void);
-    color: var(--color-electrum);
+    background: var(--color-paper);
+    color: var(--color-ink);
     color-scheme: dark;
+    scrollbar-color: var(--color-muted) var(--color-paper);
   }
   body {
     min-height: 100dvh;
-    font-family: var(--font-ui);
-    font-variant-numeric: lining-nums;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    caret-color: var(--color-accent);
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    text-wrap: balance;
   }
   :focus-visible {
-    outline: 2px solid var(--color-electrum);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
   ::selection {
-    background: color-mix(in srgb, var(--color-electrum) 35%, transparent);
+    background: color-mix(in oklab, var(--color-accent) 25%, transparent);
   }
   input,
   select,
@@ -42,27 +71,116 @@
 }
 
 @layer components {
-  /* Precision corner ticks, primary instruments only. */
-  .ticks {
-    position: relative;
-  }
-  .ticks::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    pointer-events: none;
-    --tick: 10px;
-    border: 1px solid color-mix(in srgb, var(--color-electrum) 60%, transparent);
-    -webkit-mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, #000 0) 0 0 / calc(100% - var(--tick))
-      calc(100% - var(--tick));
-    mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, #000 0) 0 0 / calc(100% - var(--tick))
-      calc(100% - var(--tick));
-  }
   .tabular {
     font-variant-numeric: tabular-nums slashed-zero;
   }
+
+  /* Buttons and inputs (mockup .btn / .btn--amber / .input). 44px targets are kept for touch. */
+  .btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    padding: 0 1rem;
+    color: var(--color-ink);
+    font-size: 0.84375rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn:hover {
+    background: var(--color-paper-2);
+    border-color: var(--color-ink-2);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-amber {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+  .btn-amber:hover {
+    background: color-mix(in oklab, var(--color-accent) 86%, var(--color-ink));
+    border-color: var(--color-accent);
+  }
+  .input {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-paper-3);
+    padding: 0 0.75rem;
+    color: var(--color-ink);
+    font-size: 0.84375rem;
+  }
+  .input:hover {
+    border-color: var(--color-ink-2);
+  }
+  .input::placeholder {
+    color: var(--color-muted);
+  }
+  .input:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .input[aria-invalid='true'] {
+    border-color: var(--color-bad);
+  }
+
+  /* Segmented control (mockup .seg-group). */
+  .seg-group {
+    display: inline-flex;
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-rule);
+  }
+  .seg-group > * {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    background: var(--color-paper-2);
+    padding: 0 0.75rem;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .seg-group > *:hover {
+    color: var(--color-ink);
+  }
+  .seg-group > [aria-pressed='true'],
+  .seg-group > :has(:checked) {
+    background: var(--color-paper-3);
+    color: var(--color-accent);
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+  }
+  .seg-group > :has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
   dialog.dsky-sheet::backdrop {
-    background: color-mix(in srgb, var(--color-void) 80%, transparent);
+    background: color-mix(in oklab, var(--color-paper-3) 78%, transparent);
+    backdrop-filter: blur(4px);
   }
 }
 

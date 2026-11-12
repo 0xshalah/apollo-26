@@ -14,15 +14,17 @@ const SECTIONS: readonly ShellSection[] = [
 export default function GroundPage() {
   return (
     <AppShell current="ground" sections={SECTIONS}>
-      <main id="main" className="mx-auto max-w-[110rem] px-4 py-6 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-electrum/15 pb-4">
-          <h1 className="font-display text-4xl sm:text-5xl">Ground station</h1>
-          <p className="max-w-prose text-sm text-electrum/75">
+      <main id="main" className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-rule bg-paper-3 px-4 py-3 sm:px-6">
+          <h1 className="text-[1.35rem] text-ink">Ground station</h1>
+          <p className="max-w-prose text-xs text-muted">
             Builds a 34-byte acoustic frame v1 and transmits it at 300 baud (Bell-202, 1200/2200 Hz). The daemon decides
             whether a frame is accepted; this page only reports browser playback.
           </p>
         </div>
-        <GroundClient />
+        <div className="mx-auto max-w-[110rem] px-4 pb-6 sm:px-6">
+          <GroundClient />
+        </div>
       </main>
     </AppShell>
   );

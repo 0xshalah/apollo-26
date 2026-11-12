@@ -283,10 +283,12 @@ Mengemas MCP server + steering `agc-safety-rules.md` sebagai satu Kiro Power aga
 
 ## 8. Design System (Mission Console & Ground Station)
 
-Konsep **Celestial Brutalism & Swiss Aerospace Luxury** (tidak berubah dari v2.0):
+**Diubah 12 Nov 2026 (keputusan operator):** gaya visual mengikuti mockup dashboard yang diarsipkan (`docs/archive/mockups/dashboard-page.html`, tema "Console": graphite, grotesk sans, aksen amber). Token dan aturan lengkap: `.kiro/steering/design-system.md`. Angka contoh, keypad, dan verb di luar cakupan dari mockup tidak dipakai.
 
-* **Warna:** Cosmic Void `#050608`; Lunar Titanium `#0a0d12` / `#0f141c`; Apollo Electrum Gold `#e6c875`; DSKY Phosphor `#00ff88`.
-* **Tipografi:** *Italiana* (judul), *Syne* (label UI), *Space Mono* (telemetri).
+* **Warna:** paper/ink graphite, aksen amber, biru (info), hijau (diterima/live), merah (ditolak/gagal); nilai oklch di steering.
+* **Tipografi:** *Host Grotesk* (UI dan judul), *Atkinson Hyperlegible Mono* (telemetri).
+* **Bentuk:** kartu 8px, kontrol 6px, tag 4px; border 1px.
+* Gaya sebelumnya (Celestial Brutalism: Cosmic Void, Lunar Titanium, Electrum Gold, DSKY Phosphor; Italiana/Syne/Space Mono) tidak dipakai lagi.
 * **Interaksi:**
   * Spektrogram dan waterfall dari **audio mikrofon asli** yang dialirkan daemon, bukan pola sintetis.
   * Bit yang dipancarkan ground station adalah **hasil encoding frame sebenarnya**.
@@ -380,7 +382,7 @@ apollo-26/
 
 * **Potential Impact:** jalur perintah tanpa antarmuka IP, dengan autentikasi frame dan gerbang keselamatan yang terbukti lewat PBT. Batasan ditulis jujur.
 * **Technological Implementation:** 4 spec EARS, 3 hook (`PreToolUse`, `PostTaskExec`, `PostFileSave`), 5 steering terfokus, custom MCP server, kontrak lintas bahasa, dan 9 properti PBT (Hypothesis + fast-check).
-* **Design:** Mission Console Celestial Brutalism dengan data live (mikrofon asli, state emulator asli).
+* **Design:** Mission Console bergaya dashboard "Console" (mockup) dengan data live (mikrofon asli, state emulator asli).
 * **Innovation:** komputer pendarat Bulan 1969 dan agen AI 2026 yang hanya berkomunikasi lewat suara.
 * **Presentation:** video ≤ 3 menit dengan dua perangkat terpisah (HP sebagai ground station, laptop sebagai wahana).
 

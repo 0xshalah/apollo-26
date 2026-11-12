@@ -138,7 +138,7 @@ Both routes are static Next.js exports. The browser may validate input and prese
 1. WHEN a valid `agc.state` event arrives, THE Mission Console SHALL update PROG, VERB, NOUN, R1, R2, R3, and the `COMP ACTY`, `UPLINK ACTY`, `KEY REL`, and `OPR ERR` lamps from that event only.
 2. BEFORE the first valid `agc.state` event, THE DSKY dock SHALL show an explicit loading or unavailable state rather than zero-filled operational data.
 3. THE DSKY dock SHALL be read-only and SHALL NOT mutate AGC state, clear lamps, send keys, authorize commands, or play a 900 Hz key click in response to a non-existent backend action.
-4. THE Mission Console SHALL preserve the mockup's pinned desktop DSKY dock, compact quick access, phosphor readouts, hairline construction, and primary-instrument corner ticks while meeting the responsive requirements in UI-REQ-17.
+4. THE Mission Console SHALL preserve the mockup's pinned desktop DSKY dock, compact quick access, green mono readouts, and rounded bezel while meeting the responsive requirements in UI-REQ-17.
 
 ### UI-REQ-11: Real acoustic spectrum
 
@@ -192,9 +192,9 @@ Both routes are static Next.js exports. The browser may validate input and prese
 
 #### Acceptance Criteria
 
-1. THE Dashboard SHALL use Cosmic Void `#050608`, Lunar Titanium `#0a0d12` and `#0f141c`, Apollo Electrum Gold `#e6c875`, and DSKY Phosphor `#00ff88` as named Tailwind design tokens.
-2. THE Dashboard SHALL load local Italiana for large headings, Syne for interface labels, and Space Mono for telemetry through `next/font` without runtime font requests.
-3. THE Dashboard SHALL preserve one-pixel hairlines and restrained corner ticks around primary instruments, including the frame preview, spectrum or audit inspector, and DSKY dock.
+1. THE Dashboard SHALL use the dashboard mockup's "Console" palette (paper, ink, muted, rule, accent amber, cool blue, ok green, bad red; oklch values in `.kiro/steering/design-system.md`) as named Tailwind design tokens and no other colors. (Changed 12 Nov 2026 by operator decision; previously the PRD §8 palette.)
+2. THE Dashboard SHALL load Host Grotesk for interface text and headings and Atkinson Hyperlegible Mono for telemetry through `next/font` without runtime font requests.
+3. THE Dashboard SHALL use the mockup's rounded card (8px), control (6px), and tag (4px) radii with one-pixel borders, and SHALL keep status text alongside every color cue.
 4. THE Dashboard SHALL use English as the initial and fallback interface language.
 5. THE Dashboard SHALL identify the emulator as an AGC-faithful subset with P00 and simplified P40 and SHALL NOT imply that it runs Luminary 99 or Colossus 249.
 

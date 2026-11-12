@@ -87,6 +87,7 @@ describe('console view derivations', () => {
     expect(matchesQuery(second, 'tone anomaly')).toBe(true);
     expect(matchesQuery(second, '#2 rejected')).toBe(true);
     expect(matchesQuery(second, '#2 accepted')).toBe(false);
+    expect(matchesQuery(second, 'EVT-2')).toBe(true);
     expect(filterAudit(rows, { verdict: 'ALL', query: '  ' })).toHaveLength(2);
   });
 

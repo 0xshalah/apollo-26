@@ -10,7 +10,7 @@ const H = 200;
 export function SpectrumPanel({ spectrum, disconnected }: { spectrum: PanelValue<SpectrumData>; disconnected: boolean }) {
   const status =
     spectrum.kind === 'loading' ? (
-      <Chip tone="muted">{disconnected ? 'DISCONNECTED' : 'AWAITING'}</Chip>
+      <Chip tone={disconnected ? 'bad' : 'muted'}>{disconnected ? 'DISCONNECTED' : 'AWAITING'}</Chip>
     ) : spectrum.kind === 'stale' ? (
       <Chip tone="warn">STALE</Chip>
     ) : (
@@ -18,11 +18,14 @@ export function SpectrumPanel({ spectrum, disconnected }: { spectrum: PanelValue
     );
 
   return (
-    <Panel id="spectrum" title="Acoustic spectrum (daemon microphone)" ticks aside={status}>
+    <Panel id="spectrum" title={`Acoustic spectrum, Bell-202 (${MARK_HZ} / ${SPACE_HZ} Hz)`} aside={status}>
       {spectrum.kind === 'loading' ? (
-        <p className="text-sm text-electrum/70">
-          {disconnected ? 'DISCONNECTED. ' : ''}No audio.spectrum event received. Nothing is plotted until the daemon sends one.
-        </p>
+        <div className="grid min-h-48 place-items-center rounded-pill border border-rule-2 bg-paper-3 p-6 text-center">
+          <p className="max-w-sm text-sm text-muted">
+            {disconnected ? 'DISCONNECTED. ' : ''}No audio.spectrum event received. The daemon publishes the spectrum only while it
+            listens to a microphone; nothing is plotted until it sends one.
+          </p>
+        </div>
       ) : (
         <SpectrumPlot data={spectrum.value} eventId={spectrum.eventId} timestamp={spectrum.timestamp} stale={spectrum.kind === 'stale'} />
       )}
@@ -33,7 +36,7 @@ export function SpectrumPanel({ spectrum, disconnected }: { spectrum: PanelValue
 function SpectrumPlot({ data, eventId, timestamp, stale }: { data: SpectrumData; eventId: number; timestamp: string; stale: boolean }) {
   const n = data.bin_hz.length;
   if (n === 0) {
-    return <p className="text-sm text-electrum/70">The latest spectrum event contained no bins.</p>;
+    return <p className="text-sm text-muted">The latest spectrum event contained no bins.</p>;
   }
   const fMin = Math.min(...data.bin_hz);
   const fMax = Math.max(...data.bin_hz);
@@ -48,23 +51,41 @@ function SpectrumPlot({ data, eventId, timestamp, stale }: { data: SpectrumData;
   const barW = Math.max(1, W / n - 1);
 
   return (
-    <figure className="m-0">
+    <figure className="m-0 rounded-pill border border-rule-2 bg-paper-3 p-3">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className={`h-48 w-full border border-electrum/10 bg-void ${stale ? 'opacity-60' : ''}`}
+        className={`h-48 w-full ${stale ? 'opacity-60' : ''}`}
         preserveAspectRatio="none"
         aria-hidden="true"
       >
         {data.bin_hz.map((f, i) => (
-          <rect key={i} x={x(f) - barW / 2} y={y(data.power_db[i])} width={barW} height={H - y(data.power_db[i])} fill="#00ff88" fillOpacity={0.75} />
+          <rect
+            key={i}
+            x={x(f) - barW / 2}
+            y={y(data.power_db[i])}
+            width={barW}
+            height={H - y(data.power_db[i])}
+            className="fill-cool"
+            fillOpacity={0.8}
+          />
         ))}
         {[MARK_HZ, SPACE_HZ].map((f) =>
           f >= fMin && f <= fMax ? (
-            <line key={f} x1={x(f)} x2={x(f)} y1={0} y2={H} stroke="#e6c875" strokeOpacity={0.6} strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
+            <line
+              key={f}
+              x1={x(f)}
+              x2={x(f)}
+              y1={0}
+              y2={H}
+              className="stroke-accent"
+              strokeOpacity={0.8}
+              strokeDasharray="4 4"
+              vectorEffect="non-scaling-stroke"
+            />
           ) : null,
         )}
       </svg>
-      <figcaption className="mt-2 font-mono text-xs text-electrum/75 tabular">
+      <figcaption className="mt-2 font-mono text-xs text-muted tabular">
         {n} bins · {fMin}–{fMax} Hz · {data.sample_rate_hz} Hz sample rate · peak {data.bin_hz[peak]} Hz at {data.power_db[peak]} dB ·
         power range {pMin} to {pMax} dB · dashed lines mark reference tones {MARK_HZ} Hz (mark) and {SPACE_HZ} Hz (space) ·
         event #{eventId} · {timestamp}

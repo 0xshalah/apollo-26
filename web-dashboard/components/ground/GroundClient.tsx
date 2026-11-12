@@ -73,24 +73,24 @@ function Field({
   const id = useId();
   const describedBy = [hint ? `${id}-hint` : '', error ? `${id}-err` : ''].filter(Boolean).join(' ') || undefined;
   return (
-    <div className="min-w-0">
-      <label htmlFor={id} className="block text-xs uppercase tracking-[0.14em] text-electrum/80">
+    <div className="grid min-w-0 gap-1">
+      <label htmlFor={id} className="text-xs font-medium text-ink-2">
         {label}
       </label>
       <input
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className="mt-1 block min-h-11 w-full border border-electrum/25 bg-lunar-800 px-3 font-mono text-electrum tabular placeholder:text-electrum/40 hover:border-electrum/50 disabled:opacity-50 aria-[invalid=true]:border-electrum aria-[invalid=true]:border-2"
+        className="input font-mono tabular"
         {...input}
       />
       {hint ? (
-        <p id={`${id}-hint`} className="mt-1 text-xs text-electrum/70">
+        <p id={`${id}-hint`} className="text-xs text-muted">
           {hint}
         </p>
       ) : null}
       {error ? (
-        <p id={`${id}-err`} className="mt-1 text-xs font-semibold text-electrum">
+        <p id={`${id}-err`} className="text-xs font-medium text-bad">
           Error: {error}
         </p>
       ) : null}
@@ -98,10 +98,16 @@ function Field({
   );
 }
 
-const btn =
-  'inline-flex min-h-11 items-center justify-center border px-4 text-sm font-semibold uppercase tracking-[0.12em] disabled:cursor-not-allowed disabled:opacity-50';
-const btnPrimary = `${btn} border-electrum bg-electrum text-void hover:bg-electrum/90`;
-const btnGhost = `${btn} border-electrum/40 text-electrum hover:border-electrum hover:bg-lunar-800`;
+const btnPrimary = 'btn btn-amber';
+const btnGhost = 'btn';
+
+/** Short labels for the quick-command buttons (mockup preset row). */
+const QUICK_LABEL: Record<CommandKind, string> = {
+  V37_P40: 'P40 burn (V37 N00)',
+  V25_N81: 'Load R1–R3 (V25 N81)',
+  V37_P00: 'Idle P00 (V37 N00)',
+  V34: 'Terminate (V34)',
+};
 
 export function GroundClient() {
   const [mode, setMode] = useState<Mode>('COMMAND');
@@ -252,12 +258,9 @@ export function GroundClient() {
         <Panel id="compose" title="Compose frame">
           <fieldset disabled={busy} className="space-y-4">
             <legend className="sr-only">Frame fields</legend>
-            <div role="radiogroup" aria-label="Frame type" className="grid grid-cols-2 gap-px bg-electrum/15">
+            <div role="radiogroup" aria-label="Frame type" className="seg-group grid w-full grid-cols-2">
               {(['COMMAND', 'AUTH'] as const).map((m) => (
-                <label
-                  key={m}
-                  className="flex min-h-11 cursor-pointer items-center justify-center gap-2 bg-lunar-900 px-3 text-sm font-semibold uppercase tracking-[0.14em] has-[:checked]:bg-electrum has-[:checked]:text-void has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-electrum"
-                >
+                <label key={m} className="text-sm">
                   <input
                     type="radio"
                     name="frame-type"
@@ -273,22 +276,25 @@ export function GroundClient() {
 
             {mode === 'COMMAND' ? (
               <>
-                <div>
-                  <label htmlFor="cmd-kind" className="block text-xs uppercase tracking-[0.14em] text-electrum/80">
+                <div className="grid gap-2">
+                  <p id="cmd-kind-label" className="text-xs font-medium text-ink-2">
                     Command (v1 vocabulary)
-                  </label>
-                  <select
-                    id="cmd-kind"
-                    value={kind}
-                    onChange={(e) => edit(setKind)(e.target.value as CommandKind)}
-                    className="mt-1 block min-h-11 w-full min-w-0 max-w-full border border-electrum/25 bg-lunar-800 px-3 text-sm text-electrum"
-                  >
+                  </p>
+                  <div role="group" aria-labelledby="cmd-kind-label" className="grid gap-2 sm:grid-cols-2">
                     {COMMAND_KINDS.map((k) => (
-                      <option key={k} value={k}>
-                        {COMMAND_LABELS[k]}
-                      </option>
+                      <button
+                        key={k}
+                        type="button"
+                        aria-pressed={kind === k}
+                        onClick={() => edit(setKind)(k)}
+                        title={COMMAND_LABELS[k]}
+                        className={kind === k ? 'btn btn-amber' : 'btn'}
+                      >
+                        {QUICK_LABEL[k]}
+                      </button>
                     ))}
-                  </select>
+                  </div>
+                  <p className="text-xs text-muted">{COMMAND_LABELS[kind]}</p>
                 </div>
                 <Field
                   label="Sequence (seq)"
@@ -327,9 +333,9 @@ export function GroundClient() {
                     />
                   </div>
                 ) : (
-                  <p className="text-xs text-electrum/70">This command carries no R1/R2/delta-v payload; those fields are encoded as 0.</p>
+                  <p className="text-xs text-muted">This command carries no R1/R2/delta-v payload; those fields are encoded as 0.</p>
                 )}
-                <div className="border border-electrum/15 p-3 text-xs text-electrum/80">
+                <div className="rounded-pill border border-rule-2 bg-paper-3 p-3 text-xs text-ink-2">
                   {ALWAYS_CRITICAL[kind] ? (
                     <p>
                       <Chip tone="info">CRITICAL set</Chip> This command is always marked CRITICAL by the sender. The flag is
@@ -341,7 +347,7 @@ export function GroundClient() {
                         type="checkbox"
                         checked={extraCritical}
                         onChange={(e) => edit(setExtraCritical)(e.target.checked)}
-                        className="h-5 w-5 accent-electrum"
+                        className="h-5 w-5 accent-accent"
                       />
                       Also mark this frame CRITICAL (metadata only; the safety gate decides independently).
                     </label>
@@ -368,18 +374,18 @@ export function GroundClient() {
                   error={errors.refSeq}
                   hint="AUTH authorizes exactly one held COMMAND, once. Reuse is rejected."
                 />
-                <p className="text-xs text-electrum/70">
+                <p className="text-xs text-muted">
                   AUTH frames always encode flags, verb, noun, program, R1, R2, and delta-v as 0 and are signed with the
                   operator key.
                 </p>
               </>
             )}
 
-            <div className="border-t border-electrum/15 pt-3 text-xs text-electrum/75">
+            <div className="border-t border-rule pt-3 text-xs text-muted">
               {lastTransmitted !== null ? (
                 <div className="flex flex-wrap items-center gap-2">
                   <span>
-                    Last seq transmitted from this browser: <span className="font-mono text-electrum">{lastTransmitted}</span>{' '}
+                    Last seq transmitted from this browser: <span className="font-mono text-ink">{lastTransmitted}</span>{' '}
                     (stored locally, not authoritative)
                   </span>
                   <button
@@ -398,7 +404,7 @@ export function GroundClient() {
                 <span>No sequence transmitted from this browser yet.</span>
               )}
               {seqNotIncreasing ? (
-                <p className="mt-2 font-semibold text-electrum" role="note">
+                <p className="mt-2 font-medium text-accent" role="note">
                   Warning: seq {activeSeqNum} is not greater than the last seq sent from this browser. The daemon will
                   likely reject it as REPLAY.
                 </p>
@@ -413,7 +419,7 @@ export function GroundClient() {
           aside={demoKeys ? <Chip tone="warn">Public demo keys</Chip> : null}
         >
           <div className="space-y-4">
-            <p className="text-xs text-electrum/75">
+            <p className="text-xs text-muted">
               Keys stay in this tab&apos;s memory. They are never stored, sent over the network, or included in the page
               bundle. COMMAND uses the link key; AUTH uses the operator key.
             </p>
@@ -449,8 +455,8 @@ export function GroundClient() {
                 Clear keys
               </button>
             </div>
-            <div className="border border-dashed border-electrum/30 p-3">
-              <p className="text-xs text-electrum/80">
+            <div className="rounded-pill border border-dashed border-rule-2 bg-paper-3 p-3">
+              <p className="text-xs text-ink-2">
                 Public demo keys come from the protocol contract. They are not secret: anyone can forge frames with them.
                 Use them only with a daemon configured for the public demo.
               </p>
@@ -466,14 +472,14 @@ export function GroundClient() {
         <Panel
           id="transmit"
           title="Sign and transmit"
-          aside={<Chip tone={phase === 'failed' || phase === 'invalid' ? 'warn' : phase === 'completed' ? 'ok' : 'muted'}>{PHASE_LABEL[phase]}</Chip>}
+          aside={<Chip tone={phase === 'failed' || phase === 'invalid' ? 'bad' : phase === 'completed' ? 'ok' : phase === 'ready' ? 'warn' : 'muted'}>{PHASE_LABEL[phase]}</Chip>}
         >
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className={btnPrimary} onClick={onEncode} disabled={busy}>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <button type="button" className={encoded ? btnGhost : btnPrimary} onClick={onEncode} disabled={busy}>
               Encode &amp; sign
             </button>
             <button type="button" className={btnPrimary} onClick={onTransmit} disabled={!encoded || busy}>
-              Transmit{estMs !== null ? ` (${(estMs / 1000).toFixed(2)} s)` : ''}
+              Modulate &amp; transmit{estMs !== null ? ` (${(estMs / 1000).toFixed(2)} s)` : ''}
             </button>
             {phase === 'transmitting' ? (
               <button type="button" className={btnGhost} onClick={onCancel}>
@@ -486,27 +492,29 @@ export function GroundClient() {
               </button>
             ) : null}
           </div>
-          <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm text-electrum/90">
+          <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm text-ink-2">
             {message}
           </p>
           {warnings.length > 0 ? (
-            <ul className="mt-2 space-y-1 text-xs text-electrum" aria-label="Warnings">
+            <ul className="mt-2 space-y-1 text-xs text-accent" aria-label="Warnings">
               {warnings.map((w) => (
                 <li key={w}>Warning: {w}</li>
               ))}
             </ul>
           ) : null}
-          <p className="mt-3 text-xs text-electrum/70">
+          <p className="mt-3 text-xs text-muted">
             Turn the phone volume up and hold the speaker near the laptop microphone. The browser must allow audio output
             from a tap; on iOS, disable silent mode.
           </p>
         </Panel>
 
-        <Panel id="preview" title="Frame preview" ticks>
+        <Panel id="preview" title="Frame preview" aside={<Chip tone="warn">Ground station</Chip>}>
           {encoded ? (
             <FrameInspector bytes={encoded.bytes} hex={encoded.hex} />
           ) : (
-            <p className="text-sm text-electrum/70">No signed frame. Choose Encode &amp; sign to see the exact bytes and 8N1 bits.</p>
+            <div className="grid min-h-32 place-items-center rounded-pill border border-rule-2 bg-paper-3 p-6 text-center">
+              <p className="text-sm text-muted">No signed frame. Choose Encode &amp; sign to see the exact bytes and 8N1 bits.</p>
+            </div>
           )}
         </Panel>
       </div>

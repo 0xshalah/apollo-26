@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from 'next';
-import { Italiana, Space_Mono, Syne } from 'next/font/google';
+import { Atkinson_Hyperlegible_Mono, Host_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
 import './globals.css';
 
 // next/font downloads these at build time and serves them from the export; no runtime font requests.
-const italiana = Italiana({ weight: '400', subsets: ['latin'], variable: '--font-italiana', display: 'swap' });
-const syne = Syne({ subsets: ['latin'], variable: '--font-syne', display: 'swap' });
-const spaceMono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-space-mono', display: 'swap' });
+const hostGrotesk = Host_Grotesk({ weight: ['400', '500'], subsets: ['latin'], variable: '--font-host-grotesk', display: 'swap' });
+const atkinsonMono = Atkinson_Hyperlegible_Mono({
+  weight: ['400', '500'],
+  subsets: ['latin'],
+  variable: '--font-atkinson-mono',
+  display: 'swap',
+  // next/font has no metric overrides for this family; fall back to the plain ui-monospace stack.
+  adjustFontFallback: false,
+});
 
 export const metadata: Metadata = {
   title: { default: 'Apollo-26', template: '%s · Apollo-26' },
@@ -14,18 +20,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#050608',
+  // oklch(10.5% 0.008 250) (paper-3) as sRGB hex for the browser UI.
+  themeColor: '#0b0d10',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${italiana.variable} ${syne.variable} ${spaceMono.variable}`}>
-      <body className="bg-void font-ui text-electrum">
+    <html lang="en" className={`${hostGrotesk.variable} ${atkinsonMono.variable}`}>
+      <body className="bg-paper font-sans text-ink">
         <a
           href="#main"
-          className="absolute left-4 -top-20 z-50 bg-electrum px-4 py-2 font-ui text-void focus-visible:top-4"
+          className="absolute left-4 -top-20 z-50 rounded-pill bg-accent px-4 py-2 font-medium text-accent-ink focus-visible:top-4"
         >
           Skip to main content
         </a>

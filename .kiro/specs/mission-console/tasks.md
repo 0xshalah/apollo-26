@@ -33,8 +33,8 @@ This dependency-ordered plan delivers the static `/ground` and `/console` routes
   - _Requirements: UI-REQ-1, UI-REQ-2.1, UI-REQ-2.2_
 
 - [ ] 3. Implement approved visual tokens and local typography · Depends on: Task 2; project M5.0 design-system steering
-  - [ ] 3.1 Map Cosmic Void, both Lunar Titanium surfaces, Apollo Electrum Gold, and DSKY Phosphor to named Tailwind tokens.
-  - [ ] 3.2 Store Italiana, Syne, and Space Mono locally and load them through `next/font/local` with appropriate fallbacks.
+  - [x] 3.1 Map the dashboard mockup palette (paper, ink, muted, rule, accent, cool, ok, bad) to named Tailwind tokens. (Changed 12 Nov 2026 from the PRD §8 palette by operator decision.)
+  - [x] 3.2 Load Host Grotesk and Atkinson Hyperlegible Mono through `next/font` (build-time download, served locally).
   - [ ] 3.3 Create shared instrument primitives for one-pixel hairlines, restrained primary-instrument corner ticks, focus rings, and loading/error/stale/unmeasured notices.
   - [ ] 3.4 Set English as initial and fallback copy and describe the emulator only as an AGC-faithful subset with P00 and simplified P40.
   - [ ] 3.5 Add a build/network assertion that no font, icon, script, or styling CDN is requested at runtime.
@@ -116,7 +116,7 @@ This dependency-ordered plan delivers the static `/ground` and `/console` routes
   - [ ] 12.1 Build the console shell with semantic navigation, main content, connection badge, and explicit panel loading/disconnected states.
   - [ ] 12.2 Project only validated `agc.state` fields into PROG, VERB, NOUN, R1–R3, and all four lamps.
   - [ ] 12.3 Render em dashes and “Awaiting AGC state” before the first event; render retained values with text-labelled `STALE` after disconnect.
-  - [ ] 12.4 Recreate the pinned desktop dock, compact quick access, phosphor readouts, hairlines, and corner ticks from the dashboard mockup.
+  - [x] 12.4 Recreate the pinned desktop dock, compact quick access, green mono readouts, and rounded bezel from the dashboard mockup.
   - [ ] 12.5 Keep the DSKY read-only: no key sends, lamp clearing, command composition, local AGC mutation, or fake 900 Hz click.
   - [ ] 12.6 Test that telemetry COMMAND fields never substitute for AGC state and no DSKY presentation action sends a socket message.
   - _Requirements: UI-REQ-9.1, UI-REQ-10, UI-REQ-13.3, UI-REQ-16.2; Property: UI-P9_

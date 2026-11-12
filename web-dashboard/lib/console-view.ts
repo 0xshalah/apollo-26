@@ -52,7 +52,7 @@ export function commandLabel(frame: TelemetryFrameData['frame']): string | null 
 function searchText(r: AuditRow): string {
   const t = r.telemetry;
   const f = t.frame;
-  const parts = [`#${r.eventId}`, t.verdict, t.reason, t.source.kind, t.received_at];
+  const parts = [`#${r.eventId}`, `evt-${r.eventId}`, t.verdict, t.reason, t.source.kind, t.received_at];
   if (f) parts.push(f.frame_type, `seq ${f.seq}`, String(f.seq), `ref ${f.ref_seq}`, commandLabel(f) ?? '', f.raw_hex);
   if (r.anomaly) parts.push('tone anomaly');
   return parts.join(' ').toLowerCase();

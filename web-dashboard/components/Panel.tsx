@@ -1,17 +1,15 @@
 import type { ReactNode } from 'react';
 
-/** Hairline instrument panel. `ticks` adds corner ticks; reserve for primary instruments. */
+/** Rounded panel card (mockup .panel-box): title row with a hairline, then content. */
 export function Panel({
   title,
   id,
-  ticks = false,
   aside,
   children,
   className = '',
 }: {
   title: string;
   id: string;
-  ticks?: boolean;
   aside?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -20,10 +18,10 @@ export function Panel({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={`min-w-0 scroll-mt-6 border border-electrum/15 bg-lunar-900 ${ticks ? 'ticks' : ''} ${className}`}
+      className={`min-w-0 scroll-mt-6 rounded-card border border-rule-2 bg-paper-2 ${className}`}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-electrum/15 px-4 py-2">
-        <h2 id={`${id}-title`} className="text-xs font-semibold uppercase tracking-[0.18em] text-electrum/80">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule px-4 py-3">
+        <h2 id={`${id}-title`} className="text-[0.9375rem] text-ink">
           {title}
         </h2>
         {aside}
@@ -33,18 +31,19 @@ export function Panel({
   );
 }
 
-export type Tone = 'ok' | 'warn' | 'muted' | 'info';
+export type Tone = 'ok' | 'warn' | 'bad' | 'muted' | 'info';
 
-/** Text-labelled status chip; color is never the only cue. */
+/** Text-labelled status pill (mockup .pill); color is never the only cue. */
 export function Chip({ tone, children }: { tone: Tone; children: ReactNode }) {
   const styles: Record<Tone, string> = {
-    ok: 'border-phosphor/60 text-phosphor',
-    warn: 'border-electrum bg-electrum text-void',
-    muted: 'border-electrum/25 text-electrum/70',
-    info: 'border-electrum/50 text-electrum',
+    ok: 'bg-ok-soft text-ok',
+    warn: 'bg-accent-soft text-accent',
+    bad: 'bg-bad-soft text-bad',
+    muted: 'bg-paper-3 text-muted',
+    info: 'bg-cool-soft text-cool',
   };
   return (
-    <span className={`inline-flex items-center border px-2 py-0.5 font-mono text-[0.7rem] uppercase tracking-wider ${styles[tone]}`}>
+    <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-tag px-2 py-0.5 text-xs font-medium ${styles[tone]}`}>
       {children}
     </span>
   );
