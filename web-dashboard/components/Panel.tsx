@@ -18,8 +18,9 @@ export function Panel({
 }) {
   return (
     <section
+      id={id}
       aria-labelledby={`${id}-title`}
-      className={`min-w-0 border border-electrum/15 bg-lunar-900 ${ticks ? 'ticks' : ''} ${className}`}
+      className={`min-w-0 scroll-mt-6 border border-electrum/15 bg-lunar-900 ${ticks ? 'ticks' : ''} ${className}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-electrum/15 px-4 py-2">
         <h2 id={`${id}-title`} className="text-xs font-semibold uppercase tracking-[0.18em] text-electrum/80">

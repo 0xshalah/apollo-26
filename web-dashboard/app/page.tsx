@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import { AppHeader } from '@/components/AppHeader';
+import { AppShell } from '@/components/AppShell';
 
 export default function HomePage() {
   return (
-    <>
-      <AppHeader current="home" />
+    <AppShell current="home">
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <h1 className="font-display text-5xl leading-tight sm:text-6xl">Apollo-26</h1>
         <p className="mt-4 max-w-prose text-electrum/80">
@@ -35,6 +34,6 @@ export default function HomePage() {
           daemon–MCP–AGC command path is local.
         </p>
       </main>
-    </>
+    </AppShell>
   );
 }

@@ -276,6 +276,7 @@ class Daemon:
         self._telemetry = TelemetryStore(paths.inbox, paths.rejected, schemas, self._instance_id)
         self._journal: ExecutionJournal | None = None
         self._accepted: list[dict[str, Any]] = []
+        self._console_history: deque[dict[str, Any]] = deque(maxlen=AUDIT_BACKFILL_LIMIT)
         self._by_seq: dict[int, dict[str, Any]] = {}
         self._frames_changed = asyncio.Condition()
         self.anomalies: deque[FrequencyAnomaly] = deque(maxlen=256)
@@ -428,9 +429,10 @@ class Daemon:
         ]
         if self._test_summary is not None:
             events.append(self.bus.make_event("test.summary", dict(self._test_summary)))
-        # Audit backfill: accepted frames of the current epoch, oldest first, bounded to the
-        # console's 500-row window. Rejected frames are only on disk and are not backfilled.
-        for record in self._accepted[-AUDIT_BACKFILL_LIMIT:]:
+        # Audit backfill, oldest first, bounded to the console's 500-row window: accepted frames
+        # recovered from the inbox at startup, then every accepted or rejected frame since.
+        # Rejected frames from before this daemon process started stay on disk only.
+        for record in self._console_history:
             events.append(self.bus.make_event("telemetry.frame", record))
         return events
 
@@ -463,6 +465,13 @@ class Daemon:
         seq = int(record["frame"]["seq"])
         self._accepted.append(record)
         self._by_seq[seq] = record
+        self._console_history.append(record)
+
+    def _publish_frame(self, record: dict[str, Any]) -> None:
+        """Publish a rejected telemetry record and keep it for console backfill."""
+
+        self._console_history.append(record)
+        self.bus.publish("telemetry.frame", record)
 
     async def process_candidate(
         self, raw: bytes, source: SourceMetadata, deviation_hz: float | None
@@ -515,7 +524,7 @@ class Daemon:
             reason=reason,
         )
         self._telemetry.write_rejected(record, received_at)
-        self.bus.publish("telemetry.frame", record)
+        self._publish_frame(record)
         _LOG.info("rejected candidate reason=%s", reason.value)
         return record
 
@@ -533,7 +542,7 @@ class Daemon:
             modem_sync_ok=event.loss is not CandidateLoss.SYNC,
         )
         self._telemetry.write_rejected(record, received_at)
-        self.bus.publish("telemetry.frame", record)
+        self._publish_frame(record)
         return record
 
     async def _handle_events(

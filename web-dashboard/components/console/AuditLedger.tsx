@@ -1,7 +1,13 @@
+'use client';
+
+import { useId, useState } from 'react';
 import { Chip, Panel } from '@/components/Panel';
 import { AUDIT_LIMIT, type AuditRow, type ConnectionState } from '@/lib/console-state';
+import { auditStats, commandLabel, filterAudit, VERDICT_FILTERS, type VerdictFilter } from '@/lib/console-view';
 import { FIELD_LAYOUT, fromHex, parseFields } from '@/lib/frame';
 import { centidegrees, hexBytes, pad2, tenthsFps } from '@/lib/format';
+
+const FILTER_LABEL: Record<VerdictFilter, string> = { ALL: 'All', ACCEPTED: 'Accepted', REJECTED: 'Rejected' };
 
 type Gate = boolean | null;
 
@@ -26,9 +32,15 @@ export function AuditLedger({
   onSelect: (id: number | null) => void;
   connection: ConnectionState;
 }) {
-  const newestFirst = [...rows].reverse();
+  const [verdict, setVerdict] = useState<VerdictFilter>('ALL');
+  const [query, setQuery] = useState('');
+  const searchId = useId();
+  const stats = auditStats(rows);
+  const counts: Record<VerdictFilter, number> = { ALL: stats.total, ACCEPTED: stats.accepted, REJECTED: stats.rejected };
+  const visible = filterAudit(rows, { verdict, query });
   const selected = rows.find((r) => r.eventId === selectedId) ?? null;
   const disconnected = connection.kind !== 'connected';
+  const filtering = verdict !== 'ALL' || query.trim() !== '';
 
   return (
     <Panel
@@ -36,12 +48,46 @@ export function AuditLedger({
       title="Frame audit log"
       aside={<span className="font-mono text-xs text-electrum/70">{rows.length} rows · client window, newest {AUDIT_LIMIT} max</span>}
     >
+      <div className="mb-4 flex flex-wrap items-end gap-3">
+        <div role="group" aria-label="Filter by verdict" className="flex gap-px border border-electrum/20 bg-electrum/20">
+          {VERDICT_FILTERS.map((f) => (
+            <button
+              key={f}
+              type="button"
+              aria-pressed={verdict === f}
+              onClick={() => setVerdict(f)}
+              className="min-h-11 bg-lunar-900 px-3 text-xs uppercase tracking-[0.12em] text-electrum/80 hover:text-electrum aria-[pressed=true]:bg-electrum aria-[pressed=true]:text-void"
+            >
+              {FILTER_LABEL[f]} <span className="font-mono tabular">{counts[f]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="min-w-[12rem] flex-1">
+          <label htmlFor={searchId} className="block text-[0.65rem] uppercase tracking-[0.16em] text-electrum/75">
+            Search frames
+          </label>
+          <input
+            id={searchId}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="seq, reason, V25 N81, #event"
+            autoComplete="off"
+            className="mt-1 block min-h-11 w-full border border-electrum/25 bg-lunar-800 px-3 font-mono text-sm text-electrum placeholder:text-electrum/45 hover:border-electrum/50"
+          />
+        </div>
+        <p role="status" aria-live="polite" className="font-mono text-xs text-electrum/70 tabular">
+          {filtering ? `Showing ${visible.length} of ${rows.length}` : `${rows.length} shown`}
+        </p>
+      </div>
       {rows.length === 0 ? (
         <p className="text-sm text-electrum/70">
           {disconnected
             ? 'DISCONNECTED. No telemetry.frame events received in this session.'
             : 'Connected. Waiting for the first telemetry.frame event.'}
         </p>
+      ) : visible.length === 0 ? (
+        <p className="text-sm text-electrum/70">No frames match this filter.</p>
       ) : (
         <div className="max-h-[28rem] overflow-auto" role="region" aria-label="Frame audit table" tabIndex={0}>
           <table className="w-full min-w-[60rem] border-collapse text-left text-sm [&_td]:whitespace-nowrap">
@@ -66,7 +112,7 @@ export function AuditLedger({
               </tr>
             </thead>
             <tbody>
-              {newestFirst.map((r) => {
+              {visible.map((r) => {
                 const t = r.telemetry;
                 const f = t.frame;
                 const isSel = r.eventId === selectedId;
@@ -98,7 +144,7 @@ export function AuditLedger({
                     <td className="px-2 py-1.5 font-mono text-xs tabular">{f ? f.seq : 'N/A'}</td>
                     <td className="px-2 py-1.5 font-mono text-xs tabular">{f ? f.ref_seq : 'N/A'}</td>
                     <td className="px-2 py-1.5 font-mono text-xs tabular">
-                      {f ? `V${pad2(f.verb)} N${pad2(f.noun)} P${pad2(f.program)}${f.critical ? ' CRIT' : ''}` : 'N/A'}
+                      {commandLabel(f) ?? 'N/A'}
                     </td>
                     <GateCell label="CRC" value={t.validation.crc} />
                     <GateCell label="HMAC" value={t.validation.hmac} />

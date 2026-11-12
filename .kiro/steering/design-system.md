@@ -61,5 +61,8 @@ Rules:
 - Touch targets: `min-h-11` (44px) on every button, link, input, and select.
 - Skip link to `#main`; one `h1` per route; native labels, `aria-describedby` for hints and errors; `role="status"` (polite) for connection and transmission state; `role="alert"` only for disconnection.
 - `prefers-reduced-motion: reduce` disables transitions and smooth scroll globally. Do not add animation that carries meaning.
-- Layout: single column below `lg` on `/ground`; on `/console` the DSKY is a pinned right dock at `xl` (80rem) and above, and a native `<dialog>` sheet with a sticky quick bar below that. Must work at 375px with no page-level horizontal scroll.
+- Layout: every route uses `AppShell`. From `lg` up it is a 15rem left rail (brand, route links, numbered "On this page" section links, daemon-link status at the bottom); below `lg` it collapses to a top bar and the section links are hidden. The status slot renders once (no duplicated live regions).
+- `/console` order: title row, KPI strip (session counters derived only from received `telemetry.frame` rows), spectrum + system status (side by side from 90rem), frame audit log with verdict filter and search, then test evidence + diagnostics. The DSKY is a pinned right dock at `xl` (80rem) and above, and a native `<dialog>` sheet with a sticky quick bar below that; it stays read-only with no keypad.
+- Single column below `lg` on `/ground`. Must work at 375px with no page-level horizontal scroll.
+- Layout follows the archived mockup (`docs/archive/mockups/dashboard-page.html`, chosen 12 Nov 2026); its palette, fonts, rounded corners and invented numbers are not used.
 - English is the only UI language in v1.

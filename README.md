@@ -87,7 +87,7 @@ From [`docs/metrics.json`](docs/metrics.json) (Windows 10 21H1 laptop, Intel, 8 
 
 Over-the-air decoding has **not** been demonstrated yet. The demo path that works today is WAV or loopback input into the same daemon pipeline.
 
-![Mission console connected to a live daemon after one loopback frame](docs/images/console-live.png)
+![Mission console connected to a live daemon after three accepted loopback frames and one rejected replay](docs/images/console-live.png)
 
 ## Known limitations
 

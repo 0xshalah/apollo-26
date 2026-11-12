@@ -173,3 +173,23 @@ async def test_ui_req_console_backfills_frames_accepted_before_it_connected(daem
     assert all(f["verdict"] == "ACCEPTED" for f in frames)
     ids = [e["event_id"] for e in events]
     assert ids == sorted(ids) and len(set(ids)) == len(ids)
+
+
+async def test_ui_req_console_backfill_includes_rejected_frames_in_order(daemon: Daemon) -> None:
+    await transmit(daemon, command_bytes(5))
+    await transmit(daemon, with_bad_crc(command_bytes(6)))
+    await transmit(daemon, command_bytes(5))  # replay
+    async with aiohttp.ClientSession() as session:
+        async with session.ws_connect(_url(daemon, "/ws")) as ws:
+            events: list[dict[str, Any]] = []
+            async with asyncio.timeout(3.0):
+                while sum(1 for e in events if e["type"] == "telemetry.frame") < 3:
+                    events.append(json.loads((await ws.receive()).data))
+    frames = [e["data"] for e in events if e["type"] == "telemetry.frame"]
+    for event in events:
+        SCHEMAS.validate_ws_event(event)
+    assert [(f["verdict"], f["reason"]) for f in frames] == [
+        ("ACCEPTED", "OK"),
+        ("REJECTED", "CRC"),
+        ("REJECTED", "REPLAY"),
+    ]

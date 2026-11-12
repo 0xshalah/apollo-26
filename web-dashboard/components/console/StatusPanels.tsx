@@ -19,7 +19,7 @@ export function SystemStatusPanel({ system, disconnected }: { system: PanelValue
     { label: 'Kiro Flight Watch', value: v?.flight_watch ?? null },
   ];
   return (
-    <Panel id="system" title="System status" aside={<Freshness p={system} disconnected={disconnected} />}>
+    <Panel id="system" title="System & Flight Watch" aside={<Freshness p={system} disconnected={disconnected} />}>
       <dl className="grid gap-px bg-electrum/10">
         {rows.map((r) => (
           <div key={r.label} className="flex items-center justify-between gap-3 bg-lunar-900 py-2">
