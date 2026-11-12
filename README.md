@@ -7,6 +7,8 @@ Landing page: <https://0xshalah.github.io/apollo-26/> · Ground station: <https:
 
 > **Status: active development.** This is a software demonstration on an emulator. It is not flight software, it does not run the original Apollo programs (Luminary/Colossus), and it is not certified for anything.
 
+![Apollo-26 landing page: live P40 mission card beside the hero](docs/images/landing-hero.png)
+
 ## What it does
 
 1. A ground station page (`/ground`) builds a 34-byte frame (CRC-16 + truncated HMAC-SHA256 + sequence number) and plays it as Bell-202 FSK at 300 baud (1200 Hz mark / 2200 Hz space).

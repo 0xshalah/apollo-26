@@ -194,3 +194,48 @@
     scroll-behavior: auto !important;
   }
 }
+
+@layer components {
+  /* Landing-only depth. Lines are decorative and use existing palette tokens. */
+  .landing-hero {
+    background-image:
+      radial-gradient(circle at 68% 30%, color-mix(in oklab, var(--color-cool) 9%, transparent), transparent 31rem),
+      radial-gradient(circle at 18% 65%, color-mix(in oklab, var(--color-accent) 7%, transparent), transparent 25rem),
+      linear-gradient(color-mix(in oklab, var(--color-rule) 22%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--color-rule) 22%, transparent) 1px, transparent 1px);
+    background-size: auto, auto, 4rem 4rem, 4rem 4rem;
+    background-position: center, center, -1px -1px, -1px -1px;
+  }
+
+  .landing-live-card {
+    box-shadow:
+      0 1.5rem 5rem color-mix(in oklab, var(--color-paper-3) 70%, transparent),
+      0 0 0 1px color-mix(in oklab, var(--color-cool) 8%, transparent);
+  }
+
+  .landing-pipeline > li:not(:last-child)::after {
+    content: '';
+    display: none;
+  }
+
+  .landing-closing {
+    background-image:
+      radial-gradient(circle at 85% 30%, color-mix(in oklab, var(--color-cool) 12%, transparent), transparent 26rem),
+      linear-gradient(125deg, var(--color-paper-3), var(--color-paper-2));
+  }
+}
+
+@media (min-width: 80rem) {
+  @layer components {
+    .landing-pipeline > li:not(:last-child)::after {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: 2rem;
+      right: -0.72rem;
+      width: 1.4rem;
+      height: 1px;
+      background: var(--color-accent);
+    }
+  }
+}
