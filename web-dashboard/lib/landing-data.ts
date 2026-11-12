@@ -69,8 +69,8 @@ export function evidenceRows(m: MetricsDoc, t: TestSummary): EvidenceRow[] {
     },
     {
       label: 'Over the air, laptop speaker to its own microphone',
-      value: `${air.frames_accepted}/${air.frames_sent} detected`,
-      detail: `Target ${Math.round(TARGETS.overAirAcceptRatio * 100)} percent or more. The laptop microphone array captured almost no 1200/2200 Hz energy.`,
+      value: `${air.frames_accepted}/${air.frames_sent} accepted`,
+      detail: `Target ${Math.round(TARGETS.overAirAcceptRatio * 100)} percent or more. Needs Windows audio enhancements off; with defaults the preamble is suppressed.`,
       status: air.frames_accepted >= air.frames_sent * TARGETS.overAirAcceptRatio ? 'MEASURED' : 'FAILED',
     },
     {

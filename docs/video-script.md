@@ -16,6 +16,6 @@ Before recording:
 | 1:00–1:35 | Kiro chat: ask for Flight Watch; show await → inspect → plan; execute is refused `AUTH_REQUIRED` | "The agent waits over MCP, inspects the AGC, and asks for the canonical key plan. A burn is critical, so the gate refuses it without operator authorization." |
 | 1:35–2:05 | `curl` AUTH WAV; agent awaits AUTH, re-plans, approve execute; DSKY shows P40, R1–R3 | "The operator sends a separate AUTH frame bound to that sequence number. Only then can the agent press the 36 keys, and the DSKY shows P40 with the loaded burn." |
 | 2:05–2:30 | `.kiro/` tree: specs, steering, hooks; flash `docs/pbt-report.md` | "Kiro specs drove each subsystem, steering holds the safety rules, a hook locks the agent's shell during flight, and property tests cover the codec, modem and gate." |
-| 2:30–2:45 | `docs/metrics.json` / README "Measured so far" | "Everything shown is measured. Loopback decode takes about half a second. Over-the-air decoding on a laptop microphone does not work yet; that is next." |
+| 2:30–2:45 | `docs/metrics.json` / README "Measured so far" | "Everything shown is measured. Loopback decode takes about half a second. Over the air is still the weak link: Windows voice processing erased our preamble, and with it switched off one laptop accepted 3 of 20 frames. Making that reliable is next." |
 
 Do not say "100% secure", "offline", or quote any number that is not in `docs/metrics.json` or `docs/pbt-report.md`.

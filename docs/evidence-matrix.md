@@ -18,7 +18,9 @@ UI dan materi kompetisi **hanya boleh menyajikan angka sebagai fakta** jika stat
 - Sesi Kiro live (12 Nov): V25 N81 seq 1 EXECUTED 29/29; P40 seq 2 ditolak `AUTH_REQUIRED` tanpa AUTH, lalu EXECUTED 36/36 dengan AUTH seq 3. Sumber: hasil tool MCP dan log daemon.
 - `web-dashboard`: `npm run lint && npm run typecheck && npm test -- --run && npm run build` exit 0 (56 tes); `npm run test:full` (P9, 10.000 kasus/properti) exit 0. Log: `web-dashboard/logs/`.
 - CLI nyata: `scripts\smoke_cli.cmd` — `sample_burst.wav` diterima sebagai seq 1, pemutaran ulang ditolak `REPLAY`.
-- Uji akustik fisik pertama (speaker → mikrofon laptop yang sama, 20 frame): 0/20 terdeteksi (`docs/metrics.json`). Semua tes otomatis audio memakai PCM sintetis dari modem asli.
+- Uji akustik fisik pertama (speaker → mikrofon laptop yang sama, 20 frame): 0/20 terdeteksi (`docs/metrics.json`, `acoustic_self_test_previous`). Semua tes otomatis audio memakai PCM sintetis dari modem asli.
+- 13 Nov, penyebab 0/20: rekaman nada 1200 Hz stabil memudar sekitar 35 dB dalam 2 s karena pemrosesan suara Windows/Realtek, sehingga preamble 250 ms tidak pernah memenuhi syarat. Bukan bug modem.
+- 13 Nov, uji ulang dengan *Audio enhancements*, noise suppression, dan echo cancellation mati (dilaporkan operator): 20/20 terdeteksi, **3/20 diterima**, 17 ditolak `LENGTH`; nada pertama → diterima median 1,86 s (min 1,83, maks 1,93) pada 3 frame itu (`docs/metrics.json`, `acoustic_self_test`). Tidak ada frame rusak yang diterima.
 - `/console` diuji di Chrome headless terhadap daemon nyata: status, DSKY, ringkasan tes, dan baris audit dari frame loopback tampil (`docs/images/console-live.png`).
 
 ## Requirements
@@ -57,9 +59,9 @@ Catatan jumlah kasus: profil `dev` Hypothesis = 100 contoh/properti (dipakai hoo
 | :-- | :-- | :-- | :-- | :-- | :-- |
 | Command path tidak membuka socket keluar | 0 di luar `127.0.0.1` | listener bind test + host guard test | `test_listeners_bind_only_to_loopback`, `test_dns_rebinding_*` | IMPLEMENTED (listener terverifikasi; inspeksi socket keluar belum) | `Listeners bind only to 127.0.0.1 (tested)` |
 | Frame korup/palsu dieksekusi | 0 pada suite | P4/P6/P7 + E2E abuse | `tests/test_e2e_flight_watch.py` | VERIFIED (dev profile) | `Corrupted, forged, and replayed frames are rejected in tests` |
-| Latensi deterministik | ≤2.0 s | nada pertama → inbox timestamp | `docs/metrics.json` (`loopback_processing`) | MEASURED (loopback 20/20: proses median 0,588 s, maks 0,892 s); over-air **belum diukur**, estimasi turunan 1,97 s | `Loopback decode + validation: median 0.59 s over 20 frames (measured)` |
+| Latensi deterministik | ≤2.0 s | nada pertama → inbox timestamp | `docs/metrics.json` (`loopback_processing`) | MEASURED (loopback 20/20: proses median 0,588 s, maks 0,892 s); over-air MEASURED pada 3 frame yang diterima (13 Nov, enhancements mati): median 1,86 s, maks 1,93 s; sampel terlalu kecil untuk klaim umum | `Loopback decode + validation: median 0.59 s over 20 frames (measured)` |
 | Latensi penuh via agen | ≤10 s | COMMAND diterima → AGC postcondition | `docs/metrics.json` (`agent_path_live`) | MEASURED, **meleset**: 84,2 s (1 run P40+AUTH, termasuk percobaan tanpa AUTH yang sengaja ditolak) | `Agent path: 84 s in one live run (target 10 s not met)` |
-| Decode pada 0.5 m | ≥95% dari 20 frame | controlled trial | `docs/metrics.json` (`acoustic_self_test`) | FAILED (speaker → mic laptop yang sama: 0/20 terdeteksi); uji HP 0,5 m belum dijalankan | `Over-the-air decoding not yet demonstrated` |
+| Decode pada 0.5 m | ≥95% dari 20 frame | controlled trial | `docs/metrics.json` (`acoustic_self_test`) | FAILED (speaker → mic laptop yang sama: 0/20 terdeteksi dengan bawaan Windows; 3/20 diterima dengan enhancements mati, 13 Nov); uji HP 0,5 m belum dijalankan | `Over the air: 3 of 20 frames accepted on one laptop with audio enhancements off (measured; target 95% not met)` |
 | RAM daemon | ≤256 MB | process measurement | `docs/metrics.json` (`resources_idle`) | MEASURED: working set 53,5 MB idle, puncak 55,8 MB; private commit 295,5 MB | `Daemon working set ≈54 MB (measured)` |
 | CPU idle listening | ≤10% | process measurement | `docs/metrics.json` (`resources_idle`) | MEASURED: rata-rata 3,49% satu core (0,44% mesin 8 thread) selama 30 s | `Idle listening: 3.5% of one core (measured)` |
 
