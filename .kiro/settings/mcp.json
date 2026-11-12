@@ -9,7 +9,7 @@
       "env": {
         "PYTHONUNBUFFERED": "1"
       },
-      "disabled": true,
+      "disabled": false,
       "autoApprove": [
         "read_telemetry_frames",
         "await_telemetry_frame",
