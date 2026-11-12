@@ -63,7 +63,11 @@ Sequence numbers are global and must increase; adjust `--seq` if the daemon has 
 scripts\pytest.cmd                          # all Python tests incl. slow; output in telemetry\state\last-pytest.txt
 .venv\Scripts\python -m pytest -m "not slow"
 cd web-dashboard; npm ci; npm run lint; npm run typecheck; npm test -- --run; npm run build
+scripts\pbt_full.cmd                        # full Hypothesis profile -> docs\pbt-report.md, docs\test-summary.json
+scripts\clean_clone_check.cmd               # README quick start in a fresh clone
 ```
+
+GitHub Actions workflows for CI and Pages are kept in `docs/ci/` (the publishing token lacked the `workflow` scope). To enable them, run `gh auth refresh -s workflow` and move them to `.github/workflows/`. The Pages site is currently published from the `gh-pages` branch by `scripts\deploy_pages.cmd`.
 
 Covered properties: frame round-trip (P1), clean and noisy audio round-trip (P2, P3 at SNR ≥ 15 dB), bit flips rejected (P4), random audio never yields a frame (P5), wrong HMAC and replays rejected (P6), critical commands without matching AUTH never actuate (P7), ones' complement invariants (P8), Python ↔ TypeScript encoder equality (P9). End-to-end abuse scenarios from `docs/threat-model.md` run against the real daemon and MCP tool layer.
 

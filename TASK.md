@@ -165,7 +165,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 - [x] **5.4 Route `/ground`** · 4 j · ↳ 5.3
   - Komposer perintah dan modulator Web Audio.
   - Bisa mengirim frame **`AUTH` operator**; kunci dimasukkan manual di UI, tidak ditanam di kode.
-- [ ] **5.5 GitHub Pages** · 1 j · ↳ 5.4
+- [ ] **5.5 GitHub Pages** · 1 j · ↳ 5.4 — situs live di <https://0xshalah.github.io/apollo-26/ground/> (branch `gh-pages`, `scripts/deploy_pages.cmd`, dicek di Chrome headless); belum: bunyi dari HP terdekode daemon
   - `basePath` dikonfigurasi; `/ground` terbuka di HP lewat HTTPS dan bunyinya terdekode daemon.
 - [ ] **5.6 Route `/console`** · 7 j · ↳ 3.8, 5.2
   - DSKY live, spektrogram dari mikrofon asli, log audit frame (inbox + rejected), status hook & safety gate, hasil PBT dari `docs/pbt-report.md`.
@@ -182,7 +182,7 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
   - Latensi deterministik, latensi via agen, keandalan dekode, RAM/CPU; ditulis apa adanya, termasuk yang meleset dari target.
 - [x] **6.3 README** · 3 j — quick start, demo P40+AUTH, tabel "Measured so far", screenshot console live; link video masih kosong
   - Konsep, arsitektur, instalasi, mode WAV untuk juri, batasan yang diakui (PRD §2.3), link video.
-- [ ] **6.4 Uji clone bersih** · 1,5 j · ↳ 6.3
+- [x] **6.4 Uji clone bersih** · 1,5 j · ↳ 6.3 — `scripts/clean_clone_check.cmd` 12 Nov: clone dari GitHub, venv baru, tanpa Node; WAV diterima seq 1, replay ditolak `REPLAY`, `out/console` ada, 125 tes cepat lulus. Tampilan `/console` di clone itu belum dibuka di browser.
   - Clone ke folder baru, ikuti README dari nol **tanpa Node.js**, jalankan mode WAV sampai DSKY ter-update di `/console`. Perbaiki setiap langkah yang macet.
 - [ ] **6.5 ⛔ Video ≤ 3 menit** · 6 j · ↳ 4.9
   - Alur PRD §11, dua perangkat, tanpa musik berhak cipta; unggah ke YouTube **publik**; cek durasi < 3:00.
