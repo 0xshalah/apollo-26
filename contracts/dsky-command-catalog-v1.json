@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "catalog_id": "apollo26-dsky-command-catalog",
+  "catalog_version": "1.2",
+  "agc_subset_id": "apollo26-agc-subset-v1",
+  "description": "Normative mapping from an accepted COMMAND frame (verb, noun, program, r1_centidegrees, r2_centidegrees, delta_v_tenths_fps) to the only canonical DSKY key sequence and postcondition permitted for it. Keys use agc_core.DskyKey member names. Consumed independently by mcp_server (planner + safety gate) and acoustic daemon (execution guard); both must produce identical plans.",
+  "keys": ["VERB", "NOUN", "DIGIT_0", "DIGIT_1", "DIGIT_2", "DIGIT_3", "DIGIT_4", "DIGIT_5", "DIGIT_6", "DIGIT_7", "DIGIT_8", "DIGIT_9", "PLUS", "MINUS", "ENTR", "PRO", "CLR", "RSET", "KEY_REL"],
+  "field_encodings": {
+    "SIGNED_5": {
+      "description": "PLUS when value >= 0, MINUS when value < 0, then abs(value) as exactly five zero-padded decimal digits. Values outside min..max are unrepresentable and the command is rejected (never clamped).",
+      "min": -16383,
+      "max": 16383
+    },
+    "DIGITS_2": {
+      "description": "Exactly two decimal digits, tens first.",
+      "min": 0,
+      "max": 99
+    }
+  },
+  "segments": {
+    "V25_N81_LOAD": [
+      "VERB", "DIGIT_2", "DIGIT_5", "ENTR",
+      "NOUN", "DIGIT_8", "DIGIT_1", "ENTR",
+      { "field": "r1_centidegrees", "encoding": "SIGNED_5" }, "ENTR",
+      { "field": "r2_centidegrees", "encoding": "SIGNED_5" }, "ENTR",
+      { "field": "delta_v_tenths_fps", "encoding": "SIGNED_5" }, "ENTR"
+    ],
+    "V37_SELECT_PROGRAM": [
+      "VERB", "DIGIT_3", "DIGIT_7", "ENTR",
+      { "field": "program", "encoding": "DIGITS_2" }, "ENTR"
+    ],
+    "V34_TERMINATE": ["VERB", "DIGIT_3", "DIGIT_4", "ENTR"]
+  },
+  "commands": [
+    {
+      "id": "V25_N81_LOAD",
+      "summary": "Load R1 azimuth (0.01 deg), R2 elevation (0.01 deg), R3 delta-v (0.1 ft/s) through V25 N81.",
+      "match": { "verb": 25, "noun": 81, "program": 0 },
+      "require_zero": [],
+      "segments": ["V25_N81_LOAD"],
+      "postcondition": {
+        "program": "UNCHANGED",
+        "verb": 25,
+        "noun": 81,
+        "registers": { "r1": "r1_centidegrees", "r2": "r2_centidegrees", "r3": "delta_v_tenths_fps" },
+        "required_clear_lamps": ["opr_err"]
+      }
+    },
+    {
+      "id": "V37_P40_ACTIVATE",
+      "summary": "Load the burn tuple through V25 N81, then select P40 through V37. R1-R3 are visible while P40 is active (FR-11).",
+      "match": { "verb": 37, "noun": 0, "program": 40 },
+      "require_zero": [],
+      "segments": ["V25_N81_LOAD", "V37_SELECT_PROGRAM"],
+      "postcondition": {
+        "program": 40,
+        "verb": 37,
+        "noun": 0,
+        "registers": { "r1": "r1_centidegrees", "r2": "r2_centidegrees", "r3": "delta_v_tenths_fps" },
+        "required_clear_lamps": ["opr_err"]
+      }
+    },
+    {
+      "id": "V37_P00_SELECT",
+      "summary": "Select P00 (idle) through V37. Payload fields must be zero.",
+      "match": { "verb": 37, "noun": 0, "program": 0 },
+      "require_zero": ["r1_centidegrees", "r2_centidegrees", "delta_v_tenths_fps"],
+      "segments": ["V37_SELECT_PROGRAM"],
+      "postcondition": {
+        "program": 0,
+        "verb": 37,
+        "noun": 0,
+        "registers": "UNCHANGED",
+        "required_clear_lamps": ["opr_err"]
+      }
+    },
+    {
+      "id": "V34_TERMINATE",
+      "summary": "Terminate the current program; the subset returns to P00 and preserves R1-R3. Payload fields must be zero.",
+      "match": { "verb": 34, "noun": 0, "program": 0 },
+      "require_zero": ["r1_centidegrees", "r2_centidegrees", "delta_v_tenths_fps"],
+      "segments": ["V34_TERMINATE"],
+      "postcondition": {
+        "program": 0,
+        "verb": 34,
+        "noun": "UNCHANGED",
+        "registers": "UNCHANGED",
+        "required_clear_lamps": ["opr_err"]
+      }
+    }
+  ],
+  "criticality": {
+    "p40_critical_delta_v_threshold_tenths_fps": 0,
+    "frame_critical_flag": "ADD_ONLY",
+    "rules": [
+      { "id": "V37_WHILE_P40", "description": "COMMAND verb 37 while the inspected program is 40." },
+      { "id": "V34_WHILE_P40", "description": "COMMAND verb 34 while the inspected program is 40." },
+      { "id": "NONZERO_P40_ACTIVATION", "description": "Postcondition program is 40, inspected program is not 40, and abs(delta_v_tenths_fps) > p40_critical_delta_v_threshold_tenths_fps." },
+      { "id": "FRAME_CRITICAL_FLAG", "description": "The accepted frame carries CRITICAL=1. The flag can only add criticality; it never removes a computed reason." }
+    ]
+  },
+  "authorization": {
+    "auth_ref_must_equal_command_seq": true,
+    "hold_expiry_ms": 120000,
+    "expiry_clock": "Daemon received_at of the COMMAND; an AUTH is fresh only when AUTH.received_at < COMMAND.received_at + hold_expiry_ms. A HELD command is EXPIRED when now >= COMMAND.received_at + hold_expiry_ms.",
+    "single_use": true
+  },
+  "preconditions": {
+    "description": "Required for every command at plan, gate, and daemon actuation time.",
+    "input_state": "IDLE",
+    "pending_entry": null,
+    "key_rel": false,
+    "opr_err": false
+  },
+  "execution": {
+    "min_key_cadence_ms": 100,
+    "inspection_max_age_ms": 20000
+  },
+  "plan_digest": {
+    "algorithm": "SHA-256",
+    "input": "UTF-8 canonical JSON of {\"catalog_version\", \"frame_seq\", \"keys\"} with sorted object keys and separators (',', ':'); lowercase hex output."
+  }
+}

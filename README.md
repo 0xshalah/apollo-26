@@ -1,0 +1,67 @@
+# Apollo-26
+
+**An authenticated acoustic command link between a 2026 ground station and an AGC-inspired 1969 DSKY, flown by a Kiro agent through MCP.**
+Kiroween 2026 · Frankenstein category · MIT License
+
+> **Status: active development.** This is a software demonstration on an emulator. It is not flight software, it does not run the original Apollo programs (Luminary/Colossus), and it is not certified for anything.
+
+## What it does
+
+1. A ground station page (`/ground`) builds a 34-byte frame (CRC-16 + truncated HMAC-SHA256 + sequence number) and plays it as Bell-202 FSK at 300 baud (1200 Hz mark / 2200 Hz space).
+2. The acoustic daemon listens (microphone, WAV file, or loopback), demodulates, and validates every frame: sync → CRC → HMAC → replay → ranges. Rejected frames are logged with a reason and never reach the agent.
+3. A Kiro agent in a **Flight Watch** session waits for accepted frames over MCP (`await_telemetry_frame`), inspects the AGC, and asks for the canonical DSKY key plan.
+4. `execute_dsky_sequence` passes a **code-enforced safety gate** (`mcp_server/safety_gate.py`) and a second, independent guard inside the daemon. Critical commands (P40 activation, V37/V34 during P40) require a separate operator `AUTH` frame that references the command's sequence number, is single-use, and expires 120 s after the COMMAND was accepted.
+5. The AGC subset emulator (15-bit ones' complement words, DSKY state machine, V25/V34/V37, P00/P40) executes the keys at ≥100 ms cadence; the mission console (`/console`) shows its real state over a local WebSocket.
+
+The command path (daemon, MCP server, emulator) binds only to `127.0.0.1`. The Kiro agent itself uses a cloud LLM; the "no IP interface" claim applies to the command path, not to the whole laptop.
+
+## Quick start (Windows, no microphone, no Node.js)
+
+Requires Python 3.12+.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -e ".[dev]"
+copy .env.example .env                     # public demo keys only
+.venv\Scripts\python -m acoustic.daemon --provision-sequence 0
+.venv\Scripts\python -m acoustic.daemon --input web-dashboard\public\sample_burst.wav --serve-after-input
+```
+
+Then open <http://127.0.0.1:8026/console/>. The sample WAV contains one authenticated COMMAND (seq 1, V25 N81). Running the same WAV again is rejected as `REPLAY`.
+
+Other inputs: `--loopback` (POST a WAV to `/loopback`) or `--device <index|name>` for a real microphone.
+
+## Using it from Kiro
+
+`.kiro/settings/mcp.json` registers the `apollo26` MCP server (`scripts/mcp.cmd`). Start the daemon first, then ask Kiro to start Flight Watch. Read-only tools are auto-approved; **`execute_dsky_sequence` is never auto-approved** (a test enforces this).
+
+| Kiro feature | Where |
+| :-- | :-- |
+| Specs (EARS requirements → design → tasks) | `.kiro/specs/{acoustic-link,agc-emulator,mcp-bridge,mission-console}/` |
+| Steering | `.kiro/steering/` (product, tech, structure, safety rules, design system) |
+| Hooks | `.kiro/hooks/`: shell guard during Flight Watch (`PreToolUse`), quick tests after spec tasks (`PostTaskExec`) and on Python save (`PostFileSave`) |
+| MCP | `mcp_server/` – six tools over stdio |
+| Property-based tests | Hypothesis (P1–P8) and fast-check (P9) – see below |
+
+## Tests
+
+```powershell
+scripts\pytest.cmd                          # all Python tests incl. slow; output in telemetry\state\last-pytest.txt
+.venv\Scripts\python -m pytest -m "not slow"
+cd web-dashboard; npm ci; npm run lint; npm run typecheck; npm test -- --run; npm run build
+```
+
+Covered properties: frame round-trip (P1), clean and noisy audio round-trip (P2, P3 at SNR ≥ 15 dB), bit flips rejected (P4), random audio never yields a frame (P5), wrong HMAC and replays rejected (P6), critical commands without matching AUTH never actuate (P7), ones' complement invariants (P8), Python ↔ TypeScript encoder equality (P9). End-to-end abuse scenarios from `docs/threat-model.md` run against the real daemon and MCP tool layer.
+
+What is and is not yet verified is tracked honestly in [`docs/evidence-matrix.md`](docs/evidence-matrix.md). In particular: physical speaker-to-microphone decoding, end-to-end latency, and resource usage are **not measured yet**.
+
+## Known limitations
+
+- The acoustic channel can be overheard and jammed. HMAC prevents forgery, not eavesdropping; payloads are not encrypted.
+- HMAC is truncated to 64 bits to keep frames short (demo trade-off).
+- The demo keys in `.env.example` are public. Anyone with your keys can send valid frames.
+- A user with full access to the local OS can modify the processes, keys, and state.
+
+## Repository map
+
+`acoustic/` daemon, modem, frame codec · `agc_core/` emulator · `mcp_server/` MCP tools + safety gate · `web-dashboard/` Next.js static export (`out/` is committed and served by the daemon) · `contracts/` wire format, schemas, golden vectors · `docs/` threat model, state machines, evidence · `PRD.md`, `TASK.md` product and plan.

@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Flight Mode Shell Guard",
+      "trigger": "PreToolUse",
+      "description": "Steering S-01: blocks shell tools (exit 2) while telemetry/FLIGHT_MODE exists, i.e. while an Apollo-26 Flight Watch session is live. Defense in depth; the normative gate is mcp_server/safety_gate.py.",
+      "matcher": "shell",
+      "action": {
+        "type": "command",
+        "command": ".venv\\Scripts\\python.exe scripts\\hooks\\flight_mode_guard.py",
+        "timeout": 15
+      }
+    }
+  ]
+}

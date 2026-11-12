@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apollo-26.local/schemas/mcp-audit-event-v1.json",
+  "title": "Apollo-26 MCP bridge immutable audit event",
+  "description": "One event per file, written via temp file + atomic rename. Never contains key material or environment secrets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "session_id", "event_id", "timestamp", "event_type", "request_id", "frame_seq", "ref_seq", "sequence_epoch", "agc_revision", "plan_digest", "decision", "error_code", "command_state", "details"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "session_id": { "type": "string", "pattern": "^[0-9a-f-]{36}$" },
+    "event_id": { "type": "integer", "minimum": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "event_type": {
+      "enum": [
+        "session.start", "session.stop", "tool.call", "frame.delivered", "auth.accepted", "auth.rejected",
+        "command.expired", "inspection", "plan.generated", "gate.decision", "execution.started",
+        "execution.result", "reconciliation", "postcondition.result"
+      ]
+    },
+    "request_id": { "oneOf": [{ "type": "string", "pattern": "^[0-9a-f-]{36}$" }, { "type": "null" }] },
+    "frame_seq": { "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 4294967295 }, { "type": "null" }] },
+    "ref_seq": { "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 4294967295 }, { "type": "null" }] },
+    "sequence_epoch": { "oneOf": [{ "type": "string", "pattern": "^[0-9a-f-]{36}$" }, { "type": "null" }] },
+    "agc_revision": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+    "plan_digest": { "oneOf": [{ "type": "string", "pattern": "^[0-9a-f]{64}$" }, { "type": "null" }] },
+    "decision": { "oneOf": [{ "enum": ["ALLOW", "REJECT", "RECONCILE"] }, { "type": "null" }] },
+    "error_code": { "oneOf": [{ "type": "string", "pattern": "^[A-Z_]+$" }, { "type": "null" }] },
+    "command_state": { "oneOf": [{ "enum": ["HELD", "READY", "EXECUTING", "EXECUTED", "FAILED", "EXPIRED", "OUTCOME_UNKNOWN"] }, { "type": "null" }] },
+    "details": { "type": "object", "additionalProperties": { "type": ["string", "integer", "boolean", "null"] } }
+  }
+}

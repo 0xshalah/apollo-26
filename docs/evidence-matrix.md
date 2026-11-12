@@ -1,0 +1,73 @@
+# Apollo-26 Evidence & Traceability Matrix
+
+Dokumen ini mencegah requirement hilang dan klaim tanpa bukti. Perbarui setelah setiap milestone.
+
+## Status
+- `PLANNED`: belum diimplementasikan.
+- `IMPLEMENTED`: kode ada, belum diverifikasi penuh.
+- `MEASURED`: nilai berasal dari pengukuran tersimpan.
+- `VERIFIED`: acceptance test/property lolos dan bukti tersedia.
+- `FAILED`: bukti nyata tidak mencapai target; tampilkan apa adanya.
+
+UI dan materi kompetisi **hanya boleh menyajikan angka sebagai fakta** jika statusnya `MEASURED` atau `VERIFIED`. Selain itu gunakan label `TARGET` atau `UNMEASURED`.
+
+## Requirements
+| ID | Ringkasan | Design owner | Implementasi | Verifikasi | Bukti | Status |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+Bukti terakhir (12 Nov 2026, Windows 11, Python 3.12.10, Node 26.13.1):
+- `scripts\pytest.cmd` (semua tes, termasuk `slow`, catalog 1.2): **128 passed**, exit 0 (`telemetry\state\last-pytest.txt`).
+- Sesi Kiro live (12 Nov): V25 N81 seq 1 EXECUTED 29/29; P40 seq 2 ditolak `AUTH_REQUIRED` tanpa AUTH, lalu EXECUTED 36/36 dengan AUTH seq 3. Sumber: hasil tool MCP dan log daemon.
+- `web-dashboard`: `npm run lint && npm run typecheck && npm test -- --run && npm run build` exit 0 (56 tes); `npm run test:full` (P9, 10.000 kasus/properti) exit 0. Log: `web-dashboard/logs/`.
+- CLI nyata: `scripts\smoke_cli.cmd` — `sample_burst.wav` diterima sebagai seq 1, pemutaran ulang ditolak `REPLAY`.
+- Belum ada pengujian akustik fisik (speaker → mikrofon); semua tes audio memakai PCM sintetis dari modem asli.
+
+## Requirements
+| ID | Ringkasan | Design owner | Implementasi | Verifikasi | Bukti | Status |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| FR-1 | Preamble ≥250 ms memulai demodulasi | `acoustic-link/design.md` | `acoustic/modem.py`, `receiver.py` | `test_al_req_1_3_*`, `test_al_req_2_*`, E2E | pytest | VERIFIED (sintetis) |
+| FR-2 | Frame gagal dibuang + diaudit; daemon hidup | `acoustic-link/design.md` | `acoustic/frame.py`, `daemon.py` | P4, P5, P6, `test_threat_2/3/4` | rejected JSON | VERIFIED |
+| FR-3 | Frame valid ditulis atomik ke inbox | `acoustic-link/design.md` | `acoustic/telemetry_store.py` | `test_threat_1`, smoke CLI | inbox JSON | VERIFIED |
+| FR-4 | Drift >50 Hz dicatat sebagai anomali | `acoustic-link/design.md` | `acoustic/modem.py` | `test_al_req_10_*` | pytest | VERIFIED (unit) |
+| FR-5 | WAV/loopback lewat pipeline sama | `acoustic-link/design.md` | `acoustic/audio.py`, `daemon.py` | smoke CLI `--input`, harness loopback | `sample_burst.wav` | VERIFIED |
+| FR-6 | Flight Watch menunggu frame via MCP | `mcp-bridge/design.md` | `mcp_server/service.py` | `test_e2e_flight_watch.py`, `test_mcp_stdio.py`, sesi Kiro live 12 Nov (seq 1 V25 N81 via WAV; seq 2 P40 + AUTH seq 3 via loopback) | pytest + audit MCP | VERIFIED (live, sumber WAV/loopback; mikrofon fisik belum) |
+| FR-7 | Inspect AGC sebelum planning | `mcp-bridge/design.md` | `mcp_server/safety_gate.py` | `test_mcp_req_inspect_before_act_is_enforced` | pytest | VERIFIED |
+| FR-8 | Setiap execute melewati safety gate | `mcp-bridge/design.md` | `safety_gate.py` + guard daemon | P7, `test_daemon_refuses_direct_rpc_*` | pytest | VERIFIED |
+| FR-9 | Perintah kritis wajib AUTH terkait | `mcp-bridge/design.md` | `safety_gate.py`, `ledger.py` | P7, `test_threat_5/6`, expiry test, sesi Kiro live 12 Nov: seq 2 P40 ditolak `AUTH_REQUIRED` tanpa AUTH, lalu EXECUTED 36/36 setelah AUTH seq 3 `MATCHED` | pytest + audit MCP | VERIFIED |
+| FR-10 | Key cadence ≥100 ms dan KEY REL aman | `agc-emulator/design.md` | `agc_core/agc_engine.py` | stateful PBT, `test_agc_req_6/7_*`, `test_system_clock.py` (clock asli) | pytest | VERIFIED |
+| FR-11 | P40 memperbarui R1–R3 + COMP ACTY | `agc-emulator/design.md` | `agc_core/agc_engine.py` | `test_agc_prop_6/8_*`, `test_threat_5`; live: P40 aktif, R1/R2/R3 = 1250/420/3120 | pytest + inspect MCP | VERIFIED (R1–R3 live; kedip COMP ACTY hanya di test) |
+| FR-12 | Urutan invalid → OPR ERR tanpa state change | `agc-emulator/design.md` | `agc_core/agc_engine.py` | `test_agc_prop_4/5_*`, stateful PBT | pytest | VERIFIED |
+
+## Properties
+| ID | Property | Test target | Status |
+| :-- | :-- | :-- | :-- |
+| P1 | Frame byte round-trip | `tests/test_frame.py` | VERIFIED |
+| P2 | Audio bersih round-trip | `tests/test_modem.py` | VERIFIED |
+| P3 | Audio SNR ≥15 dB round-trip | `tests/test_modem.py` (`slow`) | VERIFIED |
+| P4 | Bit flip ditolak | `tests/test_frame.py` | VERIFIED |
+| P5 | Audio acak tidak menghasilkan kandidat / tombol | `tests/test_modem.py`, `test_threat_7` | VERIFIED |
+| P6 | HMAC salah/replay ditolak | `tests/test_frame.py`, `test_threat_3/4` | VERIFIED |
+| P7 | Critical tanpa AUTH tidak execute | `tests/test_p7_safety_gate.py`, `test_daemon_refuses_direct_rpc_*` | VERIFIED |
+| P8 | Invariant ones' complement | `tests/test_word.py`, `tests/test_agc_stateful.py` | VERIFIED |
+| P9 | Python–TypeScript encoder setara | `web-dashboard/tests/p9-frame.test.ts` | VERIFIED |
+
+Catatan jumlah kasus: profil `dev` Hypothesis = 100 contoh/properti (dipakai hook); profil `full` (`HYPOTHESIS_PROFILE=full`) = 10.000 contoh dan **belum** dijalankan untuk seluruh suite Python. Jangan menyebut "10.000 kasus" untuk P1–P8 sebelum laporan `full` disimpan di `docs/pbt-report.md`.
+
+## Competition claims
+| Claim | Target | Metode | Evidence path | Status | Copy yang boleh tampil sekarang |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+| Command path tidak membuka socket keluar | 0 di luar `127.0.0.1` | listener bind test + host guard test | `test_listeners_bind_only_to_loopback`, `test_dns_rebinding_*` | IMPLEMENTED (listener terverifikasi; inspeksi socket keluar belum) | `Listeners bind only to 127.0.0.1 (tested)` |
+| Frame korup/palsu dieksekusi | 0 pada suite | P4/P6/P7 + E2E abuse | `tests/test_e2e_flight_watch.py` | VERIFIED (dev profile) | `Corrupted, forged, and replayed frames are rejected in tests` |
+| Latensi deterministik | ≤2.0 s | nada pertama → inbox timestamp | `docs/metrics.json` | PLANNED | `TARGET ≤2.0 s` |
+| Latensi penuh via agen | ≤10 s | nada pertama → AGC postcondition | `docs/metrics.json` | PLANNED | `TARGET ≤10 s` |
+| Decode pada 0.5 m | ≥95% dari 20 frame | controlled trial | `docs/metrics.json` | PLANNED | `TARGET ≥95% at 0.5 m` |
+| RAM daemon | ≤256 MB | process measurement | `docs/metrics.json` | PLANNED | `TARGET ≤256 MB` |
+| CPU idle listening | ≤10% | process measurement | `docs/metrics.json` | PLANNED | `TARGET ≤10%` |
+
+## Change rule
+Jika requirement berubah:
+1. Ubah PRD/feature requirement.
+2. Ubah design dan task terkait.
+3. Perbarui baris matriks ini.
+4. Perbarui schema/vector bila kontrak berubah.
+5. Jalankan ulang verifikasi yang terdampak.
+6. Jangan mempertahankan bukti lama untuk versi perilaku baru.

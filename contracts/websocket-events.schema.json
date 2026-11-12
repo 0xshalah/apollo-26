@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apollo-26.local/schemas/websocket-events-v1.json",
+  "title": "Apollo-26 console WebSocket event",
+  "oneOf": [
+    { "$ref": "#/$defs/telemetry" },
+    { "$ref": "#/$defs/agcState" },
+    { "$ref": "#/$defs/audioSpectrum" },
+    { "$ref": "#/$defs/testSummary" },
+    { "$ref": "#/$defs/systemStatus" }
+  ],
+  "$defs": {
+    "base": {
+      "type": "object",
+      "required": ["schema_version", "event_id", "timestamp", "type", "data"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "event_id": { "type": "integer", "minimum": 1 },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "type": { "type": "string" },
+        "data": { "type": "object" }
+      }
+    },
+    "telemetry": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        { "properties": { "type": { "const": "telemetry.frame" }, "data": { "$ref": "telemetry-frame.schema.json" } } }
+      ],
+      "unevaluatedProperties": false
+    },
+    "agcState": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        { "properties": { "type": { "const": "agc.state" }, "data": {
+          "type": "object", "additionalProperties": false,
+          "required": ["program", "verb", "noun", "r1", "r2", "r3", "lamps"],
+          "properties": {
+            "program": { "type": "integer", "minimum": 0, "maximum": 99 },
+            "verb": { "type": "integer", "minimum": 0, "maximum": 99 },
+            "noun": { "type": "integer", "minimum": 0, "maximum": 99 },
+            "r1": { "type": "integer", "minimum": -16383, "maximum": 16383 },
+            "r2": { "type": "integer", "minimum": -16383, "maximum": 16383 },
+            "r3": { "type": "integer", "minimum": -16383, "maximum": 16383 },
+            "lamps": { "type": "object", "additionalProperties": false, "required": ["comp_acty", "uplink_acty", "key_rel", "opr_err"], "properties": { "comp_acty": {"type":"boolean"}, "uplink_acty": {"type":"boolean"}, "key_rel": {"type":"boolean"}, "opr_err": {"type":"boolean"} } }
+          }
+        } } }
+      ],
+      "unevaluatedProperties": false
+    },
+    "audioSpectrum": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        { "properties": { "type": { "const": "audio.spectrum" }, "data": {
+          "type": "object", "additionalProperties": false,
+          "required": ["sample_rate_hz", "bin_hz", "power_db"],
+          "properties": {
+            "sample_rate_hz": { "enum": [44100, 48000] },
+            "bin_hz": { "type": "array", "maxItems": 256, "items": { "type": "number", "minimum": 0 } },
+            "power_db": { "type": "array", "maxItems": 256, "items": { "type": "number" } }
+          }
+        } } }
+      ],
+      "unevaluatedProperties": false
+    },
+    "testSummary": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        { "properties": { "type": { "const": "test.summary" }, "data": {
+          "type": "object", "additionalProperties": false,
+          "required": ["profile", "passed", "failed", "skipped", "report_path"],
+          "properties": { "profile": {"type":"string"}, "passed": {"type":"integer","minimum":0}, "failed": {"type":"integer","minimum":0}, "skipped": {"type":"integer","minimum":0}, "report_path": {"type":"string"} }
+        } } }
+      ],
+      "unevaluatedProperties": false
+    },
+    "systemStatus": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        { "properties": { "type": { "const": "system.status" }, "data": {
+          "type": "object", "additionalProperties": false,
+          "required": ["daemon", "audio", "agc", "flight_watch"],
+          "properties": { "daemon": {"enum":["READY","DEGRADED","STOPPED"]}, "audio": {"enum":["READY","DEGRADED","STOPPED"]}, "agc": {"enum":["READY","BUSY","ERROR"]}, "flight_watch": {"enum":["STANDBY","WAITING","PROCESSING","HALTED"]} }
+        } } }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

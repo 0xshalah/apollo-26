@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apollo-26.local/schemas/mcp-daemon-rpc-v1.json",
+  "title": "Apollo-26 MCP <-> acoustic daemon local RPC message",
+  "description": "Transport: TCP on 127.0.0.1 only. Framing: one UTF-8 JSON object per line terminated by LF, at most 65536 bytes including the LF. One request per connection-turn; the daemon answers each request with exactly one response carrying the same request_id. Every message is validated against this schema before dispatch (daemon) or use (client). Per-method params/results are under $defs/params and $defs/results.",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/successResponse" },
+    { "$ref": "#/$defs/errorResponse" }
+  ],
+  "$defs": {
+    "uuid": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+    "seq": { "type": "integer", "minimum": 1, "maximum": 4294967295 },
+    "cursor": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "key": { "enum": ["VERB", "NOUN", "DIGIT_0", "DIGIT_1", "DIGIT_2", "DIGIT_3", "DIGIT_4", "DIGIT_5", "DIGIT_6", "DIGIT_7", "DIGIT_8", "DIGIT_9", "PLUS", "MINUS", "ENTR", "PRO", "CLR", "RSET", "KEY_REL"] },
+    "method": { "enum": ["telemetry.read", "telemetry.await", "agc.inspect", "execution.preflight", "dsky.execute", "execution.get"] },
+    "errorCode": {
+      "enum": [
+        "INVALID_ARGUMENT", "SCHEMA_VERSION", "RPC_PROTOCOL", "TIMEOUT", "NOT_FOUND", "BUSY",
+        "AGC_UNAVAILABLE", "KEY_REL_ACTIVE", "OPR_ERR_ACTIVE", "UNSUPPORTED_COMMAND", "CATALOG_MISMATCH",
+        "PLAN_MISMATCH", "INSPECTION_STALE", "AUTH_REQUIRED", "AUTH_INVALID", "AUTH_EXPIRED", "AUTH_USED",
+        "IDEMPOTENCY_CONFLICT", "COMMAND_CLOSED", "INTERNAL"
+      ]
+    },
+
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "request_id", "method", "deadline_ms", "params"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "method": { "$ref": "#/$defs/method" },
+        "deadline_ms": { "type": "integer", "minimum": 1, "maximum": 60000 },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        { "if": { "properties": { "method": { "const": "telemetry.read" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/telemetry.read" } } } },
+        { "if": { "properties": { "method": { "const": "telemetry.await" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/telemetry.await" } } } },
+        { "if": { "properties": { "method": { "const": "agc.inspect" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/agc.inspect" } } } },
+        { "if": { "properties": { "method": { "const": "execution.preflight" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/execution.preflight" } } } },
+        { "if": { "properties": { "method": { "const": "dsky.execute" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/dsky.execute" } } } },
+        { "if": { "properties": { "method": { "const": "execution.get" } } }, "then": { "properties": { "params": { "$ref": "#/$defs/params/execution.get" } } } }
+      ]
+    },
+
+    "successResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "request_id", "ok", "daemon_instance_id", "sequence_epoch", "result"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "request_id": { "$ref": "#/$defs/uuid" },
+        "ok": { "const": true },
+        "daemon_instance_id": { "$ref": "#/$defs/uuid" },
+        "sequence_epoch": { "$ref": "#/$defs/uuid" },
+        "result": { "type": "object" }
+      }
+    },
+
+    "errorResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "request_id", "ok", "daemon_instance_id", "sequence_epoch", "error"],
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "request_id": { "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+        "ok": { "const": false },
+        "daemon_instance_id": { "$ref": "#/$defs/uuid" },
+        "sequence_epoch": { "$ref": "#/$defs/uuid" },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "retryable", "details"],
+          "properties": {
+            "code": { "$ref": "#/$defs/errorCode" },
+            "message": { "type": "string", "maxLength": 512 },
+            "retryable": { "type": "boolean" },
+            "details": { "type": "object", "additionalProperties": { "type": ["string", "integer", "boolean", "null"] } }
+          }
+        }
+      }
+    },
+
+    "acceptedFrame": {
+      "allOf": [
+        { "$ref": "telemetry-frame.schema.json" },
+        { "properties": { "verdict": { "const": "ACCEPTED" }, "frame": { "type": "object" } } }
+      ]
+    },
+
+    "agcSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state_revision", "engine_revision", "captured_at", "program", "verb", "noun", "registers", "input_state", "pending_entry", "lamps", "snapshot_digest", "catalog_version"],
+      "properties": {
+        "state_revision": { "type": "integer", "minimum": 1 },
+        "engine_revision": { "type": "integer", "minimum": 0 },
+        "captured_at": { "$ref": "#/$defs/timestamp" },
+        "program": { "enum": [0, 40] },
+        "verb": { "type": "integer", "minimum": 0, "maximum": 99 },
+        "noun": { "type": "integer", "minimum": 0, "maximum": 99 },
+        "registers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["r1", "r2", "r3"],
+          "properties": {
+            "r1": { "type": "integer", "minimum": -16383, "maximum": 16383 },
+            "r2": { "type": "integer", "minimum": -16383, "maximum": 16383 },
+            "r3": { "type": "integer", "minimum": -16383, "maximum": 16383 }
+          }
+        },
+        "input_state": { "enum": ["IDLE", "VERB_ENTRY", "NOUN_ENTRY", "DATA_ENTRY", "EXECUTING", "OPR_ERR"] },
+        "pending_entry": { "oneOf": [{ "type": "null" }, { "enum": ["VERB", "NOUN", "PROGRAM", "V25_NOUN", "R1", "R2", "R3"] }] },
+        "lamps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["comp_acty", "uplink_acty", "key_rel", "opr_err"],
+          "properties": {
+            "comp_acty": { "type": "boolean" },
+            "uplink_acty": { "type": "boolean" },
+            "key_rel": { "type": "boolean" },
+            "opr_err": { "type": "boolean" }
+          }
+        },
+        "snapshot_digest": { "$ref": "#/$defs/digest" },
+        "catalog_version": { "type": "string" }
+      }
+    },
+
+    "executionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frame_seq", "operation_id", "plan_digest", "catalog_version", "status", "keys_total", "keys_accepted", "auth_seq", "started_at", "finished_at", "pre_revision", "post_revision", "error_code"],
+      "properties": {
+        "frame_seq": { "$ref": "#/$defs/seq" },
+        "operation_id": { "$ref": "#/$defs/uuid" },
+        "plan_digest": { "$ref": "#/$defs/digest" },
+        "catalog_version": { "type": "string" },
+        "status": { "enum": ["STARTED", "EXECUTED", "FAILED"] },
+        "keys_total": { "type": "integer", "minimum": 1, "maximum": 128 },
+        "keys_accepted": { "type": "integer", "minimum": 0, "maximum": 128 },
+        "auth_seq": { "oneOf": [{ "$ref": "#/$defs/seq" }, { "type": "null" }] },
+        "started_at": { "$ref": "#/$defs/timestamp" },
+        "finished_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+        "pre_revision": { "type": "integer", "minimum": 1 },
+        "post_revision": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+        "error_code": { "oneOf": [{ "enum": ["KEY_REL_ACTIVE", "OPR_ERR_ACTIVE", "KEY_REJECTED", "INTERRUPTED"] }, { "type": "null" }] }
+      }
+    },
+
+    "params": {
+      "telemetry.read": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["after_seq", "limit"],
+        "properties": {
+          "after_seq": { "$ref": "#/$defs/cursor" },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 500 }
+        }
+      },
+      "telemetry.await": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["after_seq", "timeout_ms"],
+        "properties": {
+          "after_seq": { "$ref": "#/$defs/cursor" },
+          "timeout_ms": { "type": "integer", "minimum": 0, "maximum": 30000 }
+        }
+      },
+      "agc.inspect": { "type": "object", "additionalProperties": false, "properties": {} },
+      "execution.preflight": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["frame_seq"],
+        "properties": { "frame_seq": { "$ref": "#/$defs/seq" } }
+      },
+      "dsky.execute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["operation_id", "frame_seq", "catalog_version", "plan_digest", "keys", "expected_revision", "min_cadence_ms", "auth_seq"],
+        "properties": {
+          "operation_id": { "$ref": "#/$defs/uuid" },
+          "frame_seq": { "$ref": "#/$defs/seq" },
+          "catalog_version": { "type": "string" },
+          "plan_digest": { "$ref": "#/$defs/digest" },
+          "keys": { "type": "array", "minItems": 1, "maxItems": 128, "items": { "$ref": "#/$defs/key" } },
+          "expected_revision": { "type": "integer", "minimum": 1 },
+          "min_cadence_ms": { "const": 100 },
+          "auth_seq": { "oneOf": [{ "$ref": "#/$defs/seq" }, { "type": "null" }] }
+        }
+      },
+      "execution.get": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["frame_seq"],
+        "properties": { "frame_seq": { "$ref": "#/$defs/seq" } }
+      }
+    },
+
+    "results": {
+      "telemetry.read": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["frames", "high_water_seq", "truncated"],
+        "properties": {
+          "frames": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/acceptedFrame" } },
+          "high_water_seq": { "$ref": "#/$defs/cursor" },
+          "truncated": { "type": "boolean" }
+        }
+      },
+      "telemetry.await": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "frame"],
+        "properties": {
+          "status": { "enum": ["FRAME", "TIMEOUT"] },
+          "frame": { "oneOf": [{ "$ref": "#/$defs/acceptedFrame" }, { "type": "null" }] }
+        }
+      },
+      "agc.inspect": { "$ref": "#/$defs/agcSnapshot" },
+      "execution.preflight": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["snapshot", "command_known", "execution"],
+        "properties": {
+          "snapshot": { "$ref": "#/$defs/agcSnapshot" },
+          "command_known": { "type": "boolean" },
+          "execution": { "oneOf": [{ "$ref": "#/$defs/executionRecord" }, { "type": "null" }] }
+        }
+      },
+      "dsky.execute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["execution", "idempotent_replay"],
+        "properties": {
+          "execution": { "$ref": "#/$defs/executionRecord" },
+          "idempotent_replay": { "type": "boolean" }
+        }
+      },
+      "execution.get": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["execution"],
+        "properties": { "execution": { "oneOf": [{ "$ref": "#/$defs/executionRecord" }, { "type": "null" }] } }
+      }
+    }
+  }
+}

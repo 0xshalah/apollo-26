@@ -1,0 +1,41 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Node
+web-dashboard/node_modules/
+web-dashboard/.next/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Runtime state; retain directories through .gitkeep
+telemetry/inbox/*
+!telemetry/inbox/.gitkeep
+telemetry/rejected/*
+!telemetry/rejected/.gitkeep
+telemetry/state/*
+!telemetry/state/.gitkeep
+telemetry/FLIGHT_MODE
+
+# Logs and generated reports
+*.log
+coverage.xml
+htmlcov/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# IMPORTANT: .kiro/ is intentionally committed for the competition.

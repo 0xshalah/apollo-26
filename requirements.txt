@@ -1,0 +1,4 @@
+# Runtime and development dependencies are declared in pyproject.toml.
+# Install editable development environment:
+#   python -m pip install -e ".[dev]"
+-e .[dev]

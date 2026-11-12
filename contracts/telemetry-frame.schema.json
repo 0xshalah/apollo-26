@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apollo-26.local/schemas/telemetry-frame-v1.json",
+  "title": "Apollo-26 decoded telemetry frame",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "received_at", "source", "frame", "validation", "verdict", "reason"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "received_at": { "type": "string", "format": "date-time" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "sample_rate_hz", "frequency_deviation_hz"],
+      "properties": {
+        "kind": { "enum": ["microphone", "wav", "loopback"] },
+        "sample_rate_hz": { "enum": [44100, 48000] },
+        "snr_db": { "type": ["number", "null"] },
+        "frequency_deviation_hz": { "type": "number", "minimum": 0 }
+      }
+    },
+    "frame": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["version", "frame_type", "seq", "ref_seq", "critical", "verb", "noun", "program", "r1_centidegrees", "r2_centidegrees", "delta_v_tenths_fps", "hmac_hex", "crc_hex", "raw_hex"],
+      "properties": {
+        "version": { "const": 1 },
+        "frame_type": { "enum": ["COMMAND", "AUTH"] },
+        "seq": { "type": "integer", "minimum": 1, "maximum": 4294967295 },
+        "ref_seq": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+        "critical": { "type": "boolean" },
+        "verb": { "type": "integer", "minimum": 0, "maximum": 99 },
+        "noun": { "type": "integer", "minimum": 0, "maximum": 99 },
+        "program": { "type": "integer", "minimum": 0, "maximum": 99 },
+        "r1_centidegrees": { "type": "integer", "minimum": -32768, "maximum": 32767 },
+        "r2_centidegrees": { "type": "integer", "minimum": -32768, "maximum": 32767 },
+        "delta_v_tenths_fps": { "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+        "hmac_hex": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+        "crc_hex": { "type": "string", "pattern": "^[0-9a-f]{4}$" },
+        "raw_hex": { "type": "string", "pattern": "^[0-9a-f]{68}$" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["length", "sync", "crc", "hmac", "sequence", "range"],
+      "properties": {
+        "length": { "type": "boolean" },
+        "sync": { "type": "boolean" },
+        "crc": { "type": ["boolean", "null"] },
+        "hmac": { "type": ["boolean", "null"] },
+        "sequence": { "type": ["boolean", "null"] },
+        "range": { "type": ["boolean", "null"] }
+      }
+    },
+    "verdict": { "enum": ["ACCEPTED", "REJECTED"] },
+    "reason": { "enum": ["OK", "LENGTH", "SYNC", "VERSION", "TYPE", "CRC", "FLAGS", "HMAC", "REPLAY", "RANGE", "STATE", "INTERNAL"] }
+  },
+  "allOf": [
+    { "if": { "properties": { "verdict": { "const": "ACCEPTED" } } }, "then": { "properties": { "reason": { "const": "OK" }, "frame": { "type": "object" } } } },
+    { "if": { "properties": { "reason": { "enum": ["LENGTH", "SYNC"] } } }, "then": { "properties": { "frame": { "type": "null" } } } }
+  ]
+}

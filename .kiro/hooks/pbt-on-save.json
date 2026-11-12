@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "PBT On Python Save",
+      "trigger": "PostFileSave",
+      "description": "When the agent saves Python under acoustic/, agc_core/, or mcp_server/, runs the fast property-based suite and reports the real pytest exit code. Skipped while Flight Watch is live.",
+      "matcher": "(mcp_server|agc_core|acoustic)[\\\\/].*\\.py$",
+      "action": {
+        "type": "command",
+        "command": "cmd /c scripts\\hooks\\quick_tests.cmd",
+        "timeout": 300
+      }
+    }
+  ]
+}

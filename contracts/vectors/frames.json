@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "protocol": "apollo26-acoustic-frame-v1",
+  "demo_keys": {
+    "link": "apollo26-link-demo-key-v1",
+    "operator": "apollo26-operator-demo-key-v1"
+  },
+  "status": "verified-python; typescript-pending",
+  "vectors": [
+    {
+      "id": "command-p40-seq-42",
+      "frame": { "frame_type": "COMMAND", "seq": 42, "ref_seq": 0, "critical": true, "verb": 37, "noun": 0, "program": 40, "r1_centidegrees": 1250, "r2_centidegrees": 420, "delta_v_tenths_fps": 31200 },
+      "key": "link",
+      "expected_hex": "a52601010000002a000000000125002804e201a4000079e003ef57ace1ee8c8d7be6",
+      "expected_verdict": "ACCEPTED"
+    },
+    {
+      "id": "auth-for-seq-42",
+      "frame": { "frame_type": "AUTH", "seq": 43, "ref_seq": 42, "critical": false, "verb": 0, "noun": 0, "program": 0, "r1_centidegrees": 0, "r2_centidegrees": 0, "delta_v_tenths_fps": 0 },
+      "key": "operator",
+      "expected_hex": "a52601020000002b0000002a0000000000000000000000009f1de2e86e6e1d55a643",
+      "expected_verdict": "ACCEPTED"
+    },
+    {
+      "id": "command-bit-flip-crc-fails",
+      "derived_from": "command-p40-seq-42",
+      "mutation": { "byte_offset": 20, "xor": 1, "recompute_crc": false },
+      "expected_verdict": "REJECTED",
+      "expected_reason": "CRC"
+    },
+    {
+      "id": "command-replay-seq-42",
+      "derived_from": "command-p40-seq-42",
+      "precondition": { "last_accepted_seq": 42 },
+      "expected_verdict": "REJECTED",
+      "expected_reason": "REPLAY"
+    }
+  ]
+}

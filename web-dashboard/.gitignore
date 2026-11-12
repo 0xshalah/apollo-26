@@ -1,0 +1,7 @@
+node_modules/
+.next/
+logs/
+next-env.d.ts
+*.tsbuildinfo
+# out/ is intentionally committed: the Python daemon serves it, so judges never need Node.js.
+# Rebuild with an empty base path (npm run build) before committing; never commit a GitHub Pages build here.

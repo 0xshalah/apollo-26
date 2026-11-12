@@ -1,0 +1,72 @@
+"""Public API for the pure Apollo-26 AGC emulator subset."""
+
+from .agc_engine import ERASABLE_WORDS, AgcEngine
+from .dsky import MIN_KEY_CADENCE_MS, V25_NOUN
+from .errors import AgcDomainError, AgcErrorCode
+from .models import (
+    AgcSnapshot,
+    CompActyTick,
+    DisplayBusy,
+    DisplayUnit,
+    DisplayValue,
+    DskyKey,
+    DskyState,
+    EntryKind,
+    KeyResult,
+    LampState,
+    MachineRegister,
+    OperationResult,
+    PendingEntry,
+    Program,
+    ReceiverActivity,
+    RegisterValue,
+    ZeroSign,
+)
+from .programs import COMP_ACTY_PERIOD_MS
+from .word import (
+    DATA_MASK,
+    NEGATIVE_ZERO,
+    PHYSICAL_MASK,
+    POSITIVE_ZERO,
+    AddResult,
+    AgcWord,
+    add,
+    negate,
+    word_from_signed,
+)
+
+__all__ = [
+    "COMP_ACTY_PERIOD_MS",
+    "DATA_MASK",
+    "ERASABLE_WORDS",
+    "MIN_KEY_CADENCE_MS",
+    "NEGATIVE_ZERO",
+    "PHYSICAL_MASK",
+    "POSITIVE_ZERO",
+    "V25_NOUN",
+    "AddResult",
+    "AgcDomainError",
+    "AgcEngine",
+    "AgcErrorCode",
+    "AgcSnapshot",
+    "AgcWord",
+    "CompActyTick",
+    "DisplayBusy",
+    "DisplayUnit",
+    "DisplayValue",
+    "DskyKey",
+    "DskyState",
+    "EntryKind",
+    "KeyResult",
+    "LampState",
+    "MachineRegister",
+    "OperationResult",
+    "PendingEntry",
+    "Program",
+    "ReceiverActivity",
+    "RegisterValue",
+    "ZeroSign",
+    "add",
+    "negate",
+    "word_from_signed",
+]

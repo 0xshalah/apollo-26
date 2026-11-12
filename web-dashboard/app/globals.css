@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+
+/* Design tokens: see .kiro/steering/design-system.md. Only these five colors are used;
+   every other tone is one of them at reduced opacity. */
+@theme {
+  --color-void: #050608;
+  --color-lunar-900: #0a0d12;
+  --color-lunar-800: #0f141c;
+  --color-electrum: #e6c875;
+  --color-phosphor: #00ff88;
+
+  --font-display: var(--font-italiana), 'Times New Roman', serif;
+  --font-ui: var(--font-syne), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, 'Cascadia Mono', monospace;
+}
+
+@layer base {
+  html {
+    background: var(--color-void);
+    color: var(--color-electrum);
+    color-scheme: dark;
+  }
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-ui);
+    font-variant-numeric: lining-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-electrum);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-electrum) 35%, transparent);
+  }
+  input,
+  select,
+  button,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  /* Precision corner ticks, primary instruments only. */
+  .ticks {
+    position: relative;
+  }
+  .ticks::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    pointer-events: none;
+    --tick: 10px;
+    border: 1px solid color-mix(in srgb, var(--color-electrum) 60%, transparent);
+    -webkit-mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, #000 0) 0 0 / calc(100% - var(--tick))
+      calc(100% - var(--tick));
+    mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, #000 0) 0 0 / calc(100% - var(--tick))
+      calc(100% - var(--tick));
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums slashed-zero;
+  }
+  dialog.dsky-sheet::backdrop {
+    background: color-mix(in srgb, var(--color-void) 80%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

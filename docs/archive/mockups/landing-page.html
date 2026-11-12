@@ -1,0 +1,1827 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apollo-26: protokol kemudi bulan akustik air-gap untuk Kiroween 2026</title>
+<meta name="description" content="Apollo-26 menyambungkan agen AI Kiro 2026 dengan Apollo Guidance Computer 1969 melalui gelombang suara Bell-202 FSK tanpa koneksi jaringan IP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500&family=Atkinson+Hyperlegible+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* Hallmark · job: try · shape: Workbench, custom: the acoustic bridge, 3D lunar descent point-cloud with projected callouts, rolling waterfall spectrogram, 15-bit core-rope matrix, and 1969 DSKY run live · genre: modern-minimal · theme: Console (dealt 1/3, seed apollo-26-acoustic-air-gap-lunar-d8e2·6d8a6c26·2026-11-11·r0) · draw: 15d64a
+ * hero: Stage over a live lunar descent point cloud with projected 3D callout leaders, the FSK transmit action under the head, the live Bell-202 packet record and waterfall spectrogram on seven columns · sections: Statement (10 s triage reading in corner ticks against 20 min manual baseline), Switcher (three safety diffs comparing raw LLM vibe coding against Kiro steering rules), Workbench (operator FSK modulator beside the working 1969 DSKY with 15-bit core-rope bit matrix and MCP trace), Rows (four judge questions) · nav: three-part bar cut as one panel with 1px seams and ID/EN toggle · footer: interactive cursor-reactive point-scanned mast and letter close · imagery: product built in hero, diff switcher, and interactive DSKY workbench · signature: 10 s emergency maneuver triage set at display size in Atkinson Hyperlegible Mono beneath struck 20 min baseline · console: graphite
+ * axes: dark/grotesk-sans/chromatic-amber · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: R, stripped ornamental borders so the 3D lunar point-cloud callouts, rolling waterfall spectrogram, and 15-bit core-rope register matrix carry the entire instrument surface */
+
+:root {
+  color-scheme: dark;
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 144px;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem);
+  --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem);
+  --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem);
+  --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+  --color-error: oklch(72% 0.15 27);
+  --color-success: oklch(76% 0.13 150);
+  --container: 1440px;
+  --gutter: 64px;
+  --gap-columns: 32px;
+  --section-gap-s: 120px;
+  --section-gap: 144px;
+  --section-gap-l: 176px;
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-sticky-nav: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+  --color-paper: oklch(14% 0.009 250);
+  --color-paper-2: oklch(18% 0.010 250);
+  --color-paper-3: oklch(11% 0.008 250);
+  --color-ink: oklch(96% 0.005 250);
+  --color-ink-2: oklch(84% 0.008 250);
+  --color-muted: oklch(69% 0.011 250);
+  --color-rule: oklch(27% 0.011 250);
+  --color-rule-2: oklch(39% 0.013 250);
+  --color-accent: oklch(83% 0.155 80);
+  --color-accent-ink: oklch(17% 0.04 75);
+  --color-accent-soft: oklch(26.5% 0.05 80);
+  --color-focus: oklch(83% 0.155 80);
+  --color-cool: oklch(78% 0.125 245);
+  --color-cool-soft: oklch(26.5% 0.05 245);
+  --color-ok: oklch(78% 0.155 150);
+  --color-ok-soft: oklch(23% 0.035 150);
+  --color-bad: oklch(70% 0.17 25);
+  --color-bad-soft: oklch(23.5% 0.035 25);
+  --point-lo: oklch(38% 0.03 250);
+  --point-mid: oklch(66% 0.04 245);
+  --point-hi: oklch(93% 0.02 230);
+  --font-display: "Host Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-display);
+  --font-outlier: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --radius-card: 10px;
+  --radius-pill: 6px;
+  --rule-hair: 1px;
+  --tick: 12px;
+  --shadow-card: none;
+  --tracking-display: -0.035em;
+  --display-weight: 500;
+  --nav-h: 88px;
+  --measured: 0.9375rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); scroll-padding-top: var(--space-3xl); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent); }
+::selection { background: color-mix(in oklab, var(--color-accent) 25%, transparent); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; text-decoration-color: var(--color-rule-2); }
+a:hover { text-decoration-color: var(--color-accent); }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: 500; font-synthesis: none; letter-spacing: var(--tracking-display); line-height: 1.02; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h1 { max-width: 18ch; font-size: var(--text-display); }
+h2 { max-width: 28ch; font-size: var(--text-section); }
+h3 { max-width: 38ch; font-size: var(--text-title); line-height: 1.2; }
+.lead { font-size: var(--text-lead); line-height: 1.45; max-width: 50ch; color: var(--color-ink-2); }
+p { margin: 0; color: var(--color-muted); text-wrap: pretty; }
+p:not([class]) { max-width: 65ch; }
+img, video, canvas { max-width: 100%; height: auto; display: block; }
+svg { display: block; flex-shrink: 0; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; }
+code { font-family: var(--font-outlier); font-size: var(--measured); font-variant-numeric: tabular-nums slashed-zero; }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); box-sizing: border-box; }
+.m { font-family: var(--font-outlier); font-size: var(--measured); font-variant-numeric: tabular-nums slashed-zero; }
+.amber { color: var(--color-accent); }
+.cool { color: var(--color-cool); }
+del { color: var(--color-bad); text-decoration-thickness: 1px; }
+ins { color: var(--color-ok); text-decoration: none; }
+q { quotes: "“" "”"; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.skip { position: absolute; left: var(--space-md); top: calc(-1 * var(--space-3xl)); z-index: var(--z-toast); padding: var(--space-xs) var(--space-md); background: var(--color-ink); color: var(--color-paper); }
+.skip:focus-visible { top: var(--space-md); }
+
+/* Precision corner ticks around primary instruments */
+.ticks { position: relative; }
+.ticks::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  border: var(--rule-hair) solid var(--color-rule-2);
+  -webkit-mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, var(--color-ink) 0) 0 0 / calc(100% - var(--tick)) calc(100% - var(--tick));
+  mask: conic-gradient(at var(--tick) var(--tick), transparent 75%, var(--color-ink) 0) 0 0 / calc(100% - var(--tick)) calc(100% - var(--tick));
+}
+
+/* Controls: one filled primary (.btn--amber), outlined secondaries */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); min-height: 48px; padding: 0 var(--space-lg); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); background: transparent; color: var(--color-ink); font: 500 var(--text-md)/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.btn--amber { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
+.btn--amber:hover { background: color-mix(in oklab, var(--color-accent) 86%, var(--color-ink)); }
+.btn--line:hover { border-color: var(--color-ink-2); background: var(--color-paper-2); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible, a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
+.btn--nav { min-height: 40px; padding: 0 var(--space-md); font-size: var(--text-sm); }
+
+/* Navigation: sticky three-part aerospace bar */
+.nav { position: sticky; top: 0; z-index: var(--z-sticky-nav); padding-block: var(--space-sm); background: color-mix(in oklab, var(--color-paper) 88%, transparent); backdrop-filter: blur(10px); }
+.bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--rule-hair); background: var(--color-rule); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); overflow: hidden; }
+.bar > * { display: flex; align-items: center; min-height: 58px; padding: 0 var(--space-lg); background: var(--color-paper-2); }
+.bar__mark { display: inline-flex; align-items: center; gap: var(--space-sm); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-display); color: var(--color-ink); text-decoration: none; white-space: nowrap; }
+.bar__mark-bars { display: inline-grid; grid-template-columns: repeat(3, 4px); gap: var(--space-2xs); transform: skewX(-16deg); }
+.bar__mark-bars i { width: 4px; height: 12px; background: var(--color-ink); }
+.bar__mark-bars i:nth-child(2) { background: var(--color-cool); }
+.bar__mark-bars i:nth-child(3) { background: var(--color-accent); }
+.bar__links { gap: var(--space-lg); }
+.bar__links a { font-size: var(--text-sm); font-weight: 500; color: var(--color-ink-2); text-decoration: none; white-space: nowrap; transition: color var(--dur-short) var(--ease-out); }
+.bar__links a:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); }
+.bar__end { gap: var(--space-sm); padding-right: var(--space-sm); }
+
+/* Language Switcher in Nav */
+.lang-switch { display: inline-flex; gap: var(--rule-hair); background: var(--color-rule); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); overflow: hidden; }
+.lang-switch button { min-height: 36px; padding: 0 var(--space-sm); border: 0; background: var(--color-paper-2); color: var(--color-muted); font: 500 var(--text-xs)/1 var(--font-body); cursor: pointer; white-space: nowrap; transition: color var(--dur-short) var(--ease-out); }
+.lang-switch button:hover { color: var(--color-ink); }
+.lang-switch button[aria-pressed="true"] { background: var(--color-paper-3); color: var(--color-accent); box-shadow: inset 0 -2px 0 var(--color-accent); }
+.lang-switch button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+
+/* Hero: Stage over live 3D Lunar Descent Point Cloud + Callout Leaders */
+.hero { position: relative; min-height: calc(100svh - var(--nav-h)); display: grid; align-items: center; padding-block: var(--space-xl); overflow: hidden; isolation: isolate; }
+.hero__cloud {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 58% 52%, var(--color-ink) 28%, transparent 80%);
+  mask-image: radial-gradient(ellipse 72% 68% at 58% 52%, var(--color-ink) 28%, transparent 80%);
+}
+.hero__callouts { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.callout { position: absolute; left: 0; top: 0; transition: opacity var(--dur-long) var(--ease-out); }
+.callout.is-hidden { opacity: 0; }
+.callout__dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-cool); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-paper) 75%, transparent); }
+.callout__leader { position: absolute; left: 0; bottom: 0; width: var(--rule-hair); height: 56px; background: color-mix(in oklab, var(--color-cool) 65%, transparent); }
+.callout__note { position: absolute; left: 0; bottom: 56px; display: grid; gap: var(--space-3xs); padding: var(--space-2xs) var(--space-sm); white-space: nowrap; font-size: var(--text-xs); color: var(--color-ink-2); background: color-mix(in oklab, var(--color-paper-3) 88%, transparent); box-shadow: inset var(--rule-hair) 0 0 var(--color-cool); }
+.callout__note b { font-family: var(--font-outlier); font-size: var(--text-sm); font-weight: 500; color: var(--color-ink); }
+.callout--amber .callout__dot { background: var(--color-accent); }
+.callout--amber .callout__leader { background: var(--color-accent); }
+.callout--amber .callout__note { box-shadow: inset var(--rule-hair) 0 0 var(--color-accent); }
+
+.hero__grid { position: relative; z-index: var(--z-raised); display: grid; grid-template-columns: minmax(0, 10.5fr) minmax(0, 13.5fr); column-gap: var(--space-3xl); align-items: center; }
+.hero__text { display: grid; gap: var(--space-lg); }
+.hero h1 { max-width: 14ch; line-height: 0.98; font-size: clamp(2.85rem, 6.2vw - 1rem, 5rem); }
+.hero .lead { max-width: 34ch; }
+.hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); margin-top: var(--space-2xs); }
+.hero__status { min-height: 1lh; font-size: var(--text-sm); color: var(--color-muted); }
+
+/* Panels cut from one surface */
+.panels { display: grid; gap: var(--rule-hair); background: var(--color-rule); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-card); overflow: hidden; color: var(--color-ink-2); font-size: var(--text-sm); }
+.panels > * { background: var(--color-paper-2); color: var(--color-ink-2); }
+.state-pill { display: inline-block; padding: 0 var(--space-xs); border-radius: 4px; font-size: var(--text-xs); line-height: 1.6; white-space: nowrap; }
+.state-pill--amber { background: var(--color-accent-soft); color: var(--color-accent); }
+.state-pill--cool { background: var(--color-cool-soft); color: var(--color-cool); }
+.state-pill--ok { background: var(--color-ok-soft); color: var(--color-ok); }
+.state-pill--bad { background: var(--color-bad-soft); color: var(--color-bad); }
+
+/* Hero Product: Acoustic Bridge Record & Live Waterfall Spectrogram */
+.record__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-md) var(--space-lg); background: var(--color-paper-3); }
+.record__name { font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-display); color: var(--color-ink); }
+.record__where { color: var(--color-cool); }
+.rail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; gap: var(--rule-hair); background: var(--color-rule); }
+.rail li { background: var(--color-paper-2); }
+.rail button { width: 100%; min-height: 44px; padding: 0 var(--space-xs); border: 0; background: var(--color-paper-2); color: var(--color-muted); font: 500 var(--text-sm)/1 var(--font-outlier); cursor: pointer; white-space: nowrap; transition: color var(--dur-short) var(--ease-out); }
+.rail button:hover { color: var(--color-ink); }
+.rail button[aria-pressed="true"] { background: var(--color-paper-3); color: var(--color-accent); box-shadow: inset 0 -2px 0 var(--color-accent); }
+.rail button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+
+.wave-box { position: relative; padding: var(--space-sm) var(--space-lg); background: var(--color-paper-3); display: grid; gap: var(--space-xs); }
+.wave-box__top { display: flex; justify-content: space-between; align-items: center; font-size: var(--text-xs); color: var(--color-muted); }
+.wave-canvas { width: 100%; height: 92px; border-radius: 4px; border: var(--rule-hair) solid var(--color-rule); }
+
+.steps { width: 100%; border-collapse: collapse; }
+.steps th, .steps td { padding: var(--space-sm) var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); text-align: left; font-weight: 400; white-space: nowrap; }
+.steps tbody tr:last-child > * { border-bottom: 0; }
+.steps thead th { padding-block: var(--space-xs); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); background: var(--color-paper-3); }
+.steps tbody th { color: var(--color-ink); }
+.n { display: inline-block; width: 2.5ch; color: var(--color-muted); }
+.steps .is-changed { background: var(--color-paper-3); }
+.steps .is-changed .n { color: var(--color-accent); }
+
+.change { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--rule-hair); background: var(--color-rule); }
+.change > div { display: grid; align-content: start; gap: var(--space-2xs); padding: var(--space-sm) var(--space-lg); background: var(--color-paper-2); }
+.change dt { font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+.change dd { margin: 0; color: var(--color-ink); }
+.change dd.amber { color: var(--color-accent); }
+.change dd.cool { color: var(--color-cool); }
+.change__why { grid-column: 1 / -1; background: var(--color-paper-3) !important; }
+.change__why dd { font-size: var(--text-md); color: var(--color-ink-2); }
+
+/* Section 2: Statement Reading with Precision Ticks */
+.reason { padding-top: var(--section-gap); }
+.reason__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: center; }
+.reason__grid::before { content: ""; grid-column: 1 / -1; height: 0; border-top: var(--rule-hair) solid var(--color-rule); margin-bottom: var(--space-2xl); }
+.reading { grid-column: 1 / 7; margin: 0; padding: var(--space-xl) var(--space-2xl); background: var(--color-paper-3); border-radius: var(--radius-card); }
+.reading__was { margin: 0; font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.75rem); line-height: 1; }
+.reading__was del { text-decoration-thickness: 2px; }
+.reading__now { margin: var(--space-sm) 0 0; font-size: clamp(5.5rem, 14vw, 13rem); font-weight: 400; line-height: 0.86; letter-spacing: -0.05em; color: var(--color-ink); }
+.reading__unit { margin-left: 0.1em; font-size: 0.38em; letter-spacing: 0; color: var(--color-accent); }
+.reason__side { grid-column: 7 / 13; display: grid; gap: var(--space-xl); padding-left: var(--space-xl); border-left: var(--rule-hair) solid var(--color-rule-2); }
+.reason__side h2 { font-size: clamp(2rem, 2.2vw + 1rem, 3.25rem); }
+.sign { margin: 0; display: grid; border-top: var(--rule-hair) solid var(--color-rule); }
+.sign > div { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--space-md); align-items: baseline; padding-block: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.sign dt { font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+.sign dd { margin: 0; color: var(--color-ink-2); }
+.sign dd.amber { color: var(--color-accent); }
+.sign dd.cool { color: var(--color-cool); }
+.sign__why { font-size: var(--text-lg); line-height: 1.3; color: var(--color-ink); }
+
+/* Section 3: Diff Switcher */
+.before { padding-top: var(--section-gap-l); }
+.before__head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: end; margin-bottom: var(--space-2xl); }
+.before__text { grid-column: 1 / 8; display: grid; gap: var(--space-md); }
+.before__head .seg { grid-column: 8 / 13; justify-self: end; }
+.seg { display: inline-flex; gap: var(--rule-hair); padding: 0; background: var(--color-rule); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); overflow: hidden; }
+.seg button { display: inline-flex; align-items: center; gap: 0.35em; min-height: 44px; padding: 0 var(--space-md); border: 0; background: var(--color-paper-2); color: var(--color-ink-2); font: 500 var(--text-sm)/1 var(--font-body); white-space: nowrap; cursor: pointer; transition: color var(--dur-short) var(--ease-out); }
+.seg button .m { font-size: var(--text-sm); color: inherit; }
+.seg button:hover { color: var(--color-ink); }
+.seg button[aria-selected="true"] { background: var(--color-paper-3); color: var(--color-cool); box-shadow: inset 0 -2px 0 var(--color-cool); }
+.seg button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.compare { grid-template-columns: minmax(0, 1fr); }
+.compare__count { font-size: var(--text-sm); color: var(--color-cool); }
+.compare__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); min-height: 60px; padding: var(--space-md) var(--space-lg); background: var(--color-paper-3); }
+.compare__name { font-size: var(--text-lg); font-weight: 500; color: var(--color-ink); letter-spacing: var(--tracking-display); }
+.diff { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.diff th:first-child { width: 3.5rem; }
+.diff th:nth-child(2) { width: 24%; }
+.diff th, .diff td { padding: var(--space-md) var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); text-align: left; font-weight: 400; }
+.diff thead th { padding-block: var(--space-sm); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); background: var(--color-paper-3); }
+.diff tbody th { color: var(--color-ink); }
+.diff td { color: var(--color-ink-2); }
+.diff .g { text-align: center; color: var(--color-muted); padding-inline: 0; }
+.diff .is-changed .g { color: var(--color-accent); background: var(--color-paper-3); }
+.diff .is-changed .n { color: var(--color-accent); }
+.diff .is-changed th { background: var(--color-paper-3); }
+.diff .was { background: var(--color-bad-soft); }
+.diff .now { background: var(--color-ok-soft); }
+.between { list-style: none; margin: 0; padding: var(--space-lg); display: grid; gap: var(--space-sm); background: var(--color-paper-3); }
+.between li { display: grid; grid-template-columns: 4.5rem 8.5rem 6rem minmax(0, 1fr); gap: var(--space-md); align-items: baseline; }
+.between q { color: var(--color-ink); }
+
+/* Section 4: Interactive Workbench (Operator FSK Modulator + 1969 DSKY) */
+.try { padding-top: var(--section-gap); }
+.try__text { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: end; margin-bottom: var(--space-2xl); }
+.try__text h2 { grid-column: 1 / 7; }
+.try__text .lead { grid-column: 8 / 13; max-width: 42ch; }
+.pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pair__who { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-lg); padding-bottom: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); font-size: var(--text-sm); font-weight: 500; color: var(--color-ink-2); }
+.pair__you { display: grid; align-content: start; gap: var(--space-md); padding: var(--space-xl); }
+.field { display: grid; gap: var(--space-xs); min-width: 0; }
+.field label { font-size: var(--text-sm); font-weight: 500; color: var(--color-ink-2); display: flex; justify-content: space-between; align-items: baseline; }
+.field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md); }
+.input { box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 var(--space-md); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); background: var(--color-paper-3); color: var(--color-ink); outline: 2px solid transparent; outline-offset: -3px; caret-color: var(--color-accent); transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out); }
+.input:hover { background: var(--color-paper); border-color: var(--color-ink-2); }
+.input:focus-visible { outline-color: var(--color-focus); }
+.input[aria-invalid] { border-color: var(--color-bad); }
+.input:disabled { opacity: 0.55; cursor: not-allowed; }
+input[type="range"].input { padding: 0 var(--space-xs); accent-color: var(--color-accent); cursor: pointer; }
+.check-row { display: flex; align-items: center; gap: var(--space-sm); min-height: 48px; padding: var(--space-xs) var(--space-md); background: var(--color-paper-3); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); color: var(--color-ink-2); cursor: pointer; transition: border-color var(--dur-short) var(--ease-out); }
+.check-row:hover { border-color: var(--color-accent); }
+.check-row input { width: 18px; height: 18px; accent-color: var(--color-accent); cursor: pointer; }
+.workbench-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xs); }
+.field__help { min-height: 1lh; font-size: var(--text-sm); color: var(--color-muted); }
+
+/* DSKY Instrument Half + 15-Bit Core Rope Matrix */
+.pair > .pair__system { display: grid; align-content: start; gap: var(--space-lg); padding: var(--space-xl); background: var(--color-paper-3); }
+.dsky-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr); gap: var(--space-lg); align-items: stretch; }
+.dsky-readout { display: grid; grid-template-rows: auto 1fr auto; gap: var(--rule-hair); background: var(--color-rule-2); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); overflow: hidden; }
+.dsky-top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--rule-hair); background: var(--color-rule); }
+.dsky-cell { padding: var(--space-sm) var(--space-md); background: var(--color-paper); display: grid; gap: var(--space-3xs); }
+.dsky-cell span { font-size: var(--text-xs); color: var(--color-muted); }
+.dsky-cell strong { font-family: var(--font-outlier); font-size: var(--text-2xl); font-weight: 500; line-height: 1.05; color: var(--color-ok); font-variant-numeric: tabular-nums slashed-zero; }
+.dsky-regs { display: grid; gap: var(--rule-hair); background: var(--color-rule); }
+.dsky-reg { display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-sm) var(--space-md); background: var(--color-paper); }
+.dsky-reg span { font-size: var(--text-xs); color: var(--color-muted); }
+.dsky-reg strong { font-family: var(--font-outlier); font-size: var(--text-xl); font-weight: 500; color: var(--color-ok); font-variant-numeric: tabular-nums slashed-zero; letter-spacing: 0.02em; }
+.rope-strip { padding: var(--space-xs) var(--space-md); background: var(--color-paper-3); display: grid; gap: var(--space-2xs); }
+.rope-strip__meta { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--color-muted); }
+.rope-canvas { width: 100%; height: 18px; }
+
+.dsky-right { display: grid; gap: var(--space-sm); align-content: space-between; }
+.lamps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2xs); }
+.lamp { padding: var(--space-xs) var(--space-sm); border: var(--rule-hair) solid var(--color-rule); border-radius: 4px; background: var(--color-paper-2); color: var(--color-muted); font-size: var(--text-xs); font-weight: 500; text-align: center; transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out); }
+.lamp.is-on-cool { background: var(--color-cool-soft); border-color: var(--color-cool); color: var(--color-cool); }
+.lamp.is-on-amber { background: var(--color-accent-soft); border-color: var(--color-accent); color: var(--color-accent); }
+.lamp.is-on-bad { background: var(--color-bad-soft); border-color: var(--color-bad); color: var(--color-bad); }
+
+.keypad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2xs); }
+.key { min-height: 40px; padding: 0 var(--space-2xs); border: var(--rule-hair) solid var(--color-rule-2); border-radius: 4px; background: var(--color-paper-2); color: var(--color-ink); font: 500 var(--text-xs)/1 var(--font-outlier); cursor: pointer; white-space: nowrap; transition: border-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.key:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.key:active, .key.is-pressed { transform: translateY(1px); border-color: var(--color-accent); color: var(--color-accent); }
+.key:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; }
+
+.pair__parts { margin: 0; display: grid; border-top: var(--rule-hair) solid var(--color-rule); }
+.pair__parts > div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--space-md); align-items: baseline; padding-block: var(--space-xs); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.pair__parts dt { font-size: var(--text-sm); color: var(--color-muted); }
+.pair__parts dd { margin: 0; color: var(--color-ink); }
+.pair__parts dd.amber { color: var(--color-accent); }
+.pair__parts dd.cool { color: var(--color-cool); }
+
+/* Section 5: Questions */
+.questions { padding-block: var(--section-gap-l) var(--section-gap); }
+.questions__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: start; }
+.questions__grid h2 { grid-column: 1 / 5; max-width: 11ch; position: sticky; top: calc(var(--nav-h) + var(--space-lg)); }
+.qa { grid-column: 5 / 13; margin: 0; display: grid; border-top: var(--rule-hair) solid var(--color-rule-2); }
+.qa > div { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: baseline; padding-block: var(--space-xl); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.qa dt { grid-column: 1 / 5; font-size: var(--text-title); font-weight: 500; letter-spacing: -0.015em; line-height: 1.25; color: var(--color-ink); }
+.qa dd { grid-column: 5 / 9; margin: 0; color: var(--color-ink-2); }
+.qa__last { border-bottom-color: var(--color-rule-2); }
+.qa__last dd { display: grid; justify-items: start; gap: var(--space-md); }
+
+/* Footer with Interactive Cursor-Reactive Point-Scanned Mast */
+.foot { padding-block: var(--space-3xl) var(--space-2xl); background: var(--color-paper-3); border-top: var(--rule-hair) solid var(--color-rule); }
+.foot__mast { position: relative; height: clamp(4.5rem, 16vw, 13.5rem); margin-bottom: var(--space-xl); overflow: hidden; cursor: crosshair; }
+.foot__mast canvas { width: 100%; height: 100%; display: block; }
+.foot__in { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--gap-columns); row-gap: var(--space-xl); align-items: baseline; padding-top: var(--space-lg); border-top: var(--rule-hair) solid var(--color-rule); }
+.foot__sign { margin: 0; font-family: var(--font-display); font-size: var(--text-title); font-weight: 500; letter-spacing: var(--tracking-display); line-height: 1.1; color: var(--color-ink); }
+.foot__date { color: var(--color-ink-2); }
+.foot__links { display: flex; flex-wrap: wrap; gap: var(--space-lg); }
+.foot__links a { font-size: var(--text-sm); color: var(--color-ink-2); text-decoration: none; white-space: nowrap; }
+.foot__links a:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); }
+.foot__legal { font-size: var(--text-sm); color: var(--color-muted); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__text > * { animation: rise var(--dur-long) var(--ease-out) both; }
+  .hero__text > :nth-child(2) { animation-delay: 70ms; }
+  .hero__text > :nth-child(3) { animation-delay: 140ms; }
+  .hero__text > :nth-child(4) { animation-delay: 210ms; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+
+@media (max-width: 60rem) {
+  :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; }
+  .bar { grid-template-columns: minmax(0, 1fr) auto; }
+  .bar__links { display: none; }
+  .hero { min-height: 0; padding-block: var(--space-2xl); }
+  .hero__callouts { display: none; }
+  .hero__grid, .pair, .dsky-grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xl); }
+  .reading, .reason__side, .before__text, .before__head .seg, .try__text h2, .try__text .lead, .questions__grid h2, .qa { grid-column: 1 / -1; }
+  .reason__side { margin-top: var(--space-xl); padding-left: 0; border-left: 0; }
+  .before__head .seg { justify-self: start; margin-top: var(--space-lg); }
+  .try__text .lead { margin-top: var(--space-md); }
+  .questions__grid h2 { position: static; max-width: none; margin-bottom: var(--space-xl); }
+  .pair { row-gap: var(--rule-hair); }
+  .between li { grid-template-columns: 4.5rem 8.5rem minmax(0, 1fr); }
+  .between q { grid-column: 1 / -1; }
+}
+@media (max-width: 40rem) {
+  :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; }
+  .record__where { display: none; }
+  .steps th, .steps td { padding-inline: var(--space-md); white-space: normal; }
+  .change, .field-row { grid-template-columns: minmax(0, 1fr); }
+  .diff th:nth-child(2) { width: 32%; }
+  .diff th:first-child { width: 1.75rem; }
+  .diff th, .diff td { padding: var(--space-sm); }
+  .between li { grid-template-columns: 4rem minmax(0, 1fr); }
+  .between li > :nth-child(3) { display: none; }
+  .pair__you, .pair > .pair__system { padding: var(--space-lg); }
+  .seg { width: 100%; }
+  .seg button { flex: 1; justify-content: center; padding: 0 var(--space-xs); }
+  .qa > div { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-sm); padding-block: var(--space-lg); }
+  .qa dt, .qa dd { grid-column: 1 / -1; }
+  .foot__in { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *:not(.keep-motion), *:not(.keep-motion)::before, *:not(.keep-motion)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Langsung ke isi</a>
+
+<header class="container nav">
+  <div class="bar">
+    <a class="bar__mark" href="#top" aria-label="Apollo-26, home"><span class="bar__mark-bars" aria-hidden="true"><i></i><i></i><i></i></span>Apollo-26</a>
+    <nav class="bar__links" aria-label="Main">
+      <a href="#reason" data-i18n="nav_reason">Jembatan akustik</a>
+      <a href="#before" data-i18n="nav_before">Proteksi Kiro</a>
+      <a href="#try" data-i18n="nav_try">Meja uji DSKY</a>
+      <a href="#questions" data-i18n="nav_qa">Tanya jawab</a>
+    </nav>
+    <div class="bar__end">
+      <div class="lang-switch" role="group" aria-label="Language switch">
+        <button type="button" id="lang-id" aria-pressed="true">Id +62</button>
+        <button type="button" id="lang-en" aria-pressed="false">En lab</button>
+      </div>
+      <button type="button" class="btn btn--line btn--nav" id="btn-mute" aria-pressed="false" data-i18n="audio_on">Suara aktif</button>
+      <a class="btn btn--amber btn--nav" href="#try" data-i18n="nav_cta">Buka DSKY</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top" aria-labelledby="hero-head">
+  <canvas class="hero__cloud" id="lunar-cloud" aria-hidden="true"></canvas>
+  <div class="hero__callouts" aria-hidden="true">
+    <div class="callout callout--amber" id="callout-burn"><span class="callout__dot"></span><span class="callout__leader"></span><span class="callout__note"><span>P40 burn vector</span><b>+3,120 ft/s</b></span></div>
+    <div class="callout" id="callout-crater"><span class="callout__dot"></span><span class="callout__leader"></span><span class="callout__note"><span>Mare Tranquillitatis</span><b>15.2 km alt</b></span></div>
+  </div>
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <h1 id="hero-head" data-i18n="hero_h1">Kemudi bulan lewat gelombang suara.</h1>
+      <p class="lead" data-i18n="hero_lead">Agen Kiro 2026 memandu komputer Apollo 1969 lewat audio Bell-202.</p>
+      <div class="hero__actions">
+        <button class="btn btn--amber" type="button" id="btn-hero-transmit" data-i18n="hero_btn_1">Bunyikan paket FSK</button>
+        <a class="btn btn--line" href="#try" data-i18n="hero_btn_2">Uji tombol DSKY</a>
+      </div>
+      <p class="hero__status" id="hero-status" aria-live="polite" data-i18n="hero_status">Carrier 1200 Hz siap dipancarkan.</p>
+    </div>
+
+    <div class="hero__visual ticks">
+      <div class="panels record" data-slot="hero" data-alt="Jembatan telemetri akustik Bell-202 dan status register AGC Block II">
+        <div class="record__head">
+          <span class="record__name" id="hero-pkt-title" data-i18n="pkt_0_title">Manuver dorong P40</span>
+          <span class="record__where m" id="hero-pkt-freq">Bell-202, 1200 / 2200 Hz</span>
+        </div>
+        <ol class="rail" aria-label="Preset paket telemetri akustik">
+          <li><button type="button" data-pkt="0" aria-pressed="true">v37 n40</button></li>
+          <li><button type="button" data-pkt="1" aria-pressed="false">v16 n65</button></li>
+          <li><button type="button" data-pkt="2" aria-pressed="false">v06 n33</button></li>
+          <li><button type="button" data-pkt="3" aria-pressed="false">v97 n00</button></li>
+        </ol>
+        <div class="wave-box">
+          <div class="wave-box__top">
+            <span data-i18n="wave_label">Spektrum FSK Bell-202</span>
+            <span class="m cool" id="wave-readout">24 dB, 1200 baud</span>
+          </div>
+          <canvas class="wave-canvas" id="fsk-canvas" width="680" height="92" aria-label="Gelombang frekuensi audio FSK Bell-202 dan spektrogram air-gap"></canvas>
+        </div>
+        <table class="steps">
+          <caption class="visually-hidden" data-i18n="hero_table_cap">Tahap dekode akustik ke bus memori AGC 1969</caption>
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="th_stage">Tahap</th>
+              <th scope="col" data-i18n="th_reading">Pengukuran</th>
+              <th scope="col" data-i18n="th_time">Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><span class="m n">1</span><span data-i18n="st_1">Preamble mikrofon</span></th>
+              <td class="m" id="cell-preamble">1200&nbsp;Hz, 250&nbsp;ms</td>
+              <td class="m">0.25&nbsp;s</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="m n">2</span><span data-i18n="st_2">Demodulasi MCP</span></th>
+              <td class="m" id="cell-crc">crc-16 0x9f4a</td>
+              <td class="m">0.61&nbsp;s</td>
+            </tr>
+            <tr class="is-changed" id="row-guard">
+              <th scope="row"><span class="m n">3</span><span data-i18n="st_3">Kontrak aturan Kiro</span></th>
+              <td class="m" id="cell-guard"><del>Raw prompt</del> <ins>Key rel aman</ins></td>
+              <td class="m">0.89&nbsp;s</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="m n">4</span><span data-i18n="st_4">Bus memori 15-bit</span></th>
+              <td class="m" id="cell-regs">r1 +00125, r3 +03120</td>
+              <td class="m" id="cell-lat">1.42&nbsp;s</td>
+            </tr>
+          </tbody>
+        </table>
+        <dl class="change">
+          <div><dt data-i18n="dl_who">Pengendali</dt><dd class="amber" id="hero-who">Kiro Hook</dd></div>
+          <div><dt data-i18n="dl_when">Isolasi</dt><dd class="m cool">0 socket calls</dd></div>
+          <div><dt data-i18n="dl_ver">Program</dt><dd class="m cool" id="hero-prog">p40 ke dsky</dd></div>
+          <div class="change__why"><dt data-i18n="dl_why">Catatan</dt><dd id="hero-why" data-i18n="pkt_0_why">“Murni suara ke mikrofon, bebas exploit.”</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reason" id="reason" aria-labelledby="reason-head">
+  <div class="container reason__grid">
+    <figure class="reading ticks" aria-labelledby="reason-head">
+      <p class="reading__was m"><del>20&nbsp;min</del></p>
+      <p class="reading__now m">10<span class="reading__unit">s</span></p>
+    </figure>
+    <div class="reason__side">
+      <h2 id="reason-head" data-i18n="reason_h2">Putus kabel jaringan, sisakan suara</h2>
+      <dl class="sign">
+        <div><dt data-i18n="sign_dt_1">Jaringan</dt><dd data-i18n="sign_dd_1">0 socket keluar</dd></div>
+        <div><dt data-i18n="sign_dt_2">Otorisasi</dt><dd class="amber" data-i18n="sign_dd_2">Token wajib instruksi kritis</dd></div>
+        <div><dt data-i18n="sign_dt_3">Ketahanan</dt><dd class="m cool">10.000 uji derau Hypothesis</dd></div>
+        <div><dt data-i18n="sign_dt_4">Alasan</dt><dd class="sign__why" data-i18n="sign_dd_4">“Tanpa port IP, serangan otomatis mental.”</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="before" id="before" aria-labelledby="before-head">
+  <div class="container">
+    <div class="switch" data-switch>
+      <div class="before__head">
+        <div class="before__text">
+          <h2 id="before-head" data-i18n="before_h2">Kenapa bukan LLM biasa?</h2>
+          <p class="lead" data-i18n="before_lead">Kiro diikat spesifikasi formal, bukan tebakan.</p>
+        </div>
+        <div class="seg" role="tablist" aria-label="Skenario pengujian keamanan">
+          <button type="button" role="tab" id="t-p40" data-tab="p40" aria-controls="p-p40" aria-selected="true"><span class="m">p40</span> <span data-i18n="tab_1">Manuver</span></button>
+          <button type="button" role="tab" id="t-v97" data-tab="v97" aria-controls="p-v97" aria-selected="false" tabindex="-1"><span class="m">v97</span> <span data-i18n="tab_2">Cut-off</span></button>
+          <button type="button" role="tab" id="t-noise" data-tab="noise" aria-controls="p-noise" aria-selected="false" tabindex="-1"><span class="m">pbt</span> <span data-i18n="tab_3">Derau</span></button>
+        </div>
+      </div>
+
+      <div class="panels compare" role="tabpanel" id="p-p40" aria-labelledby="t-p40" data-slot="compare-1" data-alt="Perbandingan eksekusi manuver P40">
+        <div class="compare__bar">
+          <span class="compare__name" data-i18n="cmp_1_name">Injeksi dorong P40 ke memori 15-bit</span>
+          <span class="compare__count" data-i18n="cmp_1_cnt">Pengaman aktif</span>
+        </div>
+        <table class="diff">
+          <caption class="visually-hidden">Perbandingan pada manuver P40</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Delta</span></th>
+              <th scope="col" data-i18n="diff_col_step">Lapisan</th>
+              <th scope="col"><span class="m cool">Vibe model</span></th>
+              <th scope="col"><span class="m cool">Kiro spec</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="g m"></td>
+              <th scope="row"><span class="m n">1</span><span data-i18n="d1_r1">Pemicu gelombang</span></th>
+              <td class="m">1200&nbsp;Hz, 250&nbsp;ms</td>
+              <td class="m">on_acoustic_preamble.json</td>
+            </tr>
+            <tr class="is-changed">
+              <td class="g m" aria-label="changed">±</td>
+              <th scope="row"><span class="m n">2</span><span data-i18n="d1_r2">Format kata memori</span></th>
+              <td class="m was"><del>Halusinasi 32-bit</del></td>
+              <td class="m now"><ins>15-bit oktal + paritas</ins></td>
+            </tr>
+            <tr class="is-changed">
+              <td class="g m" aria-label="changed">±</td>
+              <th scope="row"><span class="m n">3</span><span data-i18n="d1_r3">Jedah tombol</span></th>
+              <td class="m was"><del>Spam 0&nbsp;ms, bus macet</del></td>
+              <td class="m now"><ins>Cek Key rel, jeda 100&nbsp;ms</ins></td>
+            </tr>
+          </tbody>
+        </table>
+        <ol class="between" aria-label="Catatan rekayasa P40">
+          <li><span class="m cool">fr-4</span><span class="amber">Steering rule</span><span class="m cool">100 ms</span><q data-i18n="d1_q">Cek Key rel sebelum ketik tombol.</q></li>
+        </ol>
+      </div>
+
+      <div class="panels compare" role="tabpanel" id="p-v97" hidden aria-labelledby="t-v97" data-slot="compare-2" data-alt="Pencegahan instruksi berbahaya Verb 97">
+        <div class="compare__bar">
+          <span class="compare__name" data-i18n="cmp_2_name">Interupsi darurat Verb 97 saat roket menyala</span>
+          <span class="compare__count" data-i18n="cmp_2_cnt">Blokir tanpa token</span>
+        </div>
+        <table class="diff">
+          <caption class="visually-hidden">Perbandingan proteksi Verb 97</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Delta</span></th>
+              <th scope="col" data-i18n="diff_col_step_2">Lapisan</th>
+              <th scope="col"><span class="m cool">Vibe model</span></th>
+              <th scope="col"><span class="m cool">Kiro spec</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="g m"></td>
+              <th scope="row"><span class="m n">1</span><span data-i18n="d2_r1">Dekode payload</span></th>
+              <td class="m">Verb 97, Noun 00</td>
+              <td class="m">Verb 97, Noun 00</td>
+            </tr>
+            <tr class="is-changed">
+              <td class="g m" aria-label="changed">±</td>
+              <th scope="row"><span class="m n">2</span><span data-i18n="d2_r2">Aksi saat burn</span></th>
+              <td class="m was"><del>Langsung matikan mesin</del></td>
+              <td class="m now"><ins>Tahan, minta token</ins></td>
+            </tr>
+          </tbody>
+        </table>
+        <ol class="between" aria-label="Catatan keamanan Verb 97">
+          <li><span class="m cool">fr-5</span><span class="amber">Operator token</span><span class="m cool">Tertahan</span><q data-i18n="d2_q">Mesin lagi nyala jangan main cabut gas tanpa tanda tangan stasiun bumi.</q></li>
+        </ol>
+      </div>
+
+      <div class="panels compare" role="tabpanel" id="p-noise" hidden aria-labelledby="t-noise" data-slot="compare-3" data-alt="Pengujian Hypothesis terhadap derau suara">
+        <div class="compare__bar">
+          <span class="compare__name" data-i18n="cmp_3_name">Uji ketahanan derau bising (Hypothesis)</span>
+          <span class="compare__count" data-i18n="cmp_3_cnt">10.000 sampel acak</span>
+        </div>
+        <table class="diff">
+          <caption class="visually-hidden">Perbandingan ketahanan derau</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Delta</span></th>
+              <th scope="col" data-i18n="diff_col_step_3">Lapisan</th>
+              <th scope="col"><span class="m cool">Modem polos</span></th>
+              <th scope="col"><span class="m cool">Kiro + crc-16</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="is-changed">
+              <td class="g m" aria-label="changed">±</td>
+              <th scope="row"><span class="m n">1</span><span data-i18n="d3_r1">Suara batuk</span></th>
+              <td class="m was"><del>Terbaca bit liar</del></td>
+              <td class="m now"><ins>Dibuang saat cek crc-16</ins></td>
+            </tr>
+            <tr class="is-changed">
+              <td class="g m" aria-label="changed">±</td>
+              <th scope="row"><span class="m n">2</span><span data-i18n="d3_r2">Melenceng &gt; 50&nbsp;Hz</span></th>
+              <td class="m was"><del>Proses crash</del></td>
+              <td class="m now"><ins>Dicatat anomali</ins></td>
+            </tr>
+          </tbody>
+        </table>
+        <ol class="between" aria-label="Catatan pengujian properti">
+          <li><span class="m cool">fr-2</span><span class="amber">Hypothesis</span><span class="m cool">100% lolos</span><q data-i18n="d3_q">Suara batuk di ruangan enggak bakal bikin wahana salah belok.</q></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="try" id="try" aria-labelledby="try-head">
+  <div class="container try__grid">
+    <div class="try__text">
+      <h2 id="try-head" data-i18n="try_h2">Meja uji akustik dan DSKY</h2>
+      <p class="lead" data-i18n="try_lead">Kirim nada FSK ke register Apollo.</p>
+    </div>
+    <div class="panels pair ticks">
+      <form class="pair__you" id="dsky-form" novalidate>
+        <p class="pair__who">
+          <span><span class="state-pill state-pill--amber" data-i18n="role_person">Operator</span> <span data-i18n="you_title">Stasiun bumi (2026)</span></span>
+          <span class="m amber" id="freq-indicator">1200 / 2200 Hz</span>
+        </p>
+        <div class="field-row">
+          <div class="field">
+            <label for="cmd-select" data-i18n="lbl_cmd">Paket instruksi</label>
+            <select class="input m" id="cmd-select" name="command">
+              <option value="0">v37 n40 (p40 thrust)</option>
+              <option value="1">v16 n65 (met clock)</option>
+              <option value="2">v06 n33 (ignition tig)</option>
+              <option value="3">v97 n00 (engine cut-off)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="deltav-input" data-i18n="lbl_dv">Target Delta-V (ft/s)</label>
+            <input class="input m" id="deltav-input" name="deltav" type="number" inputmode="numeric" min="-9999" max="9999" step="10" value="3120">
+          </div>
+        </div>
+        <div class="field">
+          <label for="drift-input"><span data-i18n="lbl_drift">Pergeseran frekuensi / derau</span> <span class="m amber" id="drift-val">12 Hz</span></label>
+          <input class="input" id="drift-input" name="drift" type="range" min="0" max="80" step="2" value="12">
+        </div>
+        <label class="check-row" for="sig-check">
+          <input type="checkbox" id="sig-check" name="signature">
+          <span data-i18n="lbl_sig">Token otorisasi operator (Verb 97)</span>
+        </label>
+        <div class="workbench-actions">
+          <button class="btn btn--amber" type="button" id="btn-modulate" data-i18n="btn_modulate">Pancarkan sinyal FSK</button>
+          <button class="btn btn--line" type="button" id="btn-noise-test" data-i18n="btn_noise">Uji derau 65 Hz</button>
+        </div>
+        <p class="field__help" id="form-help" aria-live="polite" data-i18n="help_ready">Siap modulasi Bell-202.</p>
+      </form>
+
+      <div class="pair__system" aria-live="polite">
+        <p class="pair__who">
+          <span><span class="state-pill state-pill--cool" data-i18n="role_sys">Instrumen</span> <span data-i18n="sys_title">AGC Block II (1969) &amp; MCP</span></span>
+          <span class="state-pill state-pill--ok m" id="crc-badge">crc-16 0x9f4a</span>
+        </p>
+        <div class="dsky-grid">
+          <div class="dsky-readout" aria-label="Layar DSKY Apollo">
+            <div class="dsky-top">
+              <div class="dsky-cell"><span>Prog</span><strong id="dsky-prog">40</strong></div>
+              <div class="dsky-cell"><span>Verb</span><strong id="dsky-verb">37</strong></div>
+              <div class="dsky-cell"><span>Noun</span><strong id="dsky-noun">40</strong></div>
+            </div>
+            <div class="dsky-regs">
+              <div class="dsky-reg"><span>R1 Azimuth</span><strong id="dsky-r1">+00125</strong></div>
+              <div class="dsky-reg"><span>R2 Elevation</span><strong id="dsky-r2">+00042</strong></div>
+              <div class="dsky-reg"><span>R3 Delta-V</span><strong id="dsky-r3">+03120</strong></div>
+            </div>
+            <div class="rope-strip">
+              <div class="rope-strip__meta">
+                <span>Rope 15-bit</span>
+                <span class="m cool" id="octal-word">06060 p1</span>
+              </div>
+              <canvas class="rope-canvas" id="rope-canvas" width="240" height="18" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <div class="dsky-right">
+            <div class="lamps" role="status" aria-label="Lampu indikator DSKY">
+              <div class="lamp is-on-cool" id="lamp-comp">Comp acty</div>
+              <div class="lamp" id="lamp-uplink">Uplink acty</div>
+              <div class="lamp" id="lamp-key">Key rel</div>
+              <div class="lamp" id="lamp-err">Opr err</div>
+            </div>
+            <div class="keypad" aria-label="Papan tombol taktil DSKY 900 Hz">
+              <button type="button" class="key" data-key="V">Verb</button>
+              <button type="button" class="key" data-key="N">Noun</button>
+              <button type="button" class="key" data-key="+">+</button>
+              <button type="button" class="key" data-key="-">-</button>
+              <button type="button" class="key" data-key="7">7</button>
+              <button type="button" class="key" data-key="8">8</button>
+              <button type="button" class="key" data-key="9">9</button>
+              <button type="button" class="key" data-key="C">Clr</button>
+              <button type="button" class="key" data-key="4">4</button>
+              <button type="button" class="key" data-key="5">5</button>
+              <button type="button" class="key" data-key="6">6</button>
+              <button type="button" class="key" data-key="P">Pro</button>
+              <button type="button" class="key" data-key="1">1</button>
+              <button type="button" class="key" data-key="2">2</button>
+              <button type="button" class="key" data-key="3">3</button>
+              <button type="button" class="key" data-key="K">Key rel</button>
+              <button type="button" class="key" data-key="0">0</button>
+              <button type="button" class="key" data-key="E">Entr</button>
+              <button type="button" class="key" data-key="R">Rset</button>
+              <button type="button" class="key" data-key="S">Sync</button>
+            </div>
+          </div>
+        </div>
+        <dl class="pair__parts">
+          <div><dt data-i18n="sys_dt_1">Status Kiro</dt><dd class="amber" id="sys-status" data-i18n="sys_dd_ok">Tervalidasi kontrak agc-safety-rules.md</dd></div>
+          <div><dt data-i18n="sys_dt_2">Panggilan MCP</dt><dd class="cool"><code id="sys-mcp">execute_dsky_sequence(v37, n40, enter)</code></dd></div>
+          <div><dt data-i18n="sys_dt_3">Catatan log</dt><dd id="sys-log" data-i18n="sys_log_default">“Sinyal akustik mulus, register R3 terisi.”</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="questions" id="questions" aria-labelledby="questions-head">
+  <div class="container questions__grid">
+    <h2 id="questions-head" data-i18n="qa_h2">Yang ditanya juri</h2>
+    <dl class="qa">
+      <div>
+        <dt data-i18n="q1_dt">Kenapa pakai audio, bukan Wi-Fi?</dt>
+        <dd data-i18n="q1_dd">Port IP membuka celah burn vector; suara memutus jaringan.</dd>
+      </div>
+      <div>
+        <dt data-i18n="q2_dt">Aman dari suara batuk ruangan?</dt>
+        <dd data-i18n="q2_dd">Validasi crc-16 dan 10.000 uji Hypothesis membuang derau.</dd>
+      </div>
+      <div>
+        <dt data-i18n="q3_dt">Apa tugas agen Kiro di sini?</dt>
+        <dd data-i18n="q3_dd">Hook menangkap 1200 Hz, memanggil MCP, lalu mengecek steering.</dd>
+      </div>
+      <div class="qa__last">
+        <dt data-i18n="q4_dt">Berapa beban sistem saat diuji?</dt>
+        <dd>
+          <span data-i18n="q4_dd">Offline di localhost, memori 256 MB, latensi 2 detik.</span>
+          <a class="btn btn--line" href="#try" data-i18n="q4_btn">Coba meja uji DSKY</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="container">
+    <div class="foot__mast" aria-hidden="true" data-mast-word="APOLLO-26">
+      <canvas id="mast-canvas"></canvas>
+    </div>
+    <div class="foot__in">
+      <p class="foot__sign" data-i18n="foot_sign">Apollo-26 untuk Kiroween 2026.</p>
+      <p class="foot__date"><time datetime="2026-12-04" data-i18n="foot_date">Frankenstein, 4 Desember 2026</time></p>
+      <nav class="foot__links" aria-label="Footer">
+        <a href="#reason" data-i18n="nav_reason">Jembatan akustik</a>
+        <a href="#before" data-i18n="nav_before">Proteksi Kiro</a>
+        <a href="#try" data-i18n="nav_try">Meja uji DSKY</a>
+        <a href="#questions" data-i18n="nav_qa">Tanya jawab</a>
+      </nav>
+      <p class="foot__legal" data-i18n="foot_legal">Lisensi MIT, 0 socket keluar.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    id: {
+      skip: "Langsung ke isi",
+      nav_reason: "Jembatan akustik",
+      nav_before: "Proteksi Kiro",
+      nav_try: "Meja uji DSKY",
+      nav_qa: "Tanya jawab",
+      audio_on: "Suara aktif",
+      audio_off: "Suara bisu",
+      nav_cta: "Buka DSKY",
+      hero_h1: "Kemudi bulan lewat gelombang suara.",
+      hero_lead: "Agen Kiro 2026 memandu komputer Apollo 1969 lewat audio Bell-202.",
+      hero_btn_1: "Bunyikan paket FSK",
+      hero_btn_2: "Uji tombol DSKY",
+      hero_status: "Carrier 1200 Hz siap dipancarkan.",
+      wave_label: "Spektrum FSK Bell-202",
+      hero_table_cap: "Tahap dekode akustik ke bus memori AGC 1969",
+      th_stage: "Tahap",
+      th_reading: "Pengukuran",
+      th_time: "Waktu",
+      st_1: "Preamble mikrofon",
+      st_2: "Demodulasi MCP",
+      st_3: "Kontrak aturan Kiro",
+      st_4: "Bus memori 15-bit",
+      dl_who: "Pengendali",
+      dl_when: "Isolasi",
+      dl_ver: "Program",
+      dl_why: "Catatan",
+      pkt_0_title: "Manuver dorong P40",
+      pkt_0_why: "“Murni suara ke mikrofon, bebas exploit.”",
+      pkt_1_title: "Sinkronisasi jam misi",
+      pkt_1_why: "“Kalibrasi waktu misi langsung ke register oktal 15-bit tanpa menyentuh jaringan IP.”",
+      pkt_2_title: "Jadwal penyalaan roket",
+      pkt_2_why: "“Koordinat waktu nyala mesin dikirim lewat udara dan diverifikasi penuh dengan crc-16.”",
+      pkt_3_title: "Darurat matikan mesin",
+      pkt_3_why: "“Waduh, Verb 97 pas mesin nyala langsung ditahan Kiro kalau belum ada token operator.”",
+      reason_h2: "Putus kabel jaringan, sisakan suara",
+      sign_dt_1: "Jaringan",
+      sign_dd_1: "0 socket keluar",
+      sign_dt_2: "Otorisasi",
+      sign_dd_2: "Token wajib instruksi kritis",
+      sign_dt_3: "Ketahanan",
+      sign_dt_4: "Alasan",
+      sign_dd_4: "“Tanpa port IP, serangan otomatis mental.”",
+      before_h2: "Kenapa bukan LLM biasa?",
+      before_lead: "Kiro diikat spesifikasi formal, bukan tebakan.",
+      tab_1: "Manuver",
+      tab_2: "Cut-off",
+      tab_3: "Derau",
+      cmp_1_name: "Injeksi dorong P40 ke memori 15-bit",
+      cmp_1_cnt: "Pengaman aktif",
+      diff_col_step: "Lapisan",
+      diff_col_step_2: "Lapisan",
+      diff_col_step_3: "Lapisan",
+      d1_r1: "Pemicu gelombang",
+      d1_r2: "Format kata memori",
+      d1_r3: "Jedah tombol",
+      d1_q: "Cek Key rel sebelum ketik tombol.",
+      cmp_2_name: "Interupsi darurat Verb 97 saat roket menyala",
+      cmp_2_cnt: "Blokir tanpa token",
+      d2_r1: "Dekode payload",
+      d2_r2: "Aksi saat burn",
+      d2_q: "Mesin lagi nyala jangan main cabut gas tanpa tanda tangan stasiun bumi.",
+      cmp_3_name: "Uji ketahanan derau bising (Hypothesis)",
+      cmp_3_cnt: "10.000 sampel acak",
+      d3_r1: "Suara batuk",
+      d3_r2: "Melenceng > 50 Hz",
+      d3_q: "Suara batuk di ruangan enggak bakal bikin wahana salah belok.",
+      try_h2: "Meja uji akustik dan DSKY",
+      try_lead: "Kirim nada FSK ke register Apollo.",
+      role_person: "Operator",
+      you_title: "Stasiun bumi (2026)",
+      lbl_cmd: "Paket instruksi",
+      lbl_dv: "Target Delta-V (ft/s)",
+      lbl_drift: "Pergeseran frekuensi / derau",
+      lbl_sig: "Token otorisasi operator (Verb 97)",
+      btn_modulate: "Pancarkan sinyal FSK",
+      btn_noise: "Uji derau 65 Hz",
+      help_ready: "Siap modulasi Bell-202.",
+      role_sys: "Instrumen",
+      sys_title: "AGC Block II (1969) & MCP",
+      sys_dt_1: "Status Kiro",
+      sys_dd_ok: "Tervalidasi kontrak agc-safety-rules.md",
+      sys_dt_2: "Panggilan MCP",
+      sys_dt_3: "Catatan log",
+      sys_log_default: "“Sinyal akustik mulus, register R3 terisi.”",
+      qa_h2: "Yang ditanya juri",
+      q1_dt: "Kenapa pakai audio, bukan Wi-Fi?",
+      q1_dd: "Port IP membuka celah burn vector; suara memutus jaringan.",
+      q2_dt: "Aman dari suara batuk ruangan?",
+      q2_dd: "Validasi crc-16 dan 10.000 uji Hypothesis membuang derau.",
+      q3_dt: "Apa tugas agen Kiro di sini?",
+      q3_dd: "Hook menangkap 1200 Hz, memanggil MCP, lalu mengecek steering.",
+      q4_dt: "Berapa beban sistem saat diuji?",
+      q4_dd: "Offline di localhost, memori 256 MB, latensi 2 detik.",
+      q4_btn: "Coba meja uji DSKY",
+      foot_sign: "Apollo-26 untuk Kiroween 2026.",
+      foot_date: "Frankenstein, 4 Desember 2026",
+      foot_legal: "Lisensi MIT, 0 socket keluar."
+    },
+    en: {
+      skip: "Skip to content",
+      nav_reason: "Acoustic air-gap",
+      nav_before: "Kiro guardrails",
+      nav_try: "DSKY workbench",
+      nav_qa: "Questions",
+      audio_on: "Audio enabled",
+      audio_off: "Audio muted",
+      nav_cta: "Open DSKY",
+      hero_h1: "Steer a lunar module by sound.",
+      hero_lead: "Apollo-26 links a 2026 Kiro agent to the 1969 Apollo computer over audio.",
+      hero_btn_1: "Transmit FSK burst",
+      hero_btn_2: "Test DSKY keypad",
+      hero_status: "1200 Hz carrier ready to transmit.",
+      wave_label: "Bell-202 FSK spectrum",
+      hero_table_cap: "Acoustic decode stages into the 1969 AGC memory bus",
+      th_stage: "Stage",
+      th_reading: "Measurement",
+      th_time: "Latency",
+      st_1: "Carrier preamble",
+      st_2: "MCP FSK decode",
+      st_3: "Kiro steering check",
+      st_4: "15-bit AGC bus",
+      dl_who: "Controller",
+      dl_when: "Isolation",
+      dl_ver: "Program",
+      dl_why: "Record note",
+      pkt_0_title: "P40 thrust vector burn",
+      pkt_0_why: "“Pure speaker-to-microphone tones across an air-gap.”",
+      pkt_1_title: "Mission clock sync",
+      pkt_1_why: "“Synchronizes mission elapsed time into 15-bit octal registers with zero IP surface.”",
+      pkt_2_title: "Time of ignition load",
+      pkt_2_why: "“Loads burn ignition window over Bell-202 audio with full crc-16 frame verification.”",
+      pkt_3_title: "Emergency engine cut-off",
+      pkt_3_why: "“Blocked by agc-safety-rules.md during an active burn unless an operator token is signed.”",
+      reason_h2: "Cut the network cable, keep the sound",
+      sign_dt_1: "Network",
+      sign_dd_1: "0 outbound sockets",
+      sign_dt_2: "Authority",
+      sign_dd_2: "Operator token required on critical verbs",
+      sign_dt_3: "Resilience",
+      sign_dt_4: "Rationale",
+      sign_dd_4: "“Without an open IP port, remote exploits have nowhere to land.”",
+      before_h2: "Why not an unguarded LLM?",
+      before_lead: "Kiro runs on formal EARS contracts, not guesswork.",
+      tab_1: "Burn P40",
+      tab_2: "Cut-off",
+      tab_3: "Noise",
+      cmp_1_name: "P40 thrust injection into 15-bit memory",
+      cmp_1_cnt: "Two safety checks enforced",
+      diff_col_step: "Layer",
+      diff_col_step_2: "Layer",
+      diff_col_step_3: "Layer",
+      d1_r1: "Carrier wake hook",
+      d1_r2: "Memory word format",
+      d1_r3: "DSKY key cadence",
+      d1_q: "Checks Key rel lamp before pacing keys at 100 ms.",
+      cmp_2_name: "Emergency Verb 97 cut-off during active burn",
+      cmp_2_cnt: "Halted without token",
+      d2_r1: "Decoded payload",
+      d2_r2: "Action during burn",
+      d2_q: "Halts destructive engine cut-off commands until the ground station signs an operator token.",
+      cmp_3_name: "Ambient noise fuzzing (Hypothesis)",
+      cmp_3_cnt: "10,000 randomized cases",
+      d3_r1: "Cough or key clicks",
+      d3_r2: "Drift past 50 Hz",
+      d3_q: "Discards corrupted frames at the crc-16 gate before a single key reaches the DSKY.",
+      try_h2: "Acoustic and DSKY workbench",
+      try_lead: "Transmit FSK tones into Apollo registers.",
+      role_person: "Operator",
+      you_title: "Ground station (2026)",
+      lbl_cmd: "Instruction packet",
+      lbl_dv: "Target Delta-V (ft/s)",
+      lbl_drift: "Frequency drift / room noise",
+      lbl_sig: "Operator signature token (Verb 97)",
+      btn_modulate: "Transmit FSK burst",
+      btn_noise: "Test 65 Hz drift",
+      help_ready: "Ready for Bell-202 modulation.",
+      role_sys: "Instrument",
+      sys_title: "AGC Block II (1969) & MCP",
+      sys_dt_1: "Kiro gate",
+      sys_dd_ok: "Verified against agc-safety-rules.md",
+      sys_dt_2: "MCP call",
+      sys_dt_3: "Audit log",
+      sys_log_default: "“Air-gap intact, register R3 updated.”",
+      qa_h2: "What judges ask first",
+      q1_dt: "Why audio instead of Wi-Fi?",
+      q1_dd: "IP ports expose burn vectors; sound severs the network layer.",
+      q2_dt: "Safe against room noise or a cough?",
+      q2_dd: "Crc-16 checks and 10,000 Hypothesis runs discard stray noise.",
+      q3_dt: "What does the Kiro agent do here?",
+      q3_dd: "The hook catches 1200 Hz, calls MCP, and checks steering rules.",
+      q4_dt: "What is the runtime footprint?",
+      q4_dd: "Offline on localhost, 256 MB RAM, under 2 seconds latency.",
+      q4_btn: "Try the DSKY workbench",
+      foot_sign: "Apollo-26 for Kiroween 2026.",
+      foot_date: "Frankenstein, 4 December 2026",
+      foot_legal: "MIT License, zero outbound sockets."
+    }
+  };
+
+  var PACKETS = [
+    { verb: "37", noun: "40", prog: "40", r1: "+00125", r2: "+00042", r3: "+03120", crc: "0x9f4a", lat: "1.42 s", who: "Kiro Hook", critical: false },
+    { verb: "16", noun: "65", prog: "00", r1: "+00014", r2: "+00052", r3: "+00009", crc: "0x4c18", lat: "1.18 s", who: "Kiro Hook", critical: false },
+    { verb: "06", noun: "33", prog: "40", r1: "+00102", r2: "+00019", r3: "+00450", crc: "0x7b21", lat: "1.31 s", who: "Kiro Hook", critical: false },
+    { verb: "97", noun: "00", prog: "00", r1: "+00000", r2: "+00000", r3: "+00000", crc: "0xe011", lat: "0.41 s", who: "Operator token", critical: true }
+  ];
+
+  var state = {
+    lang: "id",
+    muted: false,
+    heroPkt: 0,
+    wbPkt: 0,
+    deltaV: 3120,
+    drift: 12,
+    signed: false,
+    keyBuffer: "",
+    keyMode: null,
+    wavePhase: 0,
+    burstActive: false,
+    burstTime: -9999
+  };
+
+  try {
+    var saved = localStorage.getItem("apollo26_lang");
+    if (saved === "id" || saved === "en") state.lang = saved;
+  } catch (e) {}
+
+  var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  /* ---------- OKLCH Token Reader for Canvas & WebGL ---------- */
+  function parseOklchToken(varName) {
+    var raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    var m = raw.match(/oklch\(\s*([\d.]+)%\s+([\d.]+)\s+([\d.]+)/);
+    if (!m) return [0.8, 0.8, 0.8];
+    var L = +m[1] / 100, C = +m[2], h = (+m[3] * Math.PI) / 180;
+    var a = C * Math.cos(h), b = C * Math.sin(h);
+    var l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+    var m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+    var s_ = L - 0.0894841775 * a - 1.291485548 * b;
+    var l = l_ * l_ * l_, mm = m_ * m_ * m_, s = s_ * s_ * s_;
+    var lin = [
+      4.0767416621 * l - 3.3077115913 * mm + 0.2309699292 * s,
+      -1.2684380046 * l + 2.6097574011 * mm - 0.3413193965 * s,
+      -0.0041960863 * l - 0.7034186147 * mm + 1.707614701 * s
+    ];
+    return lin.map(function (v) {
+      v = Math.max(0, Math.min(1, v));
+      return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+    });
+  }
+  function rgbCss(arr, alpha) {
+    return "rgba(" + Math.round(arr[0] * 255) + "," + Math.round(arr[1] * 255) + "," + Math.round(arr[2] * 255) + "," + (alpha == null ? 1 : alpha) + ")";
+  }
+  var PAL = {
+    lo: parseOklchToken("--point-lo"),
+    mid: parseOklchToken("--point-mid"),
+    hi: parseOklchToken("--point-hi"),
+    amber: parseOklchToken("--color-accent"),
+    cool: parseOklchToken("--color-cool"),
+    ok: parseOklchToken("--color-ok"),
+    bad: parseOklchToken("--color-bad"),
+    paper3: parseOklchToken("--color-paper-3"),
+    rule: parseOklchToken("--color-rule"),
+    muted: parseOklchToken("--color-muted")
+  };
+
+  /* ---------- Web Audio API Bell-202 FSK & 900 Hz DSKY Click ---------- */
+  var audioCtx = null;
+  function ensureAudio() {
+    if (state.muted) return null;
+    try {
+      if (!audioCtx) {
+        var Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) {}
+    return audioCtx;
+  }
+
+  function playKeyClick(freq) {
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    try {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq || 900, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.05);
+    } catch (e) {}
+  }
+
+  function playFskBurst(bits, driftHz) {
+    var ctx = ensureAudio();
+    state.burstActive = true;
+    state.burstTime = performance.now();
+    drawWave(performance.now());
+    setTimeout(function () {
+      state.burstActive = false;
+      drawWave(performance.now());
+    }, 1100);
+    if (!ctx) return;
+    try {
+      var now = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.09, now + 0.02);
+      osc.frequency.setValueAtTime(1200 + (driftHz || 0), now);
+      var t = now + 0.25;
+      for (var i = 0; i < bits.length; i++) {
+        var f = (bits[i] ? 1200 : 2200) + (driftHz || 0) * (i % 2 ? 1 : -1);
+        osc.frequency.setValueAtTime(f, t);
+        t += 0.055;
+      }
+      gain.gain.setValueAtTime(0.09, t - 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.03);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(t + 0.04);
+    } catch (e) {}
+  }
+
+  function crc16Hex(str) {
+    var crc = 0xFFFF;
+    for (var i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (var j = 0; j < 8; j++) {
+        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+        crc &= 0xFFFF;
+      }
+    }
+    return "0x" + crc.toString(16).toLowerCase().padStart(4, "0");
+  }
+
+  function formatReg(num) {
+    var n = Math.max(-99999, Math.min(99999, Math.round(Number(num) || 0)));
+    var sign = n < 0 ? "-" : "+";
+    return sign + String(Math.abs(n)).padStart(5, "0");
+  }
+
+  /* ---------- 15-Bit AGC Block II Core Rope & Odd Parity Visualizer ---------- */
+  function drawCoreRope(valNum) {
+    var canvas = document.getElementById("rope-canvas");
+    var octalOut = document.getElementById("octal-word");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // 15-bit one's complement representation
+    var n = Math.round(Math.abs(Number(valNum) || 0)) & 0x3FFF;
+    var word15 = (Number(valNum) < 0) ? ((~n) & 0x7FFF) : n;
+    var ones = 0;
+    for (var b = 0; b < 15; b++) {
+      if ((word15 >> b) & 1) ones++;
+    }
+    var parity = (ones % 2 === 0) ? 1 : 0; // odd parity bit
+    if (octalOut) {
+      octalOut.textContent = word15.toString(8).padStart(5, "0") + " p" + parity;
+    }
+
+    var cells = 16;
+    var gap = 3;
+    var cw = (w - gap * (cells - 1)) / cells;
+    for (var i = 0; i < cells; i++) {
+      var bit = (i < 15) ? ((word15 >> (14 - i)) & 1) : parity;
+      var isParity = i === 15;
+      var col = isParity ? PAL.amber : (bit ? PAL.ok : PAL.rule);
+      ctx.fillStyle = rgbCss(col, bit || isParity ? 0.9 : 0.45);
+      ctx.fillRect(i * (cw + gap), 2, cw, h - 4);
+    }
+  }
+
+  /* ---------- Rolling Waterfall Spectrogram + Carrier Oscilloscope ---------- */
+  var waterfallRows = [];
+  var WF_COLS = 56;
+  var WF_ROWS = 14;
+  for (var r = 0; r < WF_ROWS; r++) {
+    var rowArr = [];
+    for (var c = 0; c < WF_COLS; c++) rowArr.push((r + c) % 3 === 0 ? 0.65 : 0.18);
+    waterfallRows.push(rowArr);
+  }
+  var lastWfTick = 0;
+
+  function drawWave(now) {
+    var canvas = document.getElementById("fsk-canvas");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var w = canvas.width;
+    var h = canvas.height;
+    var ts = now || performance.now();
+    var t = ts * 0.0045 + state.wavePhase;
+
+    var pkt = PACKETS[state.heroPkt];
+    var pattern = pkt.verb === "97"
+      ? [1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1]
+      : [1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0];
+
+    // Advance waterfall history every 75ms
+    if (ts - lastWfTick > 75) {
+      lastWfTick = ts;
+      var newRow = [];
+      for (var c = 0; c < WF_COLS; c++) {
+        var b = pattern[Math.floor((c / WF_COLS) * pattern.length)];
+        var markZone = (c % 7 < 4);
+        var energy = (b === 1 && markZone) || (b === 0 && !markZone) ? (state.burstActive ? 0.95 : 0.68) : 0.14;
+        newRow.push(energy);
+      }
+      waterfallRows.unshift(newRow);
+      if (waterfallRows.length > WF_ROWS) waterfallRows.pop();
+    }
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = rgbCss(PAL.paper3, 1);
+    ctx.fillRect(0, 0, w, h);
+
+    // Upper half: Phase-Continuous FSK Carrier Wave
+    var topH = Math.round(h * 0.48);
+    ctx.strokeStyle = rgbCss(PAL.rule, 0.5);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, Math.round(topH * 0.5) + 0.5);
+    ctx.lineTo(w, Math.round(topH * 0.5) + 0.5);
+    ctx.moveTo(0, topH + 0.5);
+    ctx.lineTo(w, topH + 0.5);
+    ctx.stroke();
+
+    var waveColor = pkt.critical ? PAL.amber : (state.burstActive ? PAL.amber : PAL.cool);
+    ctx.strokeStyle = rgbCss(waveColor, 0.96);
+    ctx.lineWidth = 1.85;
+    ctx.beginPath();
+    var phase = -t * 2.4;
+    for (var x = 0; x < w; x++) {
+      var seg = Math.floor((x / w) * pattern.length);
+      var bit = pattern[seg];
+      phase += bit ? 0.09 : 0.19;
+      var amp = state.burstActive ? (topH * 0.38) : (topH * 0.28);
+      var y = topH * 0.5 + Math.sin(phase) * amp;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Lower half: Rolling 2D Waterfall Spectrogram Matrix
+    var wfTop = topH + 3;
+    var wfH = h - wfTop - 2;
+    var cellW = w / WF_COLS;
+    var cellH = wfH / WF_ROWS;
+    for (var rIdx = 0; rIdx < waterfallRows.length; rIdx++) {
+      var row = waterfallRows[rIdx];
+      var rowFade = 1 - (rIdx / WF_ROWS) * 0.65;
+      for (var cIdx = 0; cIdx < WF_COLS; cIdx++) {
+        var val = row[cIdx];
+        var col = val > 0.78 ? PAL.amber : (val > 0.45 ? PAL.cool : PAL.lo);
+        ctx.fillStyle = rgbCss(col, val * rowFade);
+        ctx.fillRect(cIdx * cellW + 0.5, wfTop + rIdx * cellH + 0.5, Math.max(1.5, cellW - 1.2), Math.max(1.5, cellH - 1));
+      }
+    }
+  }
+
+  /* ---------- Live 3D Lunar Mare Crater, Trajectory & Callout Leaders ---------- */
+  function initLunarCloud() {
+    var canvas = document.getElementById("lunar-cloud");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var calloutBurn = document.getElementById("callout-burn");
+    var calloutCrater = document.getElementById("callout-crater");
+    var pts = [];
+    var seed = 19692026;
+    function rnd() {
+      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+
+    var gridN = window.innerWidth < 700 ? 48 : 66;
+    for (var gz = -gridN; gz <= gridN; gz += 2) {
+      for (var gx = -gridN; gx <= gridN; gx += 2) {
+        var x = gx * 1.6 + (rnd() - 0.5) * 0.6;
+        var z = gz * 1.6 + (rnd() - 0.5) * 0.6;
+        var r = Math.hypot(x - 14, z + 6);
+        var crater = r < 28 ? (Math.cos((r / 28) * Math.PI) * -6.5 + Math.exp(-Math.pow((r - 22) / 5, 2)) * 5.2) : 0;
+        var ridge = Math.sin(x * 0.06) * Math.cos(z * 0.06) * 2.8;
+        var y = -14 + crater + ridge;
+        var kind = r < 24 && r > 18 ? 1 : 0;
+        pts.push({ x: x, y: y, z: z, kind: kind });
+      }
+    }
+    for (var s = 0; s < 150; s++) {
+      var u = s / 149;
+      var tx = -55 + u * 69;
+      var tz = 32 - u * 38;
+      var ty = 26 * Math.pow(1 - u, 1.55) - 14;
+      pts.push({ x: tx, y: ty, z: tz, kind: 2, u: u });
+    }
+
+    var w = 0, h = 0, yaw = 0.42, tpx = 0, tpy = 0, px = 0, py = 0, visible = true;
+    function resize() {
+      var rect = canvas.getBoundingClientRect();
+      w = rect.width;
+      h = rect.height;
+      canvas.width = Math.round(w * DPR);
+      canvas.height = Math.round(h * DPR);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    var heroEl = canvas.closest(".hero");
+    if (heroEl) {
+      heroEl.addEventListener("pointermove", function (e) {
+        var r = heroEl.getBoundingClientRect();
+        tpx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        tpy = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      });
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+      }).observe(canvas);
+    }
+
+    function projectPoint(pt, cosY, sinY, cosP, sinP, fov, cx, cy) {
+      var rx = pt[0] * cosY - pt[2] * sinY;
+      var rz = pt[0] * sinY + pt[2] * cosY;
+      var ry = pt[1] * cosP - rz * sinP;
+      var depth = pt[1] * sinP + rz * cosP + 145;
+      if (depth < 25) return null;
+      return [cx + (rx / depth) * fov, cy - (ry / depth) * fov];
+    }
+
+    function renderCloud(now) {
+      if (visible && w > 0 && h > 0) {
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        px += (tpx - px) * 0.05;
+        py += (tpy - py) * 0.05;
+        var curYaw = yaw + (reduceMotion ? 0 : now * 0.00008) + px * 0.08;
+        var pitch = 0.42 + py * 0.05;
+        var cosY = Math.cos(curYaw), sinY = Math.sin(curYaw);
+        var cosP = Math.cos(pitch), sinP = Math.sin(pitch);
+
+        var sweepPos = reduceMotion ? 14 : (((now * 0.001) % 7.5) / 5.8) * 180 - 90;
+        var burstAge = (now - state.burstTime) * 0.001;
+        var shockRadius = (burstAge >= 0 && burstAge < 1.6) ? burstAge * 68 : -999;
+
+        var fov = Math.min(w, h) * 0.92;
+        var cx = w * 0.52, cy = h * 0.54;
+
+        for (var i = 0; i < pts.length; i++) {
+          var p = pts[i];
+          var rx = p.x * cosY - p.z * sinY;
+          var rz = p.x * sinY + p.z * cosY;
+          var ry = p.y * cosP - rz * sinP;
+          var depth = p.y * sinP + rz * cosP + 145;
+          if (depth < 25) continue;
+
+          var sx = cx + (rx / depth) * fov;
+          var sy = cy - (ry / depth) * fov;
+          if (sx < 0 || sx > w || sy < 0 || sy > h) continue;
+
+          var dSweep = Math.abs(p.x - sweepPos);
+          var sweepBoost = dSweep < 14 ? Math.exp(-dSweep / 4.5) : 0;
+
+          var rCrater = Math.hypot(p.x - 14, p.z + 6);
+          var dShock = Math.abs(rCrater - shockRadius);
+          var shockBoost = dShock < 7 ? Math.exp(-dShock / 2.5) : 0;
+          var boost = Math.max(sweepBoost, shockBoost);
+
+          var col = PAL.lo;
+          var alpha = 0.42;
+          var sz = 1.35;
+
+          if (p.kind === 2) {
+            col = state.burstActive ? PAL.amber : PAL.cool;
+            alpha = 0.9;
+            sz = 2.25;
+          } else if (p.kind === 1 || boost > 0.25) {
+            col = boost > 0.45 ? PAL.amber : PAL.hi;
+            alpha = Math.min(0.95, 0.45 + boost * 0.55);
+            sz = 1.6 + boost * 0.95;
+          } else {
+            col = p.y > -12 ? PAL.mid : PAL.lo;
+            alpha = 0.34 + boost * 0.42;
+          }
+
+          ctx.fillStyle = rgbCss(col, alpha);
+          ctx.fillRect(sx, sy, sz, sz);
+        }
+
+        // Update 3D projected callout leaders
+        if (w >= 960) {
+          var bProj = projectPoint([-24, 4, 14], cosY, sinY, cosP, sinP, fov, cx, cy);
+          var cProj = projectPoint([14, -14, -6], cosY, sinY, cosP, sinP, fov, cx, cy);
+          if (calloutBurn && bProj) {
+            calloutBurn.style.transform = "translate3d(" + bProj[0].toFixed(1) + "px," + bProj[1].toFixed(1) + "px,0)";
+            calloutBurn.classList.toggle("is-hidden", bProj[0] < w * 0.28 || bProj[0] > w * 0.62);
+          }
+          if (calloutCrater && cProj) {
+            calloutCrater.style.transform = "translate3d(" + cProj[0].toFixed(1) + "px," + cProj[1].toFixed(1) + "px,0)";
+            calloutCrater.classList.toggle("is-hidden", cProj[0] < w * 0.32 || cProj[0] > w * 0.68);
+          }
+        }
+      }
+      drawWave(now);
+      if (!reduceMotion && !document.hidden) {
+        requestAnimationFrame(renderCloud);
+      }
+    }
+    requestAnimationFrame(renderCloud);
+  }
+
+  /* ---------- Interactive Cursor-Reactive Footer Mast ("APOLLO-26") ---------- */
+  function initFooterMast() {
+    var mast = document.querySelector("[data-mast-word]");
+    var canvas = document.getElementById("mast-canvas");
+    if (!mast || !canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var dots = [];
+    var mx = -999, my = -999;
+
+    function buildDots() {
+      var w = mast.clientWidth, h = mast.clientHeight;
+      if (!w || !h) return;
+      canvas.width = Math.round(w * DPR);
+      canvas.height = Math.round(h * DPR);
+      var off = document.createElement("canvas");
+      off.width = w;
+      off.height = h;
+      var og = off.getContext("2d");
+      var face = getComputedStyle(document.documentElement).getPropertyValue("--font-display");
+      og.font = "500 100px " + face;
+      var word = mast.getAttribute("data-mast-word") || "APOLLO-26";
+      var fs = Math.min(h * 1.15, (96 * w) / Math.max(1, og.measureText(word).width));
+      og.fillStyle = rgbCss(PAL.hi, 1);
+      og.font = "500 " + fs + "px " + face;
+      og.textBaseline = "alphabetic";
+      og.fillText(word, 0, h * 0.88);
+      var data = og.getImageData(0, 0, w, h).data;
+      var step = w < 640 ? 4 : 5;
+      dots = [];
+      for (var y = 0; y < h; y += step) {
+        for (var x = 0; x < w; x += step) {
+          var a = data[(y * w + x) * 4 + 3];
+          if (a > 110) dots.push([x, y]);
+        }
+      }
+      paintDots();
+    }
+
+    function paintDots() {
+      var w = mast.clientWidth, h = mast.clientHeight;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < dots.length; i++) {
+        var d = dots[i];
+        var dist = Math.hypot(d[0] - mx, d[1] - my);
+        var flare = dist < 90 ? (1 - dist / 90) : 0;
+        var ratio = d[0] / Math.max(1, w);
+        var col = flare > 0.25 ? PAL.amber : (ratio > 0.72 ? PAL.amber : (ratio > 0.45 ? PAL.cool : PAL.mid));
+        var sz = 1.8 + flare * 1.4;
+        ctx.fillStyle = rgbCss(col, Math.min(1, (ratio > 0.72 ? 0.78 : 0.48) + flare * 0.5));
+        ctx.fillRect(d[0] - flare * 0.5, d[1] - flare * 0.5, sz, sz);
+      }
+    }
+
+    mast.addEventListener("pointermove", function (e) {
+      var r = mast.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      paintDots();
+    });
+    mast.addEventListener("pointerleave", function () {
+      mx = -999;
+      my = -999;
+      paintDots();
+    });
+
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(buildDots);
+    window.addEventListener("resize", buildDots);
+  }
+
+  function renderHeroPacket() {
+    var p = PACKETS[state.heroPkt];
+    var dict = I18N[state.lang];
+    document.getElementById("hero-pkt-title").textContent = dict["pkt_" + state.heroPkt + "_title"];
+    document.getElementById("hero-why").textContent = dict["pkt_" + state.heroPkt + "_why"];
+    document.getElementById("cell-crc").textContent = "crc-16 " + p.crc;
+    document.getElementById("cell-regs").textContent = "r1 " + p.r1 + ", r3 " + p.r3;
+    document.getElementById("cell-lat").textContent = p.lat;
+    document.getElementById("hero-who").textContent = p.who;
+    document.getElementById("hero-prog").textContent = "v" + p.verb + " n" + p.noun;
+    var guardCell = document.getElementById("cell-guard");
+    if (p.critical) {
+      guardCell.innerHTML = state.lang === "id"
+        ? "<del>Eksekusi liar</del> <ins>Tahan: wajib token</ins>"
+        : "<del>Blind cut-off</del> <ins>Halted: needs token</ins>";
+    } else {
+      guardCell.innerHTML = state.lang === "id"
+        ? "<del>Raw prompt</del> <ins>Key rel aman</ins>"
+        : "<del>Raw prompt</del> <ins>Key rel verified</ins>";
+    }
+    document.querySelectorAll("[data-pkt]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", Number(btn.getAttribute("data-pkt")) === state.heroPkt ? "true" : "false");
+    });
+    drawWave(performance.now());
+  }
+
+  function syncWorkbench(triggerAudio) {
+    var sel = document.getElementById("cmd-select");
+    var dvInput = document.getElementById("deltav-input");
+    var driftInput = document.getElementById("drift-input");
+    var sigCheck = document.getElementById("sig-check");
+    if (!sel || !dvInput || !driftInput || !sigCheck) return;
+
+    state.wbPkt = Number(sel.value) || 0;
+    state.deltaV = Number(dvInput.value) || 0;
+    state.drift = Number(driftInput.value) || 0;
+    state.signed = Boolean(sigCheck.checked);
+
+    var pkt = PACKETS[state.wbPkt];
+    var dvValid = dvInput.value !== "" && state.deltaV >= -9999 && state.deltaV <= 9999;
+    dvInput.toggleAttribute("aria-invalid", !dvValid);
+
+    document.getElementById("drift-val").textContent = state.drift + " Hz";
+    var fMark = 1200 + state.drift;
+    var fSpace = 2200 + state.drift;
+    document.getElementById("freq-indicator").textContent = fMark + " / " + fSpace + " Hz";
+
+    var payloadStr = "v" + pkt.verb + "n" + pkt.noun + "dv" + state.deltaV + "d" + state.drift;
+    var crc = crc16Hex(payloadStr);
+    var crcBadge = document.getElementById("crc-badge");
+
+    var lampComp = document.getElementById("lamp-comp");
+    var lampUplink = document.getElementById("lamp-uplink");
+    var lampKey = document.getElementById("lamp-key");
+    var lampErr = document.getElementById("lamp-err");
+
+    var sysStatus = document.getElementById("sys-status");
+    var sysMcp = document.getElementById("sys-mcp");
+    var sysLog = document.getElementById("sys-log");
+    var formHelp = document.getElementById("form-help");
+
+    lampUplink.className = "lamp is-on-cool";
+    drawCoreRope(state.deltaV);
+
+    if (state.drift > 50) {
+      crcBadge.textContent = "crc-16 fail (" + crc + ")";
+      crcBadge.className = "state-pill state-pill--bad m";
+      lampComp.className = "lamp";
+      lampKey.className = "lamp";
+      lampErr.className = "lamp is-on-bad";
+      sysStatus.textContent = state.lang === "id"
+        ? "Ditolak: deviasi frekuensi > 50 Hz (aturan #4)"
+        : "Rejected: frequency drift > 50 Hz (steering rule #4)";
+      sysMcp.textContent = "verify_crc16(payload, " + crc + ") -> false";
+      sysLog.textContent = state.lang === "id"
+        ? "“Anomali derau terdeteksi (" + state.drift + " Hz). Paket dibuang tanpa menyentuh tombol DSKY.”"
+        : "“Acoustic anomaly (" + state.drift + " Hz drift). Frame discarded before DSKY actuation.”";
+      formHelp.textContent = state.lang === "id"
+        ? "Derau di atas 50 Hz memicu penolakan crc-16 otomatis."
+        : "Drift above 50 Hz triggers an automatic crc-16 drop.";
+    } else if (pkt.critical && !state.signed) {
+      crcBadge.textContent = "crc-16 " + crc;
+      crcBadge.className = "state-pill state-pill--amber m";
+      lampComp.className = "lamp";
+      lampKey.className = "lamp is-on-amber";
+      lampErr.className = "lamp is-on-bad";
+      sysStatus.textContent = state.lang === "id"
+        ? "Tertahan fr-5: Verb 97 butuh Operator Signature Token"
+        : "Halted by fr-5: Verb 97 requires Operator Signature Token";
+      sysMcp.textContent = "halt_execution(verb_97_unsigned)";
+      sysLog.textContent = state.lang === "id"
+        ? "“Enak aja matiin mesin pas burn tanpa tanda tangan. Centang token operator dulu!”"
+        : "“Critical engine cut-off blocked during active burn. Check Operator Signature Token first.”";
+      formHelp.textContent = state.lang === "id"
+        ? "Centang Operator Signature Token untuk mengizinkan Verb 97."
+        : "Check Operator Signature Token to authorize Verb 97.";
+    } else {
+      crcBadge.textContent = "crc-16 " + crc;
+      crcBadge.className = "state-pill state-pill--ok m";
+      lampComp.className = "lamp is-on-cool";
+      lampKey.className = "lamp";
+      lampErr.className = "lamp";
+      document.getElementById("dsky-prog").textContent = pkt.prog;
+      document.getElementById("dsky-verb").textContent = pkt.verb;
+      document.getElementById("dsky-noun").textContent = pkt.noun;
+      document.getElementById("dsky-r1").textContent = pkt.r1;
+      document.getElementById("dsky-r2").textContent = pkt.r2;
+      document.getElementById("dsky-r3").textContent = dvValid ? formatReg(state.deltaV) : pkt.r3;
+
+      sysStatus.textContent = state.lang === "id"
+        ? "Tervalidasi kontrak agc-safety-rules.md"
+        : "Verified against agc-safety-rules.md";
+      sysMcp.textContent = "execute_dsky_sequence(v" + pkt.verb + ", n" + pkt.noun + ", enter)";
+      sysLog.textContent = state.lang === "id"
+        ? "“Paket FSK valid (" + crc + "). Injeksi ke bus 15-bit selesai dengan jeda 100 ms per tombol.”"
+        : "“Valid FSK frame (" + crc + "). Injected into 15-bit AGC bus at 100 ms key cadence.”";
+      formHelp.textContent = state.lang === "id"
+        ? "Transmisi berhasil: lampu Comp acty menyala dan register R3 diperbarui."
+        : "Transmission verified: Comp acty lit and register R3 updated.";
+    }
+
+    if (triggerAudio) {
+      state.wavePhase += 1.2;
+      playFskBurst([1, 0, 1, 1, 0, 0, 1, 0], state.drift);
+    }
+  }
+
+  function applyLang(lang) {
+    state.lang = lang;
+    document.documentElement.lang = lang;
+    try { localStorage.setItem("apollo26_lang", lang); } catch (e) {}
+    var dict = I18N[lang];
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var key = el.getAttribute("data-i18n");
+      if (dict[key]) el.textContent = dict[key];
+    });
+    var muteBtn = document.getElementById("btn-mute");
+    if (muteBtn) muteBtn.textContent = state.muted ? dict.audio_off : dict.audio_on;
+    document.getElementById("lang-id").setAttribute("aria-pressed", lang === "id" ? "true" : "false");
+    document.getElementById("lang-en").setAttribute("aria-pressed", lang === "en" ? "true" : "false");
+    renderHeroPacket();
+    syncWorkbench(false);
+  }
+
+  document.getElementById("lang-id").addEventListener("click", function () {
+    playKeyClick(920);
+    applyLang("id");
+  });
+  document.getElementById("lang-en").addEventListener("click", function () {
+    playKeyClick(920);
+    applyLang("en");
+  });
+
+  document.getElementById("btn-mute").addEventListener("click", function () {
+    state.muted = !state.muted;
+    var btn = document.getElementById("btn-mute");
+    btn.setAttribute("aria-pressed", state.muted ? "true" : "false");
+    btn.textContent = state.muted ? I18N[state.lang].audio_off : I18N[state.lang].audio_on;
+    if (!state.muted) playKeyClick(900);
+  });
+
+  document.querySelectorAll("[data-pkt]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.heroPkt = Number(btn.getAttribute("data-pkt")) || 0;
+      state.wavePhase += 0.9;
+      renderHeroPacket();
+      playFskBurst([1, 1, 0, 1, 0, 1, 1, 0], 0);
+      var st = document.getElementById("hero-status");
+      var p = PACKETS[state.heroPkt];
+      st.textContent = state.lang === "id"
+        ? "Memancarkan paket v" + p.verb + " n" + p.noun + " (" + p.crc + ") lewat gelombang audio 1200/2200 Hz."
+        : "Transmitting packet v" + p.verb + " n" + p.noun + " (" + p.crc + ") over 1200/2200 Hz audio.";
+    });
+  });
+
+  document.getElementById("btn-hero-transmit").addEventListener("click", function () {
+    state.wavePhase += 1.4;
+    playFskBurst([1, 0, 1, 1, 0, 1, 0, 1, 1, 0], 0);
+    var p = PACKETS[state.heroPkt];
+    var st = document.getElementById("hero-status");
+    st.textContent = state.lang === "id"
+      ? "Preamble 1200 Hz (250 ms) diterima Kiro Hook: paket v" + p.verb + " n" + p.noun + " lolos cek crc-16."
+      : "1200 Hz preamble (250 ms) caught by Kiro Hook: v" + p.verb + " n" + p.noun + " passed crc-16.";
+  });
+
+  document.getElementById("cmd-select").addEventListener("change", function () {
+    var idx = Number(this.value) || 0;
+    if (idx === 0) document.getElementById("deltav-input").value = "3120";
+    if (idx === 1) document.getElementById("deltav-input").value = "9";
+    if (idx === 2) document.getElementById("deltav-input").value = "450";
+    if (idx === 3) document.getElementById("deltav-input").value = "0";
+    syncWorkbench(true);
+  });
+  document.getElementById("deltav-input").addEventListener("input", function () { syncWorkbench(false); });
+  document.getElementById("drift-input").addEventListener("input", function () { syncWorkbench(false); });
+  document.getElementById("sig-check").addEventListener("change", function () {
+    playKeyClick(900);
+    syncWorkbench(false);
+  });
+  document.getElementById("btn-modulate").addEventListener("click", function () {
+    syncWorkbench(true);
+  });
+  document.getElementById("btn-noise-test").addEventListener("click", function () {
+    document.getElementById("drift-input").value = "65";
+    syncWorkbench(true);
+  });
+
+  // Tactile 1969 DSKY keypad interaction (900 Hz click)
+  function handleDskyKey(k) {
+    playKeyClick(900);
+    var lampKey = document.getElementById("lamp-key");
+    var lampErr = document.getElementById("lamp-err");
+    var sysLog = document.getElementById("sys-log");
+    if (k === "V") {
+      state.keyMode = "verb";
+      state.keyBuffer = "";
+      lampKey.className = "lamp is-on-amber";
+      document.getElementById("dsky-verb").textContent = "00";
+    } else if (k === "N") {
+      state.keyMode = "noun";
+      state.keyBuffer = "";
+      lampKey.className = "lamp is-on-amber";
+      document.getElementById("dsky-noun").textContent = "00";
+    } else if (k === "C") {
+      state.keyBuffer = "";
+      document.getElementById("dsky-r3").textContent = "+00000";
+      drawCoreRope(0);
+    } else if (k === "K" || k === "R") {
+      state.keyMode = null;
+      state.keyBuffer = "";
+      lampKey.className = "lamp";
+      lampErr.className = "lamp";
+    } else if (k === "P" || k === "E" || k === "S") {
+      state.keyMode = null;
+      lampKey.className = "lamp";
+      document.getElementById("lamp-comp").className = "lamp is-on-cool";
+      sysLog.textContent = state.lang === "id"
+        ? "“Urutan tombol DSKY manual dieksekusi dengan klik membran 900 Hz.”"
+        : "“Manual DSKY key sequence executed with 900 Hz membrane feedback.”";
+    } else if (/^[0-9]$/.test(k)) {
+      state.keyBuffer = (state.keyBuffer + k).slice(-5);
+      if (state.keyMode === "verb") {
+        document.getElementById("dsky-verb").textContent = state.keyBuffer.slice(-2).padStart(2, "0");
+      } else if (state.keyMode === "noun") {
+        document.getElementById("dsky-noun").textContent = state.keyBuffer.slice(-2).padStart(2, "0");
+      } else {
+        var valStr = "+" + state.keyBuffer.padStart(5, "0");
+        document.getElementById("dsky-r3").textContent = valStr;
+        drawCoreRope(Number(state.keyBuffer) || 0);
+      }
+    } else if (k === "+" || k === "-") {
+      var cur = document.getElementById("dsky-r3").textContent.slice(1);
+      document.getElementById("dsky-r3").textContent = k + cur;
+    }
+  }
+
+  document.querySelectorAll(".keypad .key").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      handleDskyKey(btn.getAttribute("data-key"));
+    });
+  });
+
+  // Accessible Tabs wired via data-tab
+  var tabButtons = [].slice.call(document.querySelectorAll("[data-tab]"));
+  function pickTab(tab, focus) {
+    tabButtons.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var panel = document.getElementById(t.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+  tabButtons.forEach(function (t, i) {
+    t.addEventListener("click", function () {
+      playKeyClick(900);
+      pickTab(t, false);
+    });
+    t.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (e.key === "Home") { e.preventDefault(); pickTab(tabButtons[0], true); }
+      else if (e.key === "End") { e.preventDefault(); pickTab(tabButtons[tabButtons.length - 1], true); }
+      else if (d) { e.preventDefault(); pickTab(tabButtons[(i + d + tabButtons.length) % tabButtons.length], true); }
+    });
+  });
+
+  initLunarCloud();
+  initFooterMast();
+  applyLang(state.lang);
+})();
+</script>
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+</body>
+</html>

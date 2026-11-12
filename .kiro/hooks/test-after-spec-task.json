@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Quick Tests After Spec Task",
+      "trigger": "PostTaskExec",
+      "description": "Runs the fast Python suite (pytest -m \"not slow\", includes P1/P4/P6/P7/P8 dev profiles) after each spec task completes and reports the real exit code. Skipped while Flight Watch is live.",
+      "action": {
+        "type": "command",
+        "command": "cmd /c scripts\\hooks\\quick_tests.cmd",
+        "timeout": 300
+      }
+    }
+  ]
+}

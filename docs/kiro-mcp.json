@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "apollo26": {
+      "command": "cmd",
+      "args": ["/c", "scripts\\mcp.cmd"],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "read_telemetry_frames",
+        "await_telemetry_frame",
+        "inspect_agc_status",
+        "plan_dsky_sequence",
+        "verify_crc16"
+      ],
+      "disabledTools": []
+    }
+  }
+}
