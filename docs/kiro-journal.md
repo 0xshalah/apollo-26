@@ -46,6 +46,13 @@ After the fixes:
 
 - `scripts/measure_metrics.py` runs the real daemon in an isolated telemetry directory and writes `docs/metrics.json`. Loopback: 20/20 frames, median 0.59 s from upload to validated inbox record. Idle microphone listening: 3.5% of one core, 54 MB working set.
 - The first over-the-air test (same laptop's speaker into its microphone array) decoded 0 of 20 frames. A probe recording showed only 0.5–1% of the captured energy near 1200 Hz and 0.1–0.2% near 2200 Hz, so the problem is the capture path, not the demodulator threshold. This is recorded as FAILED in the evidence matrix.
+
+## 13 Nov - over-the-air root cause
+
+- A steady 1200 Hz tone played into the same microphone rose and then faded by about 35 dB within two seconds. Windows/Realtek voice processing treats a steady tone as noise, and the Apollo-26 preamble is exactly that: 250 ms of steady 1200 Hz. Lowering the demodulator threshold to 0.0001 or stretching the preamble to 2 s did not help, which ruled out the modem.
+- With audio enhancements, noise suppression and echo cancellation turned off, the tone stayed flat (-1 dB over 3 s). `scripts/measure_metrics.py` then detected 20 of 20 frames and accepted 3 of 20; the other 17 were rejected `LENGTH`. Median first tone to accepted frame: 1.86 s. No damaged frame was accepted.
+- Lesson: an earlier probe with tones switching every 0.5 s looked healthy, because each switch passed before the suppression caught up. Test with the same signal shape as the protocol.
+- Still FAILED against the 95% target. The phone trial at 0.5 m has not run.
 - The first loopback measurement accepted only 5 of 20 frames. All 20 were decoded, but each one arrived one upload late: the receiver decodes on 0.25 s hops, and the uploaded WAV had only 50 ms of trailing silence. The measurement now pads 0.3 s, as a live microphone would.
 - A headless Chrome check of `/console` against a real daemon showed two gaps that were then fixed: the test panel always said UNMEASURED because the daemon never published `test.summary`, and frames accepted before the browser connected never appeared in the audit log. The daemon now publishes `docs/test-summary.json` (written from pytest's JUnit XML by `scripts/write_test_summary.py`) and backfills accepted frames on connect. Screenshot: `docs/images/console-live.png`.
 

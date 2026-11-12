@@ -113,6 +113,23 @@ curl.exe -sS -X POST --data-binary "@auth.wav" http://127.0.0.1:8026/loopback
 
 Then let Flight Watch receive the COMMAND, inspect and plan. An attempt before it consumes AUTH must return `AUTH_REQUIRED`; after AUTH is matched, inspect and plan again before requesting execution.
 
+### Over the air (experimental)
+
+Windows voice processing removes the steady 1200 Hz preamble, so with default settings the microphone path detects nothing. Before trying a real microphone:
+
+1. Open **Settings → System → Sound**, select the input device, open **Properties**, and turn **Audio enhancements** off.
+2. If your laptop has a vendor audio app (for example Realtek Audio Console), turn off its noise suppression and echo cancellation for the microphone.
+3. Use a high speaker volume and keep the speaker close to the microphone.
+
+Then list devices and start the daemon on the microphone:
+
+```powershell
+.venv\Scripts\python -c "import sounddevice; print(sounddevice.query_devices())"
+.venv\Scripts\python -m acoustic.daemon --device <index>
+```
+
+With these settings our same-laptop trial accepted 3 of 20 frames (see [Measured results](#measured-results)). WAV and loopback input remain the reliable path.
+
 ## Safety model
 
 The LLM is an orchestrator, not the policy authority.
@@ -177,7 +194,8 @@ Measured on the Windows laptop recorded in [`docs/metrics.json`](docs/metrics.js
 | Loopback decode + validation + atomic inbox write, 20 frames | 20/20 accepted; median 0.59 s, max 0.89 s | MEASURED |
 | Daemon idle while listening, 30 s | 3.5% of one core; 54 MB working set | MEASURED |
 | Live Kiro P40 + AUTH, one run | 84.2 s; target 10 s | FAILED |
-| Same-laptop speaker → microphone, 20 frames | 0/20 detected | FAILED |
+| Same-laptop speaker → microphone, 20 frames, Windows defaults | 0/20 detected | FAILED |
+| Same-laptop speaker → microphone, 20 frames, audio enhancements off | 20/20 detected; 3/20 accepted, 17 rejected `LENGTH`; median 1.86 s first tone → accepted | FAILED (target ≥95%) |
 | Phone → laptop at 0.5 m | Not run | UNMEASURED |
 
 ![Mission console with three accepted frames and one replay rejection](docs/images/console-live.png)

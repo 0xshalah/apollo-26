@@ -48,6 +48,188 @@
     "status": "MEASURED",
     "path": "same-laptop speaker -> microphone over the air (not the 0.5 m phone trial)",
     "frames_sent": 20,
+    "frames_accepted": 3,
+    "frames_rejected": 17,
+    "frames_not_detected": 0,
+    "amplitude": 0.6,
+    "output_device": "Speakers (Realtek(R) Audio)",
+    "input_device": "Microphone Array (Realtek(R) Au",
+    "latency_first_tone_to_received_s": {
+      "min": 1.834,
+      "median": 1.861,
+      "max": 1.929
+    },
+    "latency_note": "first_tone = playback call time + lead silence + PortAudio output latency; includes the frame's air time (preamble + 34 bytes at 300 baud, 8N1).",
+    "per_frame": [
+      {
+        "seq": 1,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 2,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 3,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 4,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 5,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 6,
+        "air_time_s": 1.383,
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.861,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.032
+      },
+      {
+        "seq": 7,
+        "air_time_s": 1.383,
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.929,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.013
+      },
+      {
+        "seq": 8,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 9,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 10,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 11,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 12,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 13,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 14,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 15,
+        "air_time_s": 1.383,
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.834,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.06
+      },
+      {
+        "seq": 16,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 17,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 18,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 19,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      },
+      {
+        "seq": 20,
+        "air_time_s": 1.383,
+        "outcome": "REJECTED",
+        "reasons": [
+          "LENGTH"
+        ]
+      }
+    ],
+    "measured_at": "2026-11-12T23:18:51+00:00",
+    "conditions": "Windows 'Audio enhancements' off for the microphone array; Realtek noise suppression and echo cancellation off (reported by the operator). Same laptop, speaker into its own microphone array (not the 0.5 m phone trial).",
+    "note": "All 20 frames were detected. 3 passed sync/CRC/HMAC/replay/range and were accepted; 17 were rejected LENGTH (preamble found, 34 bytes not recovered). No corrupted frame was accepted."
+  },
+  "acoustic_self_test_previous": {
+    "status": "MEASURED",
+    "path": "same-laptop speaker -> microphone over the air (not the 0.5 m phone trial)",
+    "frames_sent": 20,
     "frames_accepted": 0,
     "frames_rejected": 0,
     "frames_not_detected": 20,
@@ -181,7 +363,10 @@
         "outcome": "NOT_DETECTED",
         "reasons": []
       }
-    ]
+    ],
+    "measured_at": "2026-11-12T10:48:23+00:00",
+    "conditions": "Windows defaults (audio enhancements on).",
+    "note": "Root cause found on 2026-11-13: Windows/Realtek voice processing faded a steady 1200 Hz tone by about 35 dB within 2 s, so the 250 ms preamble never qualified. Not a modem bug."
   },
   "resources_during_decode": {
     "status": "MEASURED",

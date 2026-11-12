@@ -13,15 +13,15 @@ Tugas implementasi rinci per fitur dibuat lewat **alur Spec Kiro** di `.kiro/spe
 | Milestone | Tanggal | Estimasi | Gerbang (harus terbukti) | Status |
 | :-- | :-- | --: | :-- | :-- |
 | M0 Persiapan & kontrak | 12–13 Nov | 8,5 j | Repo publik + MIT, Python & Node jalan, kontrak terkunci | ✅ repo publik, MIT terdeteksi |
-| M1 Spike risiko | 13–14 Nov | 2,75 j | Keputusan hook & kanal akustik tercatat | 🟥 uji speaker→mic laptop sendiri 0/20; uji HP → mic belum; pemicu T1 aktif |
-| M2 Acoustic Link | 14–19 Nov | 27,5 j | Frame dari HP masuk `telemetry/inbox/` | 🟨 WAV & loopback 20/20; over-air belum berhasil |
+| M1 Spike risiko | 13–14 Nov | 2,75 j | Keputusan hook & kanal akustik tercatat | 🟥 uji speaker→mic laptop sendiri 0/20 (bawaan Windows), 3/20 dengan enhancements mati (13 Nov); uji HP → mic belum; pemicu T1 aktif |
+| M2 Acoustic Link | 14–19 Nov | 27,5 j | Frame dari HP masuk `telemetry/inbox/` | 🟨 WAV & loopback 20/20; over-air 3/20 (13 Nov, enhancements mati), target ≥95% belum |
 | M3 AGC Emulator | 17–23 Nov | 20,5 j | `V37 E 40 E` → P40 aktif, R1–R3 benar | ✅ (juga di sesi live) |
 | M4 MCP Bridge | 23–27 Nov | 21,5 j | Suara → agen → DSKY ≤ 10 detik; serangan ditolak | 🟨 sesi Kiro live lolos (V25 & P40+AUTH); latensi agen 84 s, target 10 s meleset |
 | M5 Console (Next.js) | 26 Nov–1 Des | 24,5 j | Semua panel memakai data asli; build statis disajikan daemon | 🟨 tersambung ke daemon nyata (status, DSKY, audit, ringkasan tes); spektrum mic belum terlihat |
 | M6 Submisi | 1–3 Des | 16,5 j | Devpost terkirim | ⬜ |
 | **Total** | | **≈ 121,75 j** | | |
 
-**Status 12 Nov (akhir hari):** suite Python 132 lulus (termasuk `slow`); profil penuh di `docs/pbt-report.md`; frontend 56 tes + P9 10.000 kasus lulus; sesi Kiro live lolos untuk V25 dan P40+AUTH; metrik di `docs/metrics.json`. Belum: dekode lewat udara, video, Devpost. Rincian bukti: `docs/evidence-matrix.md`.
+**Status 12 Nov (akhir hari):** suite Python 132 lulus (termasuk `slow`); profil penuh di `docs/pbt-report.md`; frontend 56 tes + P9 10.000 kasus lulus; sesi Kiro live lolos untuk V25 dan P40+AUTH; metrik di `docs/metrics.json`. Belum: dekode lewat udara yang andal (13 Nov: 3/20 dengan enhancements mati), video, Devpost. Rincian bukti: `docs/evidence-matrix.md`.
 
 **Kapasitas:** asumsi 1 orang × ±5 jam efektif/hari × 22 hari ≈ 110 jam. Sekitar 4 jam fondasi dokumentasi sudah selesai; sisa rencana tetap melebihi kapasitas. Tangga pemotongan (§4) adalah bagian dari rencana, bukan rencana darurat.
 
@@ -251,4 +251,5 @@ Format tiap tugas: **ID · judul** · estimasi · ketergantungan, lalu kriteria 
 | 12 Nov | Tata letak ala mockup dashboard, gaya visual tetap PRD | Sidebar bernomor, strip KPI, tabel audit dengan filter dan pencarian, dock DSKY kanan. KPI hanya dari frame yang benar-benar diterima; tidak ada angka mockup, keypad DSKY, atau Verb 97. Daemon kini juga mengirim ulang frame yang ditolak saat console tersambung. Disetujui operator. |
 | 12 Nov | Gunakan gaya visual PRD, bukan palet mockup lama | Cosmic Void + Lunar Titanium + Apollo Electrum Gold + DSKY Phosphor lebih autentik dan khas; Italiana hanya untuk judul besar, Syne untuk UI, Space Mono untuk telemetri. |
 | 12 Nov | Uji akustik speaker → mic laptop yang sama gagal (0/20) | `scripts/measure_metrics.py`: 20 frame dari speaker Realtek, mic array Realtek, tidak ada yang terdeteksi. Rekaman probe: energi pita 1100–1300 Hz hanya 0,5–1% dan 2100–2300 Hz 0,1–0,2% dari total; energi dominan 170–850 Hz. Tidak terdekode pada ambang amplitudo 0,05 sampai 0,002. Dugaan: pemrosesan suara (array/SST) pada mic laptop menekan nada stabil; belum dibuktikan. Pemicu T1 aktif: uji HP → laptop, matikan *audio enhancements*, atau mic eksternal. Jalur loopback tetap 20/20. |
+| 13 Nov | Penyebab 0/20 terbukti: pemrosesan suara Windows/Realtek | Nada 1200 Hz stabil memudar ~35 dB dalam 2 s; menurunkan ambang ke 0,0001 atau preamble 2 s tetap gagal, jadi bukan modem. Setelah *Audio enhancements*, noise suppression, dan echo cancellation dimatikan: nada stabil (−1 dB), `measure_metrics.py` 20/20 terdeteksi, 3/20 diterima, 17 `LENGTH`; median 1,86 s. Kode modem tidak diubah (ambang dan preamble dipertahankan agar P5 tetap kuat). README menambah langkah mematikan enhancements. Target ≥95% tetap FAILED; demo utama tetap loopback. |
 | _14 Nov_ | _Jarak & volume demo akustik_ | _diisi dari hasil 1.2_ |

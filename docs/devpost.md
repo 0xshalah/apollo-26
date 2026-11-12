@@ -34,7 +34,7 @@ Running the agent live against the real MCP server found three bugs that the uni
 - Execution stopped at key 2 of 29. On Windows with Python 3.12, `time.monotonic` has 15.625 ms resolution, so 10 of 40 measured 100 ms sleeps were 93–94 ms, under the AGC's cadence rule. The fix is a high-resolution clock plus a real-clock regression test. The gate halted safely; nothing ran out of order.
 - The AUTH hold window (30 s) could never fit a human operator plus several agent calls. It is now 120 s; key, binding, single use, and ordering are unchanged.
 
-The acoustic channel is the open problem. Our first over-the-air test (the same laptop's speaker into its own microphone array) decoded **0 of 20** frames; the microphone captured almost no energy at 1200/2200 Hz. Phone-to-laptop testing is next.
+The acoustic channel is the open problem. Our first over-the-air test (the same laptop's speaker into its own microphone array) decoded **0 of 20** frames. Recording a steady 1200 Hz tone showed why: Windows voice processing faded it by about 35 dB within two seconds, so the 250 ms preamble never qualified. It was not a modem bug. With audio enhancements, noise suppression and echo cancellation turned off, the same laptop detected **20 of 20** frames and accepted **3 of 20**, with a median of 1.86 s from first tone to accepted frame. The other 17 were rejected for `LENGTH` (preamble found, 34 bytes not recovered), and no damaged frame got through. That is still far below our 95% target. Phone-to-laptop testing is next.
 
 ## Accomplishments
 
@@ -48,7 +48,7 @@ The agent's latency is part of the protocol. Windows sized for code broke as soo
 
 ## What's next
 
-- Phone → laptop decode trial at 0.5 m (target ≥95% of 20 frames).
+- Phone → laptop decode trial at 0.5 m (target ≥95% of 20 frames), and raise the 3/20 same-laptop result.
 - Bring the agent path toward the 10 s target (one live run took 84 s, including a deliberate refused attempt).
 - Optional adapter to the real yaAGC as a separate process.
 

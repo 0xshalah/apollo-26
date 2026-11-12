@@ -337,7 +337,7 @@ const FAQ: Array<[string, ReactNode]> = [
   [
     'Does the acoustic link work over the air?',
     <>
-      Not yet. The same-laptop speaker-to-microphone trial detected 0 of 20 frames, and the phone trial has not run. WAV and
+      Not reliably. With Windows defaults the same-laptop trial detected 0 of 20 frames, because voice processing suppresses the preamble. With audio enhancements off it accepted 3 of 20. The phone trial has not run. WAV and
       loopback input work through the same daemon pipeline. See{' '}
       <ExternalLink href={blob('docs/metrics.json')}>docs/metrics.json</ExternalLink>.
     </>,
@@ -443,7 +443,7 @@ export function Landing() {
               <div className="bg-paper-3 p-3">
                 <dt className="text-xs text-muted">Over the air</dt>
                 <dd className="mt-1 font-mono text-sm text-bad">
-                  {metrics.acoustic_self_test.frames_accepted}/{metrics.acoustic_self_test.frames_sent} detected
+                  {metrics.acoustic_self_test.frames_accepted}/{metrics.acoustic_self_test.frames_sent} accepted
                 </dd>
               </div>
             </dl>
