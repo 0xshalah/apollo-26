@@ -1,0 +1,113 @@
+{
+  "created_at": "2026-11-24T12:09:21+00:00",
+  "mode": "play",
+  "sample_rate": 48000,
+  "amplitude": 0.4,
+  "repeat": 1,
+  "input_device": 1,
+  "output_device": 3,
+  "wasapi_exclusive": false,
+  "conditions": "same laptop, MME mic array, amp 0.4",
+  "files": [
+    {
+      "file": "trial-01-seq2100.wav",
+      "seq": 2100,
+      "expected_hex": "a526010100000834000000000019510004e201a400000c301572fa328c5dc928df95"
+    },
+    {
+      "file": "trial-02-seq2101.wav",
+      "seq": 2101,
+      "expected_hex": "a526010100000835000000000019510004e201a400000c30027838e7ecfff6ff9619"
+    },
+    {
+      "file": "trial-03-seq2102.wav",
+      "seq": 2102,
+      "expected_hex": "a526010100000836000000000019510004e201a400000c30391d59585611297ab50a"
+    },
+    {
+      "file": "trial-04-seq2103.wav",
+      "seq": 2103,
+      "expected_hex": "a526010100000837000000000019510004e201a400000c30162eb67e1c30a1957120"
+    },
+    {
+      "file": "trial-05-seq2104.wav",
+      "seq": 2104,
+      "expected_hex": "a526010100000838000000000019510004e201a400000c30e992cd139831fb68c118"
+    },
+    {
+      "file": "trial-06-seq2105.wav",
+      "seq": 2105,
+      "expected_hex": "a526010100000839000000000019510004e201a400000c30b0a6b8a95ea7f4422b35"
+    },
+    {
+      "file": "trial-07-seq2106.wav",
+      "seq": 2106,
+      "expected_hex": "a52601010000083a000000000019510004e201a400000c302fa3f3ba6f6d6db76021"
+    },
+    {
+      "file": "trial-08-seq2107.wav",
+      "seq": 2107,
+      "expected_hex": "a52601010000083b000000000019510004e201a400000c30da2cc94c7df1278dd462"
+    },
+    {
+      "file": "trial-09-seq2108.wav",
+      "seq": 2108,
+      "expected_hex": "a52601010000083c000000000019510004e201a400000c30f00c9ee81ddcee4e5bbc"
+    },
+    {
+      "file": "trial-10-seq2109.wav",
+      "seq": 2109,
+      "expected_hex": "a52601010000083d000000000019510004e201a400000c302d04615854b75d7d2cba"
+    },
+    {
+      "file": "trial-11-seq2110.wav",
+      "seq": 2110,
+      "expected_hex": "a52601010000083e000000000019510004e201a400000c30b1b09935a3554170338c"
+    },
+    {
+      "file": "trial-12-seq2111.wav",
+      "seq": 2111,
+      "expected_hex": "a52601010000083f000000000019510004e201a400000c30e483b598e60c7a2c1188"
+    },
+    {
+      "file": "trial-13-seq2112.wav",
+      "seq": 2112,
+      "expected_hex": "a526010100000840000000000019510004e201a400000c30a0d96626601e23531040"
+    },
+    {
+      "file": "trial-14-seq2113.wav",
+      "seq": 2113,
+      "expected_hex": "a526010100000841000000000019510004e201a400000c30b78ffbf29ce6c0273b97"
+    },
+    {
+      "file": "trial-15-seq2114.wav",
+      "seq": 2114,
+      "expected_hex": "a526010100000842000000000019510004e201a400000c3083e0ad46f2d0b94c3cc5"
+    },
+    {
+      "file": "trial-16-seq2115.wav",
+      "seq": 2115,
+      "expected_hex": "a526010100000843000000000019510004e201a400000c300fc808a5588c5211f189"
+    },
+    {
+      "file": "trial-17-seq2116.wav",
+      "seq": 2116,
+      "expected_hex": "a526010100000844000000000019510004e201a400000c304cbee7b7a9efe49a932d"
+    },
+    {
+      "file": "trial-18-seq2117.wav",
+      "seq": 2117,
+      "expected_hex": "a526010100000845000000000019510004e201a400000c30a59302170874855e2cd1"
+    },
+    {
+      "file": "trial-19-seq2118.wav",
+      "seq": 2118,
+      "expected_hex": "a526010100000846000000000019510004e201a400000c30e5755e744c6d0e3983de"
+    },
+    {
+      "file": "trial-20-seq2119.wav",
+      "seq": 2119,
+      "expected_hex": "a526010100000847000000000019510004e201a400000c30cd4f0330318afc013308"
+    }
+  ]
+}

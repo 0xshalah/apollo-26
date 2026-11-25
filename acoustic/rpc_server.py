@@ -103,7 +103,10 @@ class RpcServer:
         request_id = message.get("request_id") if isinstance(message, dict) else None
         if not isinstance(request_id, str):
             request_id = None
-        if isinstance(message, dict) and message.get("schema_version") not in (None, SCHEMA_VERSION):
+        if isinstance(message, dict) and message.get("schema_version") not in (
+            None,
+            SCHEMA_VERSION,
+        ):
             return self._error(request_id, RpcError("SCHEMA_VERSION", "unsupported schema_version"))
         try:
             self._schemas.validate_rpc("/$defs/request", message)
@@ -118,7 +121,9 @@ class RpcServer:
         except RpcError as error:
             return self._error(request_id, error)
         except TimeoutError:
-            return self._error(request_id, RpcError("TIMEOUT", f"{method} exceeded its deadline", True))
+            return self._error(
+                request_id, RpcError("TIMEOUT", f"{method} exceeded its deadline", True)
+            )
         except Exception:
             _LOG.exception("RPC %s request_id=%s failed", method, request_id)
             return self._error(request_id, RpcError("INTERNAL", "internal daemon error"))
@@ -130,7 +135,9 @@ class RpcServer:
             self._schemas.validate_rpc(f"/$defs/results/{method}", result)
         except ContractViolation as violation:
             _LOG.error("RPC %s produced an invalid response: %s", method, violation)
-            return self._error(request_id, RpcError("INTERNAL", "daemon response violated contract"))
+            return self._error(
+                request_id, RpcError("INTERNAL", "daemon response violated contract")
+            )
         return response
 
     async def _on_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:

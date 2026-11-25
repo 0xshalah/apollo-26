@@ -87,7 +87,7 @@ describe('protocol constants equal the normative contract', () => {
   });
 
   it('test_p9_reason_codes_match_contract', () => {
-    const line = contractDoc.split('\n').find((l) => l.startsWith('Kode alasan stabil'))!;
+    const line = contractDoc.split('\n').find((l) => l.startsWith('Stable reason codes'))!;
     const codes = [...line.matchAll(/`([A-Z]+)`/g)].map((m) => m[1]);
     expect(codes).toEqual([...REASON_CODES]);
   });

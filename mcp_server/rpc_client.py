@@ -56,7 +56,9 @@ class DaemonRpcClient:
 
     def __init__(self, contracts: BridgeContracts, port: int, host: str = LOOPBACK_HOST) -> None:
         if host != LOOPBACK_HOST:
-            raise BridgeError(ErrorCode.INVALID_ARGUMENT, f"daemon RPC host must be {LOOPBACK_HOST}")
+            raise BridgeError(
+                ErrorCode.INVALID_ARGUMENT, f"daemon RPC host must be {LOOPBACK_HOST}"
+            )
         if not 1 <= port <= 65535:
             raise BridgeError(ErrorCode.INVALID_ARGUMENT, f"invalid daemon RPC port {port}")
         self._contracts = contracts
@@ -83,7 +85,9 @@ class DaemonRpcClient:
             )
         except (OSError, TimeoutError) as error:
             raise BridgeError(
-                ErrorCode.DAEMON_UNAVAILABLE, f"daemon RPC {self._host}:{self._port} unavailable", retryable=True
+                ErrorCode.DAEMON_UNAVAILABLE,
+                f"daemon RPC {self._host}:{self._port} unavailable",
+                retryable=True,
             ) from error
         sent = False
         try:
@@ -94,7 +98,11 @@ class DaemonRpcClient:
         except (OSError, TimeoutError, ValueError, asyncio.IncompleteReadError) as error:
             if mutating and sent:
                 raise OutcomeUnknown(f"{method} confirmation lost") from error
-            code = ErrorCode.TIMEOUT if isinstance(error, TimeoutError) else ErrorCode.DAEMON_UNAVAILABLE
+            code = (
+                ErrorCode.TIMEOUT
+                if isinstance(error, TimeoutError)
+                else ErrorCode.DAEMON_UNAVAILABLE
+            )
             raise BridgeError(code, f"{method} did not complete", retryable=True) from error
         finally:
             writer.close()
@@ -103,7 +111,9 @@ class DaemonRpcClient:
         if not line:
             if mutating:
                 raise OutcomeUnknown(f"{method} connection closed before a response")
-            raise BridgeError(ErrorCode.DAEMON_UNAVAILABLE, f"{method}: connection closed", retryable=True)
+            raise BridgeError(
+                ErrorCode.DAEMON_UNAVAILABLE, f"{method}: connection closed", retryable=True
+            )
         return self._parse(method, request_id, line)
 
     def _parse(self, method: str, request_id: str, line: bytes) -> RpcReply:

@@ -96,7 +96,9 @@ def tool_definitions() -> list[types.Tool]:
     ]
 
 
-async def dispatch(service: FlightWatchService, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+async def dispatch(
+    service: FlightWatchService, name: str, arguments: dict[str, Any]
+) -> dict[str, Any]:
     """Validate tool input once against its schema, then call the service."""
 
     schema = TOOL_SCHEMAS.get(name)
@@ -178,7 +180,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--log-level", default="WARNING")
     args = parser.parse_args(argv)
     # stdout carries MCP JSON-RPC; logs go to stderr only.
-    logging.basicConfig(level=getattr(logging, str(args.log_level).upper(), logging.WARNING), stream=sys.stderr)
+    logging.basicConfig(
+        level=getattr(logging, str(args.log_level).upper(), logging.WARNING), stream=sys.stderr
+    )
     service = build_service(
         contracts_dir=args.contracts_dir,
         state_dir=args.state_dir,

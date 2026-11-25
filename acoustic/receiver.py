@@ -10,11 +10,22 @@ Bounded rolling buffer + periodic demodulation with three guarantees:
   After a pass that yields candidates the buffer keeps only the most recent
   ``hop + 2 symbols`` samples, which cannot contain another complete frame.
 
-The receiver never validates frames; candidates are untrusted bytes.
+Over-the-air fallback: when the strict decoder rejects a burst whose preamble
+qualified (``SYNC`` / ``FRAMING``), the receiver retries it with the soft
+decoder (:mod:`acoustic.soft_decoder`) and keeps the soft bits of failed bursts
+for a few seconds so repeated copies of one transmission can be combined
+(:mod:`acoustic.recovery`).  CRC-16 is used only to choose between soft
+hypotheses; the daemon still runs the full contract validation, including HMAC
+and replay, on every candidate.
+
+Byte-identical candidates within ``duplicate_window_seconds`` are reported as
+:class:`DuplicateEvent` instead of a second candidate: they are redundant copies
+of one transmission (the ground station may repeat a burst), not new frames.
 """
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Final
@@ -29,13 +40,18 @@ from acoustic.modem import (
     DemodulatorConfig,
     FrequencyAnomaly,
     ModemErrorCode,
+    ModemFailure,
     SourceKind,
     demodulate,
     samples_per_symbol,
 )
+from acoustic.recovery import MAX_COMBINED, RecoveredCandidate, recover
+from acoustic.soft_decoder import SYNC_SEARCH_SYMBOLS, soft_decode
 
 DEFAULT_HOP_SECONDS: Final = 0.25
 DEFAULT_MAX_SECONDS: Final = 4.0
+DEFAULT_DUPLICATE_WINDOW_SECONDS: Final = 6.0
+DEFAULT_COMBINE_WINDOW_SECONDS: Final = 6.0
 _PREAMBLE_TRIGGER_SYMBOLS: Final = 60
 _MAX_RESCANS: Final = 8
 
@@ -52,6 +68,13 @@ class CandidateLoss(StrEnum):
 class CandidateEvent:
     raw: bytes
     frequency_deviation_hz: float | None
+    recovery: RecoveredCandidate | None = None
+    """``None`` for the strict decoder; otherwise how the soft fallback produced it."""
+
+
+@dataclass(frozen=True, slots=True)
+class DuplicateEvent:
+    raw: bytes
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,7 +93,9 @@ class CarrierEvent:
     active: bool
 
 
-type ReceiverEvent = CandidateEvent | LostCandidateEvent | AnomalyEvent | CarrierEvent
+type ReceiverEvent = (
+    CandidateEvent | DuplicateEvent | LostCandidateEvent | AnomalyEvent | CarrierEvent
+)
 
 
 class StreamingReceiver:
@@ -81,7 +106,17 @@ class StreamingReceiver:
         *,
         hop_seconds: float = DEFAULT_HOP_SECONDS,
         max_seconds: float = DEFAULT_MAX_SECONDS,
+        soft_fallback: bool = True,
+        duplicate_window_seconds: float = DEFAULT_DUPLICATE_WINDOW_SECONDS,
+        combine_window_seconds: float = DEFAULT_COMBINE_WINDOW_SECONDS,
     ) -> None:
+        self._soft_fallback = soft_fallback
+        self._duplicate_window = int(config.sample_rate * duplicate_window_seconds)
+        self._combine_window = int(config.sample_rate * combine_window_seconds)
+        self._recent: deque[tuple[bytes, int]] = deque(maxlen=8)
+        self._soft_history: deque[tuple[int, NDArray[np.float64]]] = deque(maxlen=MAX_COMBINED - 1)
+        self.recovered_count = 0
+        self.duplicate_count = 0
         self._config = config
         self._source_kind = source_kind
         self._width = samples_per_symbol(config.sample_rate, config.baud)
@@ -123,6 +158,7 @@ class StreamingReceiver:
         self._preamble_seen_at = None
         self._mark_run = 0
         self._detector_tail = np.zeros(0, dtype=np.float64)
+        self._soft_history.clear()
         return self._set_carrier(False)
 
     def feed(self, samples: NDArray[np.floating]) -> list[ReceiverEvent]:
@@ -208,13 +244,27 @@ class StreamingReceiver:
             if result.candidates:
                 events.extend(anomalies)
                 anomalies = []
+                self._soft_history.clear()
             for raw in result.candidates:
-                events.append(CandidateEvent(raw, deviation))
+                events.append(self._candidate(raw, deviation, None))
                 found = True
             failure = diagnostics.failure
             if failure is None:
                 break
             if failure.code in (ModemErrorCode.SYNC, ModemErrorCode.FRAMING):
+                if self._soft_fallback and failure.transition_guess is not None:
+                    if not final and not self._burst_complete(view, failure):
+                        # Wait for the rest of the burst before the soft retry.
+                        break
+                    soft = soft_decode(view, self._config, failure.transition_guess)
+                    if soft is not None:
+                        recovered = self._recover(soft.soft_bits)
+                        if recovered is not None:
+                            events.extend(anomalies)
+                            events.append(self._candidate(recovered.raw, deviation, recovered))
+                            found = True
+                            start += soft.body_end
+                            continue
                 loss = (
                     CandidateLoss.SYNC
                     if failure.code is ModemErrorCode.SYNC
@@ -242,6 +292,36 @@ class StreamingReceiver:
         elif start:
             self._drop_front(min(start, self._length))
         return events
+
+    def _burst_complete(self, view: NDArray[np.float64], failure: ModemFailure) -> bool:
+        assert failure.transition_guess is not None
+        needed = (FRAME_BYTES * 10 + SYNC_SEARCH_SYMBOLS + 1) * self._width
+        return failure.transition_guess + needed <= view.size
+
+    def _recover(self, soft_bits: NDArray[np.float64]) -> RecoveredCandidate | None:
+        now = self._total
+        while self._soft_history and now - self._soft_history[0][0] > self._combine_window:
+            self._soft_history.popleft()
+        recovered = recover([soft_bits])
+        if recovered is None and self._soft_history:
+            recovered = recover([bits for _, bits in self._soft_history] + [soft_bits])
+        if recovered is None:
+            self._soft_history.append((now, soft_bits))
+            return None
+        self._soft_history.clear()
+        self.recovered_count += 1
+        return recovered
+
+    def _candidate(
+        self, raw: bytes, deviation: float | None, recovery: RecoveredCandidate | None
+    ) -> ReceiverEvent:
+        now = self._total
+        for previous, at in self._recent:
+            if previous == raw and now - at <= self._duplicate_window:
+                self.duplicate_count += 1
+                return DuplicateEvent(raw)
+        self._recent.append((raw, now))
+        return CandidateEvent(raw, deviation, recovery)
 
     def _drop_front(self, count: int) -> None:
         if count <= 0:

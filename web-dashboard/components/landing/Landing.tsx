@@ -337,8 +337,10 @@ const FAQ: Array<[string, ReactNode]> = [
   [
     'Does the acoustic link work over the air?',
     <>
-      Not reliably. With Windows defaults the same-laptop trial detected 0 of 20 frames, because voice processing suppresses the preamble. With audio enhancements off it accepted 3 of 20. The phone trial has not run. WAV and
-      loopback input work through the same daemon pipeline. See{' '}
+      On one laptop, yes: the live daemon accepted {metrics.acoustic_self_test.frames_accepted} of{' '}
+      {metrics.acoustic_self_test.frames_sent} frames from the same laptop&apos;s speaker, with Windows audio
+      enhancements off. With Windows defaults, voice processing suppresses the preamble and almost nothing decodes. The
+      phone trial at 0.5 m has not run. WAV and loopback input work through the same daemon pipeline. See{' '}
       <ExternalLink href={blob('docs/metrics.json')}>docs/metrics.json</ExternalLink>.
     </>,
   ],
@@ -413,14 +415,18 @@ export function Landing() {
           <div data-hero-item className="max-w-[38rem]">
             <p className="font-mono text-xs text-accent">KIROWEEN 2026 / FRANKENSTEIN</p>
             <h1 id="hero-head" className="mt-5 max-w-[14ch] text-[3.25rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[4.75rem]">
-              Emergency guidance, carried by sound.
+              The agent flies. Code decides.
             </h1>
             <p className="mt-6 max-w-[42ch] text-[1.125rem] leading-relaxed text-ink-2">
-              A Kiro agent drives an Apollo-style DSKY through authenticated Bell-202 frames. A safety gate written in code
-              controls every key press.
+              Agent safety for physical systems, tested on a 1969 Apollo guidance computer. A Kiro agent receives
+              authenticated commands as sound and plans DSKY key presses; a safety gate written in code decides which
+              ones it may make.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/ground/" className="btn btn-amber">
+              <Link href="/demo/" className="btn btn-amber">
+                Try it in your browser
+              </Link>
+              <Link href="/ground/" className="btn">
                 Open ground station
               </Link>
               <Link href="/console/" className="btn">
@@ -442,7 +448,7 @@ export function Landing() {
               </div>
               <div className="bg-paper-3 p-3">
                 <dt className="text-xs text-muted">Over the air</dt>
-                <dd className="mt-1 font-mono text-sm text-bad">
+                <dd className={`mt-1 font-mono text-sm ${overAir.status === 'FAILED' ? 'text-bad' : 'text-ok'}`}>
                   {metrics.acoustic_self_test.frames_accepted}/{metrics.acoustic_self_test.frames_sent} accepted
                 </dd>
               </div>

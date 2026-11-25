@@ -70,6 +70,19 @@ After the fixes:
 - Added `ProtocolDrawing.tsx`, a proportional 34-byte frame anatomy generated from the normative TypeScript `FIELD_LAYOUT` and the recorded COMMAND bytes. Offsets, lengths, field values and the 34-byte total are not duplicated constants.
 - React Bits and Magic UI were visual references only; no component code was copied. OpenDesign, Scroll World and Canvas UI were not integrated because their tooling/media/WebGL cost did not fit the static, evidence-led page.
 
+## 24–25 Nov — over-the-air fallback, custom agent, Power
+
+- Recorded real speaker → microphone bursts and analyzed them offline (`scripts/acoustic_lab.py`). One ambiguous symbol in 340 was enough to drop a frame. Added a soft-decision fallback (`acoustic/soft_decoder.py`, `acoustic/recovery.py`) and repeated bursts; CRC only selects a candidate, HMAC and replay still decide. Live daemon over the air on one laptop: 19/20 accepted (`docs/metrics.json`). A vectorized window scan replaced a per-window Python loop that made analysis look hung; a test proves it makes identical decisions.
+- Added the custom agent `.kiro/agents/flight-director.json` (MCP + read tools only, shell and writes denied, execute always asks) and the Power `powers/apollo26-flight-watch/`.
+- Translated every judge-facing document to English and rewrote the pitch as agent safety for physical systems (`.kiro/steering/product.md`).
+
+## 25 Nov — browser demo, test-first
+
+- Added `/demo`: the visitor plays the agent against TypeScript ports of the planner, safety gate, and DSKY (`web-dashboard/lib/demo/`). Written from a design doc and plan (`docs/superpowers/`), tests before code.
+- Equality, not trust: `scripts/write_demo_vectors.py` runs the real Python planner and AGC engine and writes `contracts/vectors/dsky-demo.json`; the TypeScript tests must reproduce every key result and state. The first run caught a vector-format bug (raw key lists were not written), not a port bug.
+- An independent code review found gaps the vectors could not: AUTH ingest codes, Flight Watch HALT after a failed postcondition, plans for closed commands, and page copy that overstated what the vectors cover. All fixed with tests; the vectors now also cover the delta-v threshold boundary, PRO, CLR, cadence, and the OPR ERR latch.
+- A headless Chrome run clicked through the whole story with no console errors and no overflow at 390 px.
+
 ## 13 Nov — mission console and README quality pass
 
 - Upgraded `/console` as an Operate surface rather than adding landing-page motion: a sticky command header now projects frame window, latest sequence, AGC display and Flight Watch from reducer state.

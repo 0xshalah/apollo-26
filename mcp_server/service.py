@@ -56,7 +56,9 @@ class FlightMarker:
             return
         self._path.parent.mkdir(parents=True, exist_ok=True)
         temporary = self._path.with_name(self._path.name + ".tmp")
-        temporary.write_text(f"session_id={session_id}\nstarted_at={format_timestamp(now)}\n", encoding="utf-8")
+        temporary.write_text(
+            f"session_id={session_id}\nstarted_at={format_timestamp(now)}\n", encoding="utf-8"
+        )
         temporary.replace(self._path)
         self._active = True
 
@@ -141,7 +143,9 @@ class FlightWatchService:
         except (LedgerError, AuditError) as error:
             _LOG.error("%s request_id=%s failed closed: %s", tool, request_id, error)
             code = ErrorCode.AUDIT_FAILURE if isinstance(error, AuditError) else ErrorCode.INTERNAL
-            return _fail(request_id, BridgeError(code, "bridge persistence failed; nothing was actuated"))
+            return _fail(
+                request_id, BridgeError(code, "bridge persistence failed; nothing was actuated")
+            )
         except Exception:
             _LOG.exception("%s request_id=%s failed with an unexpected error", tool, request_id)
             return _fail(request_id, BridgeError(ErrorCode.INTERNAL, "internal bridge error"))
@@ -187,15 +191,22 @@ class FlightWatchService:
             return
         for record in self._ledger.records():
             if record.state in (CommandState.EXECUTING, CommandState.OUTCOME_UNKNOWN):
-                reply = await self._call("execution.get", {"frame_seq": record.frame_seq}, _READ_DEADLINE_MS)
+                reply = await self._call(
+                    "execution.get", {"frame_seq": record.frame_seq}, _READ_DEADLINE_MS
+                )
                 await self._apply_reconciled(record, reply.result["execution"])
         self._reconciled = True
 
     # ------------------------------------------------------------ expiry
     def _expire_if_due(self, record: CommandRecord) -> CommandRecord:
-        if record.state is CommandState.HELD and self._clock.now() >= self._gate.hold_deadline(record):
+        if record.state is CommandState.HELD and self._clock.now() >= self._gate.hold_deadline(
+            record
+        ):
             record = self._ledger.update(
-                record, state=CommandState.EXPIRED, auth_state=AuthState.EXPIRED, error_code="AUTH_EXPIRED"
+                record,
+                state=CommandState.EXPIRED,
+                auth_state=AuthState.EXPIRED,
+                error_code="AUTH_EXPIRED",
             )
             self._audit.emit(
                 "command.expired",
@@ -226,7 +237,9 @@ class FlightWatchService:
     async def await_telemetry_frame(self, timeout_sec: float) -> dict[str, Any]:
         async def body(request_id: str) -> dict[str, Any]:
             if self._await_lock.locked():
-                raise BridgeError(ErrorCode.BUSY, "another await_telemetry_frame is in progress", retryable=True)
+                raise BridgeError(
+                    ErrorCode.BUSY, "another await_telemetry_frame is in progress", retryable=True
+                )
             async with self._await_lock:
                 self._marker.activate(self.session_id, self._clock.now())
                 timeout_ms = max(0, min(30_000, int(round(timeout_sec * 1000))))
@@ -379,9 +392,17 @@ class FlightWatchService:
                 request_id=request_id,
                 sequence_epoch=reply.sequence_epoch,
                 agc_revision=state.state_revision,
-                details={"key_rel": state.key_rel, "opr_err": state.opr_err, "program": state.program},
+                details={
+                    "key_rel": state.key_rel,
+                    "opr_err": state.opr_err,
+                    "program": state.program,
+                },
             )
-            data = {key: value for key, value in snapshot.items() if key not in ("engine_revision", "catalog_version")}
+            data = {
+                key: value
+                for key, value in snapshot.items()
+                if key not in ("engine_revision", "catalog_version")
+            }
             data["sequence_epoch"] = reply.sequence_epoch
             return data
 
@@ -391,7 +412,11 @@ class FlightWatchService:
         async def body(request_id: str) -> dict[str, Any]:
             record = self._ledger.get(frame_seq)
             if record is None:
-                raise BridgeError(ErrorCode.NOT_FOUND, f"COMMAND {frame_seq} was not delivered", frame_seq=frame_seq)
+                raise BridgeError(
+                    ErrorCode.NOT_FOUND,
+                    f"COMMAND {frame_seq} was not delivered",
+                    frame_seq=frame_seq,
+                )
             record = self._expire_if_due(record)
             if record.state not in OPEN_STATES:
                 raise BridgeError(
@@ -399,7 +424,9 @@ class FlightWatchService:
                     f"COMMAND {frame_seq} is {record.state.value}",
                     frame_seq=frame_seq,
                 )
-            preflight = await self._call("execution.preflight", {"frame_seq": frame_seq}, _READ_DEADLINE_MS)
+            preflight = await self._call(
+                "execution.preflight", {"frame_seq": frame_seq}, _READ_DEADLINE_MS
+            )
             current = AgcState.from_snapshot(preflight.result["snapshot"])
             stale = self._gate.check_inspection(
                 session_id=self.session_id,
@@ -418,7 +445,9 @@ class FlightWatchService:
                 raise blocked
             plan = self._planner.plan(Command.from_frame(record.frame), self._inspection.state)
             if plan.critical and record.auth_state is AuthState.NOT_REQUIRED:
-                record = self._ledger.update(record, state=CommandState.HELD, auth_state=AuthState.REQUIRED)
+                record = self._ledger.update(
+                    record, state=CommandState.HELD, auth_state=AuthState.REQUIRED
+                )
             record = self._ledger.update(
                 record, critical_reasons=tuple(reason.value for reason in plan.critical_reasons)
             )
@@ -450,13 +479,20 @@ class FlightWatchService:
     async def execute_dsky_sequence(self, keys: list[str], frame_seq: int) -> dict[str, Any]:
         async def body(request_id: str) -> dict[str, Any]:
             if self._execute_lock.locked():
-                raise BridgeError(ErrorCode.BUSY, "another execution is in progress", retryable=True, frame_seq=frame_seq)
+                raise BridgeError(
+                    ErrorCode.BUSY,
+                    "another execution is in progress",
+                    retryable=True,
+                    frame_seq=frame_seq,
+                )
             async with self._execute_lock:
                 return await self._execute(request_id, tuple(keys), frame_seq)
 
         return await self._run("execute_dsky_sequence", body)
 
-    async def _execute(self, request_id: str, keys: tuple[str, ...], frame_seq: int) -> dict[str, Any]:
+    async def _execute(
+        self, request_id: str, keys: tuple[str, ...], frame_seq: int
+    ) -> dict[str, Any]:
         await self._reconcile_open_claims()
         record = self._ledger.get(frame_seq)
         if record is not None:
@@ -466,10 +502,14 @@ class FlightWatchService:
         epoch = self._require_epoch()
         if record is not None and record.state in OPEN_STATES:
             try:
-                preflight = await self._call("execution.preflight", {"frame_seq": frame_seq}, _READ_DEADLINE_MS)
+                preflight = await self._call(
+                    "execution.preflight", {"frame_seq": frame_seq}, _READ_DEADLINE_MS
+                )
             except BridgeError as error:
                 raise BridgeError(
-                    ErrorCode.AGC_UNAVAILABLE if error.code is ErrorCode.DAEMON_UNAVAILABLE else error.code,
+                    ErrorCode.AGC_UNAVAILABLE
+                    if error.code is ErrorCode.DAEMON_UNAVAILABLE
+                    else error.code,
                     f"preflight failed: {error.message}",
                     frame_seq=frame_seq,
                 ) from error
@@ -497,7 +537,10 @@ class FlightWatchService:
             assert decision.error is not None
             if decision.expire_command and record is not None:
                 record = self._ledger.update(
-                    record, state=CommandState.EXPIRED, auth_state=AuthState.EXPIRED, error_code="AUTH_EXPIRED"
+                    record,
+                    state=CommandState.EXPIRED,
+                    auth_state=AuthState.EXPIRED,
+                    error_code="AUTH_EXPIRED",
                 )
             self._audit.emit(
                 "gate.decision",
@@ -511,7 +554,9 @@ class FlightWatchService:
             )
             raise decision.error
         assert record is not None and decision.plan is not None and current is not None
-        return await self._actuate(request_id, record, decision.plan, decision.auth_seq, current, epoch)
+        return await self._actuate(
+            request_id, record, decision.plan, decision.auth_seq, current, epoch
+        )
 
     async def _actuate(
         self,
@@ -547,9 +592,13 @@ class FlightWatchService:
                 required=True,
             )
         except AuditError as error:
-            self._ledger.update(record, state=CommandState.FAILED, error_code=ErrorCode.AUDIT_FAILURE.value)
+            self._ledger.update(
+                record, state=CommandState.FAILED, error_code=ErrorCode.AUDIT_FAILURE.value
+            )
             raise BridgeError(
-                ErrorCode.AUDIT_FAILURE, "allow decision could not be audited; nothing was actuated", frame_seq=record.frame_seq
+                ErrorCode.AUDIT_FAILURE,
+                "allow decision could not be audited; nothing was actuated",
+                frame_seq=record.frame_seq,
             ) from error
         params = {
             "operation_id": execution_id,
@@ -567,7 +616,9 @@ class FlightWatchService:
         except DaemonRejected as rejected:
             # The daemon refused before actuation; the claim stays closed (no retry).
             error = _translate(rejected, record.frame_seq)
-            failed = self._ledger.update(record, state=CommandState.FAILED, error_code=error.code.value)
+            failed = self._ledger.update(
+                record, state=CommandState.FAILED, error_code=error.code.value
+            )
             self._store_result(failed, ok=False, error=error, data=None)
             self._audit.emit(
                 "execution.result",
@@ -581,7 +632,9 @@ class FlightWatchService:
             )
             raise error from rejected
         except (OutcomeUnknown, BridgeError) as error:
-            record = self._ledger.update(record, state=CommandState.OUTCOME_UNKNOWN, error_code="OUTCOME_UNKNOWN")
+            record = self._ledger.update(
+                record, state=CommandState.OUTCOME_UNKNOWN, error_code="OUTCOME_UNKNOWN"
+            )
             self._audit.emit(
                 "execution.result",
                 request_id=request_id,
@@ -605,7 +658,9 @@ class FlightWatchService:
     async def _reconcile_lookup(self, frame_seq: int) -> dict[str, Any] | None:
         for _ in range(_RECONCILE_ATTEMPTS):
             try:
-                reply = await self._call("execution.get", {"frame_seq": frame_seq}, _READ_DEADLINE_MS)
+                reply = await self._call(
+                    "execution.get", {"frame_seq": frame_seq}, _READ_DEADLINE_MS
+                )
             except (BridgeError, DaemonRejected) as error:
                 _LOG.warning("reconcile execution.get seq=%d failed: %s", frame_seq, error)
                 await asyncio.sleep(0.2)
@@ -616,7 +671,9 @@ class FlightWatchService:
             await asyncio.sleep(0.2)
         return None
 
-    async def _apply_reconciled(self, record: CommandRecord, execution: dict[str, Any] | None) -> None:
+    async def _apply_reconciled(
+        self, record: CommandRecord, execution: dict[str, Any] | None
+    ) -> None:
         if execution is None or execution["status"] == "STARTED":
             # Nothing durable on the daemon side: the attempt stays closed.
             self._ledger.update(record, state=CommandState.FAILED, error_code="OUTCOME_UNKNOWN")
@@ -624,7 +681,14 @@ class FlightWatchService:
         status = CommandState.EXECUTED if execution["status"] == "EXECUTED" else CommandState.FAILED
         updated = self._ledger.update(record, state=status, error_code=execution["error_code"])
         data = self._result_data(updated, execution, postcondition_matched=None)
-        self._store_result(updated, ok=status is CommandState.EXECUTED, error=None if status is CommandState.EXECUTED else BridgeError(ErrorCode.EXECUTION_FAILED, "reconciled failure"), data=data)
+        self._store_result(
+            updated,
+            ok=status is CommandState.EXECUTED,
+            error=None
+            if status is CommandState.EXECUTED
+            else BridgeError(ErrorCode.EXECUTION_FAILED, "reconciled failure"),
+            data=data,
+        )
         self._audit.emit(
             "reconciliation",
             frame_seq=record.frame_seq,
@@ -653,11 +717,20 @@ class FlightWatchService:
         }
 
     def _store_result(
-        self, record: CommandRecord, *, ok: bool, error: BridgeError | None, data: dict[str, Any] | None
+        self,
+        record: CommandRecord,
+        *,
+        ok: bool,
+        error: BridgeError | None,
+        data: dict[str, Any] | None,
     ) -> None:
         stored: dict[str, Any] = {"ok": ok, "data": data}
         if error is not None:
-            stored["error"] = {"code": error.code.value, "message": error.message, "details": error.details}
+            stored["error"] = {
+                "code": error.code.value,
+                "message": error.message,
+                "details": error.details,
+            }
         self._ledger.update(record, result=stored)
 
     async def _finish(
@@ -690,7 +763,9 @@ class FlightWatchService:
                     "daemon_error_code": execution["error_code"],
                 },
             )
-        record = self._ledger.update(record, state=status, error_code=None if error is None else error.code.value)
+        record = self._ledger.update(
+            record, state=status, error_code=None if error is None else error.code.value
+        )
         data = self._result_data(record, execution, matched)
         self._store_result(record, ok=matched, error=error, data=data)
         self._audit.emit(
@@ -713,7 +788,9 @@ class FlightWatchService:
             execution = await self._reconcile_lookup(record.frame_seq)
             if execution is None:
                 raise BridgeError(
-                    ErrorCode.OUTCOME_UNKNOWN, "execution outcome still unknown; not resending", frame_seq=record.frame_seq
+                    ErrorCode.OUTCOME_UNKNOWN,
+                    "execution outcome still unknown; not resending",
+                    frame_seq=record.frame_seq,
                 )
             await self._apply_reconciled(record, execution)
             refreshed = self._ledger.get(record.frame_seq)
@@ -728,10 +805,18 @@ class FlightWatchService:
             decision="RECONCILE",
             command_state=record.state.value,
         )
-        stored = record.result or {"ok": False, "data": None, "error": {"code": "EXECUTION_FAILED", "message": "no stored result", "details": {}}}
+        stored = record.result or {
+            "ok": False,
+            "data": None,
+            "error": {"code": "EXECUTION_FAILED", "message": "no stored result", "details": {}},
+        }
         if stored["ok"] and stored["data"] is not None:
             return {**stored["data"], "idempotent_replay": True}
-        failure = stored.get("error") or {"code": "EXECUTION_FAILED", "message": "failed", "details": {}}
+        failure = stored.get("error") or {
+            "code": "EXECUTION_FAILED",
+            "message": "failed",
+            "details": {},
+        }
         details = dict(failure.get("details") or {})
         details["idempotent_replay"] = True
         raise BridgeError(
@@ -750,7 +835,8 @@ class FlightWatchService:
                 or not _HEX.match(hex_payload)
             ):
                 raise BridgeError(
-                    ErrorCode.INVALID_ARGUMENT, "hex_payload must be even-length hex for 2..4096 bytes"
+                    ErrorCode.INVALID_ARGUMENT,
+                    "hex_payload must be even-length hex for 2..4096 bytes",
                 )
             data = bytes.fromhex(hex_payload)
             computed = crc16_ccitt_false(data[:-2])
@@ -768,4 +854,3 @@ class FlightWatchService:
     async def close(self) -> None:
         self._marker.release()
         self._audit.emit("session.stop")
-

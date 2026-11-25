@@ -1,0 +1,24 @@
+{
+  "measured_at": "2026-11-24T12:08:10+00:00",
+  "sample_rate": 48000,
+  "tx_amplitude": 0.4,
+  "input_device": 9,
+  "output_device": 8,
+  "wasapi_exclusive": true,
+  "peak_abs": 0.113,
+  "mark_amplitude": 0.00616,
+  "space_amplitude": 0.0,
+  "twist_db": 62.33,
+  "mark_2nd_harmonic_db": -54.37,
+  "mark_fade_db": 39.55,
+  "noise_floor_rms": 0.005912,
+  "room_170_850_hz_rms": 0.001742,
+  "noise_in_band_1000_2500_hz_rms": 0.003214,
+  "mark_snr_db": 2.6,
+  "space_snr_db": -59.7,
+  "advice": [
+    "Signal is weak: raise the volume or move the transmitter closer.",
+    "In-band SNR below 15 dB: reduce room noise or move closer.",
+    "Twist 62.33 dB: the soft fallback compensates, but a flatter speaker or a different position helps."
+  ]
+}

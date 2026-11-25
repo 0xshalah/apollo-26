@@ -35,17 +35,40 @@ DEMO_OPERATOR_KEY = "apollo26-operator-demo-key-v1"
 
 
 def build_burst(
-    frame: CommandFrame | AuthFrame, key: bytes, sample_rate: int, lead_s: float, tail_s: float
+    frame: CommandFrame | AuthFrame,
+    key: bytes,
+    sample_rate: int,
+    lead_s: float,
+    tail_s: float,
+    *,
+    repeat: int = 1,
+    gap_s: float = 0.3,
 ) -> np.ndarray:
+    """Lead silence, ``repeat`` identical bursts separated by ``gap_s``, tail silence.
+
+    Repeats let the receiver combine soft bits across copies; byte-identical
+    copies after the first accepted one are reported as duplicates, not replays.
+    """
+
+    if repeat < 1:
+        raise ValueError("repeat must be at least 1")
     pcm = modulate(encode_frame(frame, key), sample_rate, amplitude=0.6)
-    lead = np.zeros(int(sample_rate * lead_s))
-    tail = np.zeros(int(sample_rate * tail_s))
-    return np.concatenate((lead, pcm, tail))
+    parts = [np.zeros(int(sample_rate * lead_s))]
+    for index in range(repeat):
+        parts.append(pcm)
+        if index + 1 < repeat:
+            parts.append(np.zeros(int(sample_rate * gap_s)))
+    parts.append(np.zeros(int(sample_rate * tail_s)))
+    return np.concatenate(parts)
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--out", type=Path, default=ROOT / "web-dashboard" / "public" / "sample_burst.wav")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--out", type=Path, default=ROOT / "web-dashboard" / "public" / "sample_burst.wav"
+    )
     parser.add_argument("--seq", type=int, default=1)
     parser.add_argument("--verb", type=int, default=25)
     parser.add_argument("--noun", type=int, default=81)
@@ -61,7 +84,16 @@ def main(argv: list[str] | None = None) -> int:
         help="write an operator AUTH frame (seq=--seq) referencing COMMAND_SEQ instead of a COMMAND",
     )
     parser.add_argument("--sample-rate", type=int, choices=(44100, 48000), default=48000)
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=1,
+        help="send the same burst N times (over-the-air redundancy)",
+    )
+    parser.add_argument("--gap-ms", type=float, default=300.0, help="silence between repeats")
     args = parser.parse_args(argv)
+    if args.repeat < 1:
+        parser.error("--repeat must be at least 1")
 
     frame: CommandFrame | AuthFrame
     if args.auth_ref is not None:
@@ -79,12 +111,22 @@ def main(argv: list[str] | None = None) -> int:
             r2_centidegrees=args.r2,
             delta_v_tenths_fps=args.delta_v,
         )
-    pcm = build_burst(frame, key, args.sample_rate, lead_s=0.5, tail_s=0.5)
+    pcm = build_burst(
+        frame,
+        key,
+        args.sample_rate,
+        lead_s=0.5,
+        tail_s=0.5,
+        repeat=args.repeat,
+        gap_s=args.gap_ms / 1000.0,
+    )
     args.out.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.out.with_name(args.out.name + ".tmp")
     temporary.write_bytes(encode_wav_bytes(pcm, args.sample_rate))
     temporary.replace(args.out)
-    print(f"wrote {args.out} ({pcm.size / args.sample_rate:.2f} s, seq={args.seq}, raw={encode_frame(frame, key).hex()})")
+    print(
+        f"wrote {args.out} ({pcm.size / args.sample_rate:.2f} s, seq={args.seq}, raw={encode_frame(frame, key).hex()})"
+    )
     return 0
 
 

@@ -119,9 +119,7 @@ class FileSequenceStore:
         if type(value) is not dict or set(value) != {"schema_version", "last_accepted_seq"}:
             raise SequenceStoreError(SequenceErrorCode.MALFORMED, "load", self._path)
         if value["schema_version"] != SEQUENCE_SCHEMA_VERSION:
-            raise SequenceStoreError(
-                SequenceErrorCode.UNSUPPORTED_VERSION, "load", self._path
-            )
+            raise SequenceStoreError(SequenceErrorCode.UNSUPPORTED_VERSION, "load", self._path)
         sequence = value["last_accepted_seq"]
         if type(sequence) is not int or not 0 <= sequence <= MAX_SEQUENCE:
             raise SequenceStoreError(SequenceErrorCode.OUT_OF_RANGE, "load", self._path)
@@ -169,14 +167,17 @@ class FileSequenceStore:
         operation: str,
         error_code: SequenceErrorCode,
     ) -> None:
-        payload = json.dumps(
-            {
-                "schema_version": state.schema_version,
-                "last_accepted_seq": state.last_accepted_seq,
-            },
-            separators=(",", ":"),
-            sort_keys=True,
-        ) + "\n"
+        payload = (
+            json.dumps(
+                {
+                    "schema_version": state.schema_version,
+                    "last_accepted_seq": state.last_accepted_seq,
+                },
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+            + "\n"
+        )
         descriptor: int | None = None
         temporary_path: Path | None = None
         try:

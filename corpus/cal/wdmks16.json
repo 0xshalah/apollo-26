@@ -1,0 +1,25 @@
+{
+  "measured_at": "2026-11-24T12:08:16+00:00",
+  "sample_rate": 48000,
+  "tx_amplitude": 0.4,
+  "input_device": 16,
+  "output_device": 3,
+  "wasapi_exclusive": false,
+  "peak_abs": 0.0,
+  "mark_amplitude": 0.0,
+  "space_amplitude": 0.0,
+  "twist_db": -240.0,
+  "mark_2nd_harmonic_db": -240.0,
+  "mark_fade_db": -240.0,
+  "noise_floor_rms": 0.0,
+  "room_170_850_hz_rms": 0.0,
+  "noise_in_band_1000_2500_hz_rms": 0.0,
+  "mark_snr_db": -240.0,
+  "space_snr_db": -240.0,
+  "advice": [
+    "Mark tone fades while it plays: OS voice processing is active. Turn off audio enhancements / noise suppression, try --exclusive, or use a USB microphone.",
+    "Signal is weak: raise the volume or move the transmitter closer.",
+    "In-band SNR below 15 dB: reduce room noise or move closer.",
+    "Twist -240.0 dB: the soft fallback compensates, but a flatter speaker or a different position helps."
+  ]
+}

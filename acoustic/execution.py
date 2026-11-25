@@ -66,7 +66,9 @@ class ExecutionRecord:
             finished_at=None if data["finished_at"] is None else str(data["finished_at"]),
             pre_revision=int(data["pre_revision"]),
             post_revision=None if data["post_revision"] is None else int(data["post_revision"]),
-            error_code=None if data["error_code"] is None else ExecutionErrorCode(data["error_code"]),
+            error_code=None
+            if data["error_code"] is None
+            else ExecutionErrorCode(data["error_code"]),
         )
 
 
@@ -102,7 +104,9 @@ class ExecutionJournal:
                 )
                 self.put(record)
                 interrupted.append(record)
-                _LOG.warning("execution seq=%d closed as INTERRUPTED after restart", record.frame_seq)
+                _LOG.warning(
+                    "execution seq=%d closed as INTERRUPTED after restart", record.frame_seq
+                )
             self._records[record.frame_seq] = record
         return interrupted
 

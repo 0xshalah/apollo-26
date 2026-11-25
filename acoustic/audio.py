@@ -93,7 +93,9 @@ def decode_wav_bytes(data: bytes) -> tuple[int, NDArray[np.float64]]:
             rate = reader.getframerate()
             frames = reader.readframes(reader.getnframes())
     except (wave.Error, EOFError) as error:
-        raise AudioSourceError(SourceErrorCode.SOURCE_CONFIG, f"invalid WAV data: {error}") from error
+        raise AudioSourceError(
+            SourceErrorCode.SOURCE_CONFIG, f"invalid WAV data: {error}"
+        ) from error
     if channels != 1:
         raise AudioSourceError(SourceErrorCode.SOURCE_CONFIG, "WAV must be mono")
     if width != 2:
@@ -197,7 +199,13 @@ class LoopbackSource:
 class MicrophoneSource:
     """sounddevice capture; the callback only copies into a bounded queue."""
 
-    def __init__(self, device: int | str | None = None, sample_rate: int | None = None) -> None:
+    def __init__(
+        self,
+        device: int | str | None = None,
+        sample_rate: int | None = None,
+        *,
+        wasapi_exclusive: bool = False,
+    ) -> None:
         try:
             import sounddevice  # noqa: PLC0415 - optional hardware boundary
         except (ImportError, OSError) as error:
@@ -205,6 +213,11 @@ class MicrophoneSource:
                 SourceErrorCode.SOURCE_UNAVAILABLE, f"sounddevice unavailable: {error}"
             ) from error
         self._sd = sounddevice
+        # Exclusive mode hands samples straight from the driver, bypassing the shared-mode
+        # mixer.  Driver-level "always on" processing may still apply; measure with
+        # ``scripts/acoustic_lab.py calibrate --exclusive``.
+        extra = sounddevice.WasapiSettings(exclusive=True) if wasapi_exclusive else None
+        self._extra = extra
         rate = sample_rate or self._pick_rate(device)
         self._metadata = SourceMetadata(SourceKind.MICROPHONE, rate)
         self._queue: queue.Queue[NDArray[np.float64]] = queue.Queue(QUEUE_BLOCKS)
@@ -217,6 +230,7 @@ class MicrophoneSource:
                 blocksize=block_samples(rate),
                 dtype="float32",
                 callback=self._callback,
+                extra_settings=extra,
             )
             self._stream.start()
         except Exception as error:  # PortAudio raises its own error hierarchy
@@ -229,13 +243,16 @@ class MicrophoneSource:
     def _pick_rate(self, device: int | str | None) -> int:
         for rate in SUPPORTED_SAMPLE_RATES[::-1]:  # prefer 48 kHz, fall back to 44.1 kHz
             try:
-                self._sd.check_input_settings(device=device, channels=1, samplerate=rate)
+                self._sd.check_input_settings(
+                    device=device, channels=1, samplerate=rate, extra_settings=self._extra
+                )
                 return rate
             except Exception as error:  # noqa: BLE001 - PortAudio capability probe
                 _LOG.info("input device %r rejected %d Hz: %s", device, rate, error)
                 continue
         raise AudioSourceError(
-            SourceErrorCode.SOURCE_UNAVAILABLE, f"device {device!r} supports neither 48 kHz nor 44.1 kHz"
+            SourceErrorCode.SOURCE_UNAVAILABLE,
+            f"device {device!r} supports neither 48 kHz nor 44.1 kHz",
         )
 
     def _callback(self, indata: Any, frames: int, time_info: Any, status: Any) -> None:

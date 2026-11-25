@@ -56,7 +56,9 @@ def command_bytes(
 
 
 def p40_bytes(seq: int, dv: int = 1200, *, critical: bool = False, key: bytes = LINK_KEY) -> bytes:
-    return command_bytes(seq, verb=37, noun=0, program=40, r1=1250, r2=420, dv=dv, critical=critical, key=key)
+    return command_bytes(
+        seq, verb=37, noun=0, program=40, r1=1250, r2=420, dv=dv, critical=critical, key=key
+    )
 
 
 def auth_bytes(seq: int, ref_seq: int, *, key: bytes = OPERATOR_KEY) -> bytes:
@@ -69,7 +71,9 @@ def with_bad_crc(raw: bytes) -> bytes:
     return bytes(mutated)
 
 
-def burst(*frames: bytes, gap_s: float = 0.3, lead_s: float = 0.3, tail_s: float = 0.6) -> NDArray[np.float64]:
+def burst(
+    *frames: bytes, gap_s: float = 0.3, lead_s: float = 0.3, tail_s: float = 0.6
+) -> NDArray[np.float64]:
     parts: list[NDArray[np.float64]] = [np.zeros(int(RATE * lead_s))]
     for index, raw in enumerate(frames):
         if index:
@@ -82,7 +86,12 @@ def burst(*frames: bytes, gap_s: float = 0.3, lead_s: float = 0.3, tail_s: float
 class ArraySource:
     """Deterministic in-memory AudioSource (loopback kind) for pipeline tests."""
 
-    def __init__(self, pcm: NDArray[np.float64], kind: SourceKind = SourceKind.LOOPBACK, chunk: int | None = None) -> None:
+    def __init__(
+        self,
+        pcm: NDArray[np.float64],
+        kind: SourceKind = SourceKind.LOOPBACK,
+        chunk: int | None = None,
+    ) -> None:
         self._pcm = np.asarray(pcm, dtype=np.float64)
         self._meta = SourceMetadata(kind, RATE)
         self._chunk = chunk

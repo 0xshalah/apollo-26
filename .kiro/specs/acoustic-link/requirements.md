@@ -2,23 +2,23 @@
 
 ## Introduction
 
-Feature ini menerima atau menghasilkan burst Bell-202 Apollo-26, memvalidasi frame wire v1, mempertahankan anti-replay setelah restart, dan menerbitkan telemetry yang tervalidasi kepada konsumen lokal. Scope meliputi `acoustic/` dan kontraknya dengan filesystem serta server localhost. Keputusan DSKY, lifecycle otorisasi kritis, dan enforcement safety gate tetap milik spec `mcp-bridge`.
+This feature receives or generates Apollo-26 Bell-202 bursts, validates wire v1 frames, preserves anti-replay across restarts, and publishes validated telemetry to local consumers. The scope covers `acoustic/` and its contracts with the filesystem and the localhost server. DSKY decisions, the critical authorization lifecycle, and safety gate enforcement remain owned by the `mcp-bridge` spec.
 
-Sumber normatif wire format adalah `contracts/acoustic-frame-v1.md`. JSON lintas proses wajib sesuai `contracts/telemetry-frame.schema.json` atau `contracts/websocket-events.schema.json`.
+The normative source for the wire format is `contracts/acoustic-frame-v1.md`. Cross-process JSON must conform to `contracts/telemetry-frame.schema.json` or `contracts/websocket-events.schema.json`.
 
 ## Glossary
 
-- **Candidate**: tepat 34 byte yang dibekukan receiver untuk validasi.
-- **Accepted**: candidate yang melewati seluruh validasi dan whose sequence sudah tersimpan atomik.
-- **Published**: accepted record sudah memiliki file final di inbox dan boleh dikirim ke konsumen.
-- **Operational event**: event internal typed untuk status/anomali; event ini tidak boleh dikirim lintas proses sebelum memiliki JSON Schema kontrak.
-- **Explicit provisioning**: tindakan operator di luar UI biasa untuk membuat atau mereset sequence store.
+- **Candidate**: exactly 34 bytes frozen by the receiver for validation.
+- **Accepted**: a candidate that has passed all validation and whose sequence has been stored atomically.
+- **Published**: an accepted record that already has a final file in the inbox and may be sent to consumers.
+- **Operational event**: a typed internal event for status/anomalies; this event must not be sent across processes before it has a contract JSON Schema.
+- **Explicit provisioning**: an operator action outside the ordinary UI to create or reset the sequence store.
 
 ## Requirements
 
 ### AL-REQ-1 — Physical encoding at 300 baud
 
-**User story:** Sebagai operator, saya ingin satu encoding fisik yang deterministik agar transmitter dan receiver tidak bernegosiasi mode yang ambigu.
+**User story:** As an operator, I want a single deterministic physical encoding so that the transmitter and receiver do not negotiate ambiguous modes.
 
 Acceptance criteria:
 
@@ -30,7 +30,7 @@ Acceptance criteria:
 
 ### AL-REQ-2 — Receiver acquisition, synchronization, and timeout
 
-**User story:** Sebagai operator, saya ingin receiver kembali ke kondisi siap setelah sinyal parsial agar noise atau jamming tidak menggantung daemon.
+**User story:** As an operator, I want the receiver to return to a ready state after a partial signal so that noise or jamming does not hang the daemon.
 
 Acceptance criteria:
 
@@ -46,7 +46,7 @@ Acceptance criteria:
 
 ### AL-REQ-3 — Pure 34-byte frame codec
 
-**User story:** Sebagai pengembang, saya ingin codec murni agar wire format dapat diuji tanpa audio, filesystem, network, clock, atau environment.
+**User story:** As a developer, I want a pure codec so that the wire format can be tested without audio, filesystem, network, clock, or environment.
 
 Acceptance criteria:
 
@@ -59,7 +59,7 @@ Acceptance criteria:
 
 ### AL-REQ-4 — COMMAND and AUTH wire semantics
 
-**User story:** Sebagai safety-gate consumer, saya ingin tipe frame dan kunci dipisahkan agar COMMAND tidak dapat menyamar sebagai AUTH.
+**User story:** As a safety-gate consumer, I want frame types and keys to be separated so that a COMMAND cannot masquerade as an AUTH.
 
 Acceptance criteria:
 
@@ -71,7 +71,7 @@ Acceptance criteria:
 
 ### AL-REQ-5 — Ordered validation, integrity, authentication, and replay defense
 
-**User story:** Sebagai operator, saya ingin setiap invalid frame berhenti pada reason pertama agar hasil audit deterministik dan tidak ada frame invalid yang diterbitkan.
+**User story:** As an operator, I want every invalid frame to stop at the first reason so that audit results are deterministic and no invalid frame is published.
 
 Acceptance criteria:
 
@@ -86,7 +86,7 @@ Acceptance criteria:
 
 ### AL-REQ-6 — Microphone, WAV, and loopback adapters
 
-**User story:** Sebagai demonstrator, saya ingin sumber live dan deterministik menggunakan pipeline yang sama agar fallback WAV tidak mengubah validasi.
+**User story:** As a demonstrator, I want live and deterministic sources to use the same pipeline so that the WAV fallback does not change validation.
 
 Acceptance criteria:
 
@@ -99,7 +99,7 @@ Acceptance criteria:
 
 ### AL-REQ-7 — Bounded streaming and source recovery
 
-**User story:** Sebagai operator, saya ingin memory dan work queue tetap terbatas saat menerima noise atau ketika consumer melambat.
+**User story:** As an operator, I want memory and the work queue to stay bounded while receiving noise or when a consumer slows down.
 
 Acceptance criteria:
 
@@ -111,7 +111,7 @@ Acceptance criteria:
 
 ### AL-REQ-8 — Atomic telemetry and publication order
 
-**User story:** Sebagai Flight Watch consumer, saya ingin hanya melihat file lengkap yang sequence-nya sudah committed.
+**User story:** As a Flight Watch consumer, I want to see only complete files whose sequence has already been committed.
 
 Acceptance criteria:
 
@@ -126,7 +126,7 @@ Acceptance criteria:
 
 ### AL-REQ-9 — Sequence store, restart, and exhaustion
 
-**User story:** Sebagai operator, saya ingin restart atau state corruption tidak membuka replay window.
+**User story:** As an operator, I want a restart or state corruption not to open a replay window.
 
 Acceptance criteria:
 
@@ -141,7 +141,7 @@ Acceptance criteria:
 
 ### AL-REQ-10 — Frequency anomaly reporting
 
-**User story:** Sebagai operator, saya ingin tone drift dilaporkan terpisah dari integrity failure agar diagnosis tidak menyesatkan.
+**User story:** As an operator, I want tone drift to be reported separately from integrity failures so that the diagnosis is not misleading.
 
 Acceptance criteria:
 
@@ -155,7 +155,7 @@ Acceptance criteria:
 
 ### AL-REQ-11 — Localhost-only network boundary
 
-**User story:** Sebagai operator, saya ingin command path lokal tidak membuka koneksi non-loopback.
+**User story:** As an operator, I want the local command path not to open non-loopback connections.
 
 Acceptance criteria:
 
@@ -166,7 +166,7 @@ Acceptance criteria:
 
 ### AL-REQ-12 — Observability and evidence integrity
 
-**User story:** Sebagai reviewer, saya ingin status dan audit berasal dari runtime nyata agar klaim demo dapat diperiksa.
+**User story:** As a reviewer, I want status and audit data to come from the real runtime so that demo claims can be checked.
 
 Acceptance criteria:
 
@@ -178,7 +178,7 @@ Acceptance criteria:
 
 ### AL-REQ-13 — Performance and reliability targets
 
-**User story:** Sebagai demonstrator, saya ingin target kinerja diuji dengan prosedur yang dapat diulang dan dilaporkan apa adanya.
+**User story:** As a demonstrator, I want performance targets to be tested with a repeatable procedure and reported as they are.
 
 Acceptance criteria:
 

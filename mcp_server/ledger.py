@@ -30,7 +30,12 @@ class CommandState(StrEnum):
 
 OPEN_STATES: Final = frozenset({CommandState.HELD, CommandState.READY})
 CLAIMED_STATES: Final = frozenset(
-    {CommandState.EXECUTING, CommandState.EXECUTED, CommandState.FAILED, CommandState.OUTCOME_UNKNOWN}
+    {
+        CommandState.EXECUTING,
+        CommandState.EXECUTED,
+        CommandState.FAILED,
+        CommandState.OUTCOME_UNKNOWN,
+    }
 )
 
 
@@ -128,7 +133,9 @@ class FileLedgerPersistence:
             "commands": {str(k): v.to_json() for k, v in sorted(state.commands.items())},
         }
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        descriptor, name = tempfile.mkstemp(dir=self._path.parent, prefix=f".{self._path.name}.", suffix=".tmp")
+        descriptor, name = tempfile.mkstemp(
+            dir=self._path.parent, prefix=f".{self._path.name}.", suffix=".tmp"
+        )
         temporary: Path | None = Path(name)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
@@ -151,7 +158,9 @@ class MemoryLedgerPersistence:
     def load(self) -> LedgerState:
         if self.saved is None:
             return LedgerState()
-        return LedgerState(self.saved.daemon_epoch, self.saved.cursor_seq, dict(self.saved.commands))
+        return LedgerState(
+            self.saved.daemon_epoch, self.saved.cursor_seq, dict(self.saved.commands)
+        )
 
     def save(self, state: LedgerState) -> None:
         if self.fail_next_save:

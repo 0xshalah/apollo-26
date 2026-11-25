@@ -155,9 +155,7 @@ class AgcReferenceMachine(RuleBasedStateMachine):
     @precondition(lambda self: not self.key_rel and not self.opr_err)
     @rule()
     def canonical_v34(self) -> None:
-        self._send(
-            (DskyKey.VERB, DskyKey.DIGIT_3, DskyKey.DIGIT_4, DskyKey.ENTR)
-        )
+        self._send((DskyKey.VERB, DskyKey.DIGIT_3, DskyKey.DIGIT_4, DskyKey.ENTR))
         self.program = Program.P00
         self.comp_acty = False
         self.next_tick = None
@@ -191,7 +189,9 @@ class AgcReferenceMachine(RuleBasedStateMachine):
         assert self.engine.snapshot() == before
 
     @precondition(lambda self: self.key_rel)
-    @rule(key=st.sampled_from(tuple(DskyKey)), timestamp=st.integers(min_value=-10, max_value=10000))
+    @rule(
+        key=st.sampled_from(tuple(DskyKey)), timestamp=st.integers(min_value=-10, max_value=10000)
+    )
     def key_rel_blocks_every_key(self, key: DskyKey, timestamp: int) -> None:
         before = self.engine.snapshot()
         anchor = self.engine.last_accepted_key_ms
@@ -249,7 +249,9 @@ class AgcReferenceMachine(RuleBasedStateMachine):
         if self.program is Program.P00:
             assert not snapshot.lamps.comp_acty
             assert snapshot.next_comp_acty_tick is None
-        for raw, display in zip(self.raw_values, (snapshot.r1, snapshot.r2, snapshot.r3), strict=True):
+        for raw, display in zip(
+            self.raw_values, (snapshot.r1, snapshot.r2, snapshot.r3), strict=True
+        ):
             expected_zero = (
                 ZeroSign.POSITIVE
                 if raw == 0

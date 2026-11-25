@@ -5,7 +5,8 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from acoustic.modem import (
     BAUD,
@@ -35,8 +36,7 @@ _P3_EXAMPLES = 300 if _FULL_PROFILE else 8
 _P5_EXAMPLES = 1_000 if _FULL_PROFILE else 24
 _SAMPLE_RATES = (44_100, 48_000)
 _GOLDEN_FRAME = bytes.fromhex(
-    "a52601010000002a000000000125002804e201a4000079e003"
-    "ef57ace1ee8c8d7be6"
+    "a52601010000002a000000000125002804e201a4000079e003ef57ace1ee8c8d7be6"
 )
 
 
@@ -70,7 +70,7 @@ def test_al_req_1_protocol_constants_match_normative_contract() -> None:
     assert "Mark = 1200 Hz" in contract
     assert "space = 2200 Hz" in contract
     assert "300 symbols/s" in contract
-    assert "Preamble = mark kontinu minimal 250 ms" in contract
+    assert "Preamble = continuous mark of at least 250 ms" in contract
     assert MARK_FREQUENCY_HZ == 1_200.0
     assert SPACE_FREQUENCY_HZ == 2_200.0
     assert BAUD == 300
@@ -126,9 +126,7 @@ def test_al_req_1_modulation_duration_bounds_and_continuous_phase(sample_rate: i
     assert waveform.shape == (symbols.size * width,)
     assert float(np.max(np.abs(waveform))) <= amplitude + 1e-12
 
-    frequencies = np.repeat(
-        np.where(symbols == 1, MARK_FREQUENCY_HZ, SPACE_FREQUENCY_HZ), width
-    )
+    frequencies = np.repeat(np.where(symbols == 1, MARK_FREQUENCY_HZ, SPACE_FREQUENCY_HZ), width)
     increments = 2.0 * np.pi * frequencies / sample_rate
     expected_phases = np.empty(waveform.size)
     expected_phases[0] = initial_phase
@@ -136,10 +134,10 @@ def test_al_req_1_modulation_duration_bounds_and_continuous_phase(sample_rate: i
     np.testing.assert_allclose(waveform, amplitude * np.sin(expected_phases), atol=2e-11)
 
 
-@pytest.mark.parametrize(("frequency", "expected_tone"), [(1_200.0, Tone.MARK), (2_200.0, Tone.SPACE)])
-def test_al_req_1_goertzel_detects_bell_202_tones(
-    frequency: float, expected_tone: Tone
-) -> None:
+@pytest.mark.parametrize(
+    ("frequency", "expected_tone"), [(1_200.0, Tone.MARK), (2_200.0, Tone.SPACE)]
+)
+def test_al_req_1_goertzel_detects_bell_202_tones(frequency: float, expected_tone: Tone) -> None:
     config = DemodulatorConfig(48_000)
     measurement = goertzel_tone(_tone(frequency, 48_000, 1 / BAUD), config)
     assert measurement.tone is expected_tone
@@ -183,7 +181,7 @@ def test_al_req_10_insufficient_frequency_evidence_returns_none() -> None:
 def test_p2_clean_audio_round_trip(
     payload: bytes, sample_rate: int, leading_silence_symbols: int
 ) -> None:
-    frame = b"\xA5\x26" + payload
+    frame = b"\xa5\x26" + payload
     waveform = modulate(frame, sample_rate, initial_phase_radians=0.37)
     leading = np.zeros(leading_silence_symbols * samples_per_symbol(sample_rate))
     result = demodulate(np.concatenate((leading, waveform)), DemodulatorConfig(sample_rate))
@@ -203,7 +201,7 @@ def test_p2_clean_audio_round_trip(
 def test_p3_awgn_at_or_above_15_db_round_trip(
     payload: bytes, sample_rate: int, snr_db: float, seed: int
 ) -> None:
-    frame = b"\xA5\x26" + payload
+    frame = b"\xa5\x26" + payload
     waveform = modulate(frame, sample_rate, amplitude=0.65, initial_phase_radians=1.1)
     noisy = _awgn(waveform, snr_db, seed)
     assert float(np.max(np.abs(noisy))) <= 0.99
@@ -288,9 +286,7 @@ def test_al_req_2_stable_uart_framing_error() -> None:
     waveform = modulate(_GOLDEN_FRAME, sample_rate)
     # Replace byte 2's stop bit (mark) with space. The codec maps this detail to LENGTH.
     stop_start = (MIN_PREAMBLE_SYMBOLS + 2 * 10 + 9) * width
-    waveform[stop_start : stop_start + width] = _tone(
-        SPACE_FREQUENCY_HZ, sample_rate, 1 / BAUD
-    )
+    waveform[stop_start : stop_start + width] = _tone(SPACE_FREQUENCY_HZ, sample_rate, 1 / BAUD)
     result = demodulate(waveform, DemodulatorConfig(sample_rate))
     assert result.candidates == ()
     assert result.diagnostics.failure is not None

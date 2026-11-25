@@ -1,0 +1,23 @@
+{
+  "measured_at": "2026-11-24T12:38:09+00:00",
+  "sample_rate": 48000,
+  "tx_amplitude": 0.25,
+  "input_device": null,
+  "output_device": null,
+  "wasapi_exclusive": false,
+  "peak_abs": 0.7298,
+  "mark_amplitude": 0.19187,
+  "space_amplitude": 0.09439,
+  "twist_db": 6.16,
+  "mark_2nd_harmonic_db": -57.46,
+  "mark_fade_db": 47.33,
+  "noise_floor_rms": 0.07529,
+  "room_170_850_hz_rms": 0.027068,
+  "noise_in_band_1000_2500_hz_rms": 0.015361,
+  "mark_snr_db": 18.9,
+  "space_snr_db": 12.8,
+  "advice": [
+    "In-band SNR below 15 dB: reduce room noise or move closer.",
+    "Twist 6.16 dB: the soft fallback compensates, but a flatter speaker or a different position helps."
+  ]
+}

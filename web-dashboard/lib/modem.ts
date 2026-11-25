@@ -78,16 +78,51 @@ export interface ModulateOptions {
   tailSymbols?: number;
   /** Fade length applied only at the very start and end of the buffer. */
   edgeFadeMs?: number;
+  /**
+   * Send the identical burst this many times (default 1). The receiver combines
+   * copies that fail alone and reports later byte-identical copies as duplicates.
+   */
+  repeat?: number;
+  /** Silence between repeated bursts (default 300 ms). */
+  gapMs?: number;
+}
+
+export const MAX_REPEAT = 5;
+export const DEFAULT_GAP_MS = 300;
+
+function repeatPlan(opts: ModulateOptions): { repeat: number; gapMs: number } {
+  const repeat = opts.repeat ?? 1;
+  if (!Number.isInteger(repeat) || repeat < 1 || repeat > MAX_REPEAT) {
+    throw new RangeError(`repeat must be an integer in 1..${MAX_REPEAT}`);
+  }
+  const gapMs = opts.gapMs ?? DEFAULT_GAP_MS;
+  if (!(gapMs >= 0 && gapMs <= 2000)) throw new RangeError('gapMs in 0..2000');
+  return { repeat, gapMs };
 }
 
 /**
- * Phase-continuous FSK PCM from the real encoded frame. A single phase
- * accumulator runs across preamble, frame, and tail symbols.
+ * Phase-continuous FSK PCM from the real encoded frame, optionally repeated.
+ * Within each burst a single phase accumulator runs across preamble, frame,
+ * and tail symbols; repeats are separated by silence.
  */
 export function modulate(
   frame: Uint8Array,
   sampleRate: number,
   opts: ModulateOptions = {},
+): Float32Array<ArrayBuffer> {
+  const { repeat, gapMs } = repeatPlan(opts);
+  const burst = modulateBurst(frame, sampleRate, opts);
+  if (repeat === 1) return burst;
+  const gap = Math.round((gapMs / 1000) * sampleRate);
+  const out = new Float32Array(repeat * burst.length + (repeat - 1) * gap);
+  for (let i = 0; i < repeat; i++) out.set(burst, i * (burst.length + gap));
+  return out;
+}
+
+function modulateBurst(
+  frame: Uint8Array,
+  sampleRate: number,
+  opts: ModulateOptions,
 ): Float32Array<ArrayBuffer> {
   const amplitude = opts.amplitude ?? 0.8;
   if (!(amplitude > 0 && amplitude <= 1)) throw new RangeError('amplitude in (0, 1]');
@@ -120,8 +155,11 @@ export function modulate(
 }
 
 export function durationMs(frame: Uint8Array, sampleRate: number, opts: ModulateOptions = {}) {
+  const { repeat, gapMs } = repeatPlan(opts);
   const plan = planSymbols(frame, opts.preambleSymbols, opts.tailSymbols);
-  return (plan.symbols.length * samplesPerSymbol(sampleRate) * 1000) / sampleRate;
+  const burstMs = (plan.symbols.length * samplesPerSymbol(sampleRate) * 1000) / sampleRate;
+  const gap = Math.round((gapMs / 1000) * sampleRate);
+  return repeat * burstMs + ((repeat - 1) * gap * 1000) / sampleRate;
 }
 
 export type TransmitOutcome =

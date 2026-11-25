@@ -1,0 +1,113 @@
+{
+  "created_at": "2026-11-24T12:38:09+00:00",
+  "mode": "play",
+  "sample_rate": 48000,
+  "amplitude": 0.25,
+  "repeat": 3,
+  "input_device": null,
+  "output_device": null,
+  "wasapi_exclusive": false,
+  "conditions": "same laptop, default devices, amp 0.25, repeat 3",
+  "files": [
+    {
+      "file": "trial-01-seq3000.wav",
+      "seq": 3000,
+      "expected_hex": "a526010100000bb8000000000019510004e201a400000c303819d51c57f39ef840de"
+    },
+    {
+      "file": "trial-02-seq3001.wav",
+      "seq": 3001,
+      "expected_hex": "a526010100000bb9000000000019510004e201a400000c304ae03f71ca6752035da5"
+    },
+    {
+      "file": "trial-03-seq3002.wav",
+      "seq": 3002,
+      "expected_hex": "a526010100000bba000000000019510004e201a400000c308d9920e6f59d149b170b"
+    },
+    {
+      "file": "trial-04-seq3003.wav",
+      "seq": 3003,
+      "expected_hex": "a526010100000bbb000000000019510004e201a400000c305b1391f60bfa13019ef8"
+    },
+    {
+      "file": "trial-05-seq3004.wav",
+      "seq": 3004,
+      "expected_hex": "a526010100000bbc000000000019510004e201a400000c308f09e1a48b12f564edfa"
+    },
+    {
+      "file": "trial-06-seq3005.wav",
+      "seq": 3005,
+      "expected_hex": "a526010100000bbd000000000019510004e201a400000c309f16faffcb09001ff645"
+    },
+    {
+      "file": "trial-07-seq3006.wav",
+      "seq": 3006,
+      "expected_hex": "a526010100000bbe000000000019510004e201a400000c30e9981e81fd54aa02e85e"
+    },
+    {
+      "file": "trial-08-seq3007.wav",
+      "seq": 3007,
+      "expected_hex": "a526010100000bbf000000000019510004e201a400000c30276ee5ea6a08b0f6ee14"
+    },
+    {
+      "file": "trial-09-seq3008.wav",
+      "seq": 3008,
+      "expected_hex": "a526010100000bc0000000000019510004e201a400000c306e788dc9305c701e10d0"
+    },
+    {
+      "file": "trial-10-seq3009.wav",
+      "seq": 3009,
+      "expected_hex": "a526010100000bc1000000000019510004e201a400000c30b828a68e0a7465faa3c2"
+    },
+    {
+      "file": "trial-11-seq3010.wav",
+      "seq": 3010,
+      "expected_hex": "a526010100000bc2000000000019510004e201a400000c302fb9157abfbb0dd19d14"
+    },
+    {
+      "file": "trial-12-seq3011.wav",
+      "seq": 3011,
+      "expected_hex": "a526010100000bc3000000000019510004e201a400000c30e1088fe577dabc4b99d3"
+    },
+    {
+      "file": "trial-13-seq3012.wav",
+      "seq": 3012,
+      "expected_hex": "a526010100000bc4000000000019510004e201a400000c300b3283a429f02064b4cf"
+    },
+    {
+      "file": "trial-14-seq3013.wav",
+      "seq": 3013,
+      "expected_hex": "a526010100000bc5000000000019510004e201a400000c30146ab3f2dc3cc3d1590d"
+    },
+    {
+      "file": "trial-15-seq3014.wav",
+      "seq": 3014,
+      "expected_hex": "a526010100000bc6000000000019510004e201a400000c300e434f1884dd8ba76413"
+    },
+    {
+      "file": "trial-16-seq3015.wav",
+      "seq": 3015,
+      "expected_hex": "a526010100000bc7000000000019510004e201a400000c30421d5f919687cd697edf"
+    },
+    {
+      "file": "trial-17-seq3016.wav",
+      "seq": 3016,
+      "expected_hex": "a526010100000bc8000000000019510004e201a400000c30ac16a59db76e7a4e2ec7"
+    },
+    {
+      "file": "trial-18-seq3017.wav",
+      "seq": 3017,
+      "expected_hex": "a526010100000bc9000000000019510004e201a400000c30b975fd093142579a55fe"
+    },
+    {
+      "file": "trial-19-seq3018.wav",
+      "seq": 3018,
+      "expected_hex": "a526010100000bca000000000019510004e201a400000c30aec9b1263ba7305bb595"
+    },
+    {
+      "file": "trial-20-seq3019.wav",
+      "seq": 3019,
+      "expected_hex": "a526010100000bcb000000000019510004e201a400000c30544c071c97d8a6d33133"
+    }
+  ]
+}

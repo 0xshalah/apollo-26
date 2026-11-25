@@ -88,7 +88,9 @@ class WebServer:
     ) -> None:
         self._bus = bus
         self._initial_events = initial_events
-        self._static_dir = static_dir.resolve() if static_dir is not None and static_dir.is_dir() else None
+        self._static_dir = (
+            static_dir.resolve() if static_dir is not None and static_dir.is_dir() else None
+        )
         self._loopback_sink = loopback_sink
         self._host = require_loopback_host(host)
         self._port = require_port(port)

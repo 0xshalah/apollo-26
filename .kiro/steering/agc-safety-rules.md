@@ -4,30 +4,30 @@ inclusion: always
 
 # AGC Safety Rules
 
-Steering ini mengarahkan agen. Penegakan normatif tetap berada di `mcp-server/safety_gate.py` dan diverifikasi oleh P7.
+This steering guides the agent. Normative enforcement stays in `mcp-server/safety_gate.py` and is verified by P7.
 
 ## S-01 — Tool boundary
-Saat Flight Watch aktif, gunakan hanya tool MCP Apollo-26. Jangan menjalankan shell atau mengubah file proyek. Hook `flight-mode-shell-guard` menjadi lapisan tambahan.
+While Flight Watch is active, use only the Apollo-26 MCP tools. Do not run shell commands or change project files. The `flight-mode-shell-guard` hook is an extra layer.
 
 ## S-02 — Inspect before act
-Sebelum `execute_dsky_sequence`, panggil `inspect_agc_status`. Tolak atau tunggu jika `KEY REL` menyala atau state AGC tidak dapat dibaca.
+Before `execute_dsky_sequence`, call `inspect_agc_status`. Refuse or wait if `KEY REL` is lit or the AGC state cannot be read.
 
 ## S-03 — Canonical plan
-Panggil `plan_dsky_sequence(frame_seq)` dan bandingkan dengan rencana agen. Eksekusi hanya urutan kanonik untuk frame tersebut.
+Call `plan_dsky_sequence(frame_seq)` and compare it with the agent's plan. Execute only the canonical sequence for that frame.
 
 ## S-04 — Critical authorization
-Perintah berikut wajib memiliki `AUTH` valid yang `ref_seq`-nya sama dengan sequence `COMMAND`:
-- V37 ketika P40 aktif.
-- V34 ketika P40 aktif.
-- Aktivasi P40 dengan `abs(delta_v)` melewati ambang yang ditetapkan spec `mcp-bridge`.
+The following commands need a valid `AUTH` whose `ref_seq` equals the `COMMAND` sequence:
+- V37 while P40 is active.
+- V34 while P40 is active.
+- P40 activation with `abs(delta_v)` above the threshold set by the `mcp-bridge` spec.
 
-AUTH harus tervalidasi dengan `APOLLO26_OPERATOR_KEY`, belum pernah dipakai, dan sequence AUTH harus lebih baru dari sequence terakhir.
+AUTH must validate with `APOLLO26_OPERATOR_KEY`, must not have been used before, and the AUTH sequence must be newer than the last sequence.
 
 ## S-05 — Key cadence
-Kirim tombol hanya ketika `KEY REL` padam, dengan jeda minimal 100 ms. Hentikan urutan jika `OPR ERR` menyala.
+Send keys only while `KEY REL` is off, at least 100 ms apart. Stop the sequence if `OPR ERR` lights.
 
 ## S-06 — Anomaly reporting
-Deviasi nada lebih dari 50 Hz adalah anomali yang wajib dilaporkan. Jangan menyebutnya kegagalan CRC kecuali CRC memang gagal. Keputusan menerima/menolak mengikuti kontrak frame dan spec acoustic-link.
+A tone deviation above 50 Hz is an anomaly that must be reported. Do not call it a CRC failure unless CRC actually failed. Accept/reject decisions follow the frame contract and the acoustic-link spec.
 
 ## S-07 — No invented evidence
-Jangan membuat nilai SNR, latency, CRC rate, PBT count, RAM, atau CPU. Ambil hanya dari tool/status/report. Jika belum ada, tampilkan `UNMEASURED`.
+Do not make up SNR, latency, CRC rate, PBT counts, RAM, or CPU values. Take them only from tools/status/reports. If none exist, show `UNMEASURED`.

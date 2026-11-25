@@ -27,7 +27,9 @@ REGISTER = st.integers(min_value=-16383, max_value=16383)
 KEY_NAMES = tuple(BRIDGE_CONTRACTS.catalog["keys"])
 
 
-def _frame(seq: int, verb: int, noun: int, program: int, r1: int, r2: int, dv: int, flag: bool) -> dict[str, object]:
+def _frame(
+    seq: int, verb: int, noun: int, program: int, r1: int, r2: int, dv: int, flag: bool
+) -> dict[str, object]:
     return {
         "version": 1,
         "frame_type": "COMMAND",
@@ -79,7 +81,9 @@ def critical_scenarios(draw: st.DrawFn) -> tuple[dict[str, object], AgcState]:
     return frame, state
 
 
-def _record(frame: dict[str, object], state: CommandState, auth: AuthState, auth_seq: int | None) -> CommandRecord:
+def _record(
+    frame: dict[str, object], state: CommandState, auth: AuthState, auth_seq: int | None
+) -> CommandRecord:
     return CommandRecord(
         frame_seq=int(frame["seq"]),  # type: ignore[arg-type]
         sequence_epoch=EPOCH,

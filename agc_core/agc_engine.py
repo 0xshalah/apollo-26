@@ -367,7 +367,9 @@ class AgcEngine:
     def _dispatch_v25_data(self, key: DskyKey, pending: PendingEntry) -> None:
         if key in (DskyKey.PLUS, DskyKey.MINUS):
             if pending.sign is not None or pending.digits:
-                self._fail(AgcErrorCode.INVALID_KEY_SEQUENCE, "field sign must occur exactly once first")
+                self._fail(
+                    AgcErrorCode.INVALID_KEY_SEQUENCE, "field sign must occur exactly once first"
+                )
             sign = ZeroSign.POSITIVE if key is DskyKey.PLUS else ZeroSign.NEGATIVE
             self._pending = PendingEntry(pending.kind, sign=sign, staged_raw=pending.staged_raw)
             return

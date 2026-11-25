@@ -1,0 +1,16 @@
+{
+    "$schema":  "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+    "mcpServers":  {
+                       "apollo26":  {
+                                        "type":  "stdio",
+                                        "command":  "cmd",
+                                        "args":  [
+                                                     "/c",
+                                                     "${APOLLO26_REPO}\\scripts\\mcp.cmd"
+                                                 ],
+                                        "env":  {
+                                                    "PYTHONUNBUFFERED":  "1"
+                                                }
+                                    }
+                   }
+}

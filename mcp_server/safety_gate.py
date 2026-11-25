@@ -132,7 +132,9 @@ class SafetyGate:
                 frame_seq=seq,
             )
         if current is None:
-            return BridgeError(ErrorCode.AGC_UNAVAILABLE, "current AGC state unreadable", frame_seq=seq)
+            return BridgeError(
+                ErrorCode.AGC_UNAVAILABLE, "current AGC state unreadable", frame_seq=seq
+            )
         if current.state_revision != inspection.state_revision:
             return BridgeError(
                 ErrorCode.INSPECTION_STALE,
@@ -152,7 +154,9 @@ class SafetyGate:
             )
         record = request.record
         if record is None:
-            return _reject(ErrorCode.NOT_FOUND, f"COMMAND {seq} was not delivered to this session", seq)
+            return _reject(
+                ErrorCode.NOT_FOUND, f"COMMAND {seq} was not delivered to this session", seq
+            )
 
         request_digest = compute_plan_digest(self._planner.catalog_version, seq, request.keys)
         if record.state in (
@@ -207,7 +211,9 @@ class SafetyGate:
         auth_seq = record.auth_seq if record.auth_state is AuthState.MATCHED else None
         if plan.critical and auth_seq is None:
             if record.auth_state is AuthState.CONSUMED:
-                return _reject(ErrorCode.AUTH_USED, "AUTH for this COMMAND was already consumed", seq)
+                return _reject(
+                    ErrorCode.AUTH_USED, "AUTH for this COMMAND was already consumed", seq
+                )
             if request.now >= self.hold_deadline(record):
                 return _reject(
                     ErrorCode.AUTH_EXPIRED,

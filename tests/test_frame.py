@@ -106,7 +106,7 @@ def test_version_precedes_type_and_crc() -> None:
 
 
 def test_length_rejection_does_not_index_short_input() -> None:
-    result = validate_frame(b"\xA5", KEYS, replay_state=0)
+    result = validate_frame(b"\xa5", KEYS, replay_state=0)
 
     assert result.reason is RejectReason.LENGTH
     assert result.frame is None
@@ -159,9 +159,7 @@ frames = st.one_of(command_frames, auth_frames)
 
 
 @given(frame=frames, hmac_bit=st.integers(min_value=0, max_value=63))
-def test_p6_wrong_hmac_with_valid_recomputed_crc_is_rejected(
-    frame: Frame, hmac_bit: int
-) -> None:
+def test_p6_wrong_hmac_with_valid_recomputed_crc_is_rejected(frame: Frame, hmac_bit: int) -> None:
     raw = bytearray(encode_frame(frame, KEYS))
     raw[24 + hmac_bit // 8] ^= 1 << (hmac_bit % 8)
     raw[32:34] = crc16_ccitt_false(bytes(raw[2:32])).to_bytes(2, "big")

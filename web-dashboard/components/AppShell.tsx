@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-export type Route = 'home' | 'ground' | 'console';
+export type Route = 'home' | 'ground' | 'console' | 'demo';
 
 export interface ShellSection {
   /** Element id of the panel to jump to (Panel `id`). */
@@ -12,6 +12,7 @@ export interface ShellSection {
 const ROUTES: Array<{ route: Route; href: string; label: string; key: string }> = [
   { route: 'ground', href: '/ground/', label: 'Ground station', key: 'TX' },
   { route: 'console', href: '/console/', label: 'Mission console', key: 'RX' },
+  { route: 'demo', href: '/demo/', label: 'Browser demo', key: 'SIM' },
 ];
 
 const navItem =

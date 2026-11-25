@@ -13,7 +13,15 @@ import pytest
 
 from acoustic.clock import ManualClock
 from acoustic.daemon import Daemon
-from tests.harness import SCHEMAS, command_bytes, provision, rejected_records, start_daemon, transmit, with_bad_crc
+from tests.harness import (
+    SCHEMAS,
+    command_bytes,
+    provision,
+    rejected_records,
+    start_daemon,
+    transmit,
+    with_bad_crc,
+)
 
 pytestmark = pytest.mark.integration
 
@@ -43,7 +51,9 @@ def _url(daemon: Daemon, path: str) -> str:
     return f"http://127.0.0.1:{daemon.web_port}{path}"
 
 
-async def _collect(ws: aiohttp.ClientWebSocketResponse, wanted: set[str], limit: float = 3.0) -> list[dict[str, Any]]:
+async def _collect(
+    ws: aiohttp.ClientWebSocketResponse, wanted: set[str], limit: float = 3.0
+) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     seen: set[str] = set()
     async with asyncio.timeout(limit):
@@ -101,14 +111,24 @@ async def test_websocket_events_are_schema_valid_and_carry_real_frames(
     verdicts = {(item["verdict"], item["reason"]) for item in frames}
     assert ("ACCEPTED", "OK") in verdicts
     assert ("REJECTED", "CRC") in verdicts
-    assert any(item["frame"] and item["frame"]["seq"] == 7 for item in frames if item["verdict"] == "ACCEPTED")
+    assert any(
+        item["frame"] and item["frame"]["seq"] == 7
+        for item in frames
+        if item["verdict"] == "ACCEPTED"
+    )
     assert rejected_records(tmp_path / "telemetry")
 
 
 def test_ui_req_test_summary_loader_accepts_only_contract_valid_reports(tmp_path: Path) -> None:
     from acoustic.daemon import load_test_summary
 
-    valid = {"profile": "full", "passed": 128, "failed": 0, "skipped": 0, "report_path": "docs/pbt-report.md"}
+    valid = {
+        "profile": "full",
+        "passed": 128,
+        "failed": 0,
+        "skipped": 0,
+        "report_path": "docs/pbt-report.md",
+    }
     good = tmp_path / "good.json"
     good.write_text(json.dumps(valid), encoding="utf-8")
     assert load_test_summary(good, SCHEMAS) == valid
@@ -127,11 +147,21 @@ def test_ui_req_test_summary_loader_accepts_only_contract_valid_reports(tmp_path
     assert load_test_summary(tmp_path / "missing.json", SCHEMAS) is None
 
 
-async def test_ui_req_console_receives_test_summary_from_report(tmp_path: Path, static_dir: Path) -> None:
+async def test_ui_req_console_receives_test_summary_from_report(
+    tmp_path: Path, static_dir: Path
+) -> None:
     telemetry = tmp_path / "telemetry"
     provision(telemetry)
-    summary = {"profile": "full", "passed": 3, "failed": 1, "skipped": 2, "report_path": "docs/pbt-report.md"}
-    instance = await start_daemon(telemetry, ManualClock(), static_dir=static_dir, test_summary=summary)
+    summary = {
+        "profile": "full",
+        "passed": 3,
+        "failed": 1,
+        "skipped": 2,
+        "report_path": "docs/pbt-report.md",
+    }
+    instance = await start_daemon(
+        telemetry, ManualClock(), static_dir=static_dir, test_summary=summary
+    )
     try:
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(_url(instance, "/ws")) as ws:

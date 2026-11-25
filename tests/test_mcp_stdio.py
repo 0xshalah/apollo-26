@@ -30,7 +30,7 @@ def _payload(result: object) -> dict[str, object]:
     structured = getattr(result, "structuredContent", None)
     if structured:
         return dict(structured)
-    content = getattr(result, "content")
+    content = result.content
     return json.loads(content[0].text)
 
 
@@ -50,33 +50,38 @@ async def test_mcp_server_lists_six_tools_and_verifies_crc(tmp_path: Path) -> No
         ],
         cwd=str(ROOT),
     )
-    async with stdio_client(params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            assert {tool.name for tool in tools.tools} == EXPECTED_TOOLS
+    async with stdio_client(params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+        tools = await session.list_tools()
+        assert {tool.name for tool in tools.tools} == EXPECTED_TOOLS
 
-            good = _payload(await session.call_tool("verify_crc16", {"hex_payload": GOLDEN_COMMAND[4:]}))
-            assert good["ok"] is True
-            assert good["data"]["matches"] is True  # type: ignore[index]
+        good = _payload(
+            await session.call_tool("verify_crc16", {"hex_payload": GOLDEN_COMMAND[4:]})
+        )
+        assert good["ok"] is True
+        assert good["data"]["matches"] is True  # type: ignore[index]
 
-            corrupted = GOLDEN_COMMAND[4:-2] + ("00" if not GOLDEN_COMMAND.endswith("00") else "01")
-            bad = _payload(await session.call_tool("verify_crc16", {"hex_payload": corrupted}))
-            assert bad["data"]["matches"] is False  # type: ignore[index]
+        corrupted = GOLDEN_COMMAND[4:-2] + ("00" if not GOLDEN_COMMAND.endswith("00") else "01")
+        bad = _payload(await session.call_tool("verify_crc16", {"hex_payload": corrupted}))
+        assert bad["data"]["matches"] is False  # type: ignore[index]
 
-            offline = _payload(await session.call_tool("inspect_agc_status", {}))
-            assert offline["ok"] is False
+        offline = _payload(await session.call_tool("inspect_agc_status", {}))
+        assert offline["ok"] is False
 
 
 def test_flight_mode_guard_blocks_only_while_marker_exists() -> None:
     script = ROOT / "scripts" / "hooks" / "flight_mode_guard.py"
     marker = ROOT / "telemetry" / "FLIGHT_MODE"
     assert not marker.exists(), "a live Flight Watch marker exists; stop it before running tests"
-    allowed = subprocess.run([sys.executable, str(script)], input="{}", capture_output=True, text=True, check=False)
+    allowed = subprocess.run(
+        [sys.executable, str(script)], input="{}", capture_output=True, text=True, check=False
+    )
     assert allowed.returncode == 0
     marker.write_text("session_id=test\nstarted_at=2026-11-20T12:00:00.000Z\n", encoding="utf-8")
     try:
-        blocked = subprocess.run([sys.executable, str(script)], input="{}", capture_output=True, text=True, check=False)
+        blocked = subprocess.run(
+            [sys.executable, str(script)], input="{}", capture_output=True, text=True, check=False
+        )
     finally:
         marker.unlink()
     assert blocked.returncode == 2

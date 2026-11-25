@@ -40,7 +40,9 @@ def summarize(junit_xml: Path, profile: str, report_path: str) -> dict[str, obje
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--junit", type=Path, required=True)
     parser.add_argument("--profile", required=True)
     parser.add_argument("--report-path", required=True)

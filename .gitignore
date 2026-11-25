@@ -28,6 +28,9 @@ telemetry/state/*
 !telemetry/state/.gitkeep
 telemetry/FLIGHT_MODE
 
+# Raw acoustic recordings (scripts/acoustic_lab.py); commit analysis JSON only
+corpus/**/*.wav
+
 # Logs and generated reports
 *.log
 coverage.xml
@@ -37,5 +40,8 @@ htmlcov/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Local copy of the Devpost rules page (third-party text, not part of the project)
+aturan.md
 
 # IMPORTANT: .kiro/ is intentionally committed for the competition.

@@ -16,7 +16,8 @@ const atkinsonMono = Atkinson_Hyperlegible_Mono({
 
 export const metadata: Metadata = {
   title: { default: 'Apollo-26', template: '%s · Apollo-26' },
-  description: 'Apollo-26 acoustic ground station and mission console (AGC-faithful subset emulator).',
+  description:
+    'Apollo-26: agent safety for physical systems. A Kiro agent flies an AGC-faithful subset emulator over a sound-only link through a code-enforced safety gate.',
 };
 
 export const viewport: Viewport = {

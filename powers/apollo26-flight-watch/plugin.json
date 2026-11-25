@@ -1,0 +1,21 @@
+{
+    "$schema":  "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+    "name":  "apollo26-flight-watch",
+    "version":  "1.0.0",
+    "description":  "Apollo-26 Flight Watch: MCP tools for an AGC-faithful DSKY emulator behind a code-enforced safety gate, plus the procedure an agent must follow (inspect before act, canonical plan, operator AUTH for critical commands).",
+    "author":  {
+                   "name":  "Shalahuddin AlAyyubi"
+               },
+    "homepage":  "https://github.com/0xshalah/apollo-26",
+    "repository":  "https://github.com/0xshalah/apollo-26",
+    "license":  "MIT",
+    "keywords":  [
+                     "apollo26",
+                     "flight watch",
+                     "dsky",
+                     "agc",
+                     "p40",
+                     "safety gate",
+                     "agent safety"
+                 ]
+}

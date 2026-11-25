@@ -18,7 +18,7 @@ function walk(dir) {
   });
 }
 
-for (const route of ['index.html', 'ground/index.html', 'console/index.html']) {
+for (const route of ['index.html', 'ground/index.html', 'console/index.html', 'demo/index.html']) {
   check(existsSync(path.join(out, route)), `out/${route} exists`);
 }
 const files = existsSync(out) ? walk(out) : [];
@@ -27,7 +27,7 @@ const remote = text.filter((f) => /fonts\.(googleapis|gstatic)\.com|cdn\.jsdeliv
 check(remote.length === 0, `no runtime font/CDN URLs (${remote.map((f) => path.relative(out, f)).join(', ') || 'none'})`);
 check(files.some((f) => f.endsWith('.woff2')), 'self-hosted .woff2 fonts emitted');
 
-const html = ['ground/index.html', 'console/index.html', 'index.html'].map((r) => [r, readFileSync(path.join(out, r), 'utf8')]);
+const html = ['ground/index.html', 'console/index.html', 'demo/index.html', 'index.html'].map((r) => [r, readFileSync(path.join(out, r), 'utf8')]);
 for (const [r, h] of html) {
   check(h.includes(`${base}/_next/static/`), `${r} references assets under "${base}/_next/static/"`);
   const visible = h.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ');

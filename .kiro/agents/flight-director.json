@@ -1,0 +1,33 @@
+{
+  "name": "flight-director",
+  "description": "Apollo-26 Flight Watch: waits for authenticated frames and drives the DSKY only through the Apollo-26 MCP tools. No shell, no file writes.",
+  "prompt": "file://./flight-director-prompt.md",
+  "tools": ["read", "@apollo26"],
+  "includeMcpJson": true,
+  "includePowers": false,
+  "permissions": {
+    "rules": [
+      { "capability": "fs_read", "effect": "allow" },
+      { "capability": "fs_write", "effect": "deny" },
+      { "capability": "shell", "effect": "deny" },
+      {
+        "capability": "mcp",
+        "match": [
+          "apollo26/await_telemetry_frame",
+          "apollo26/read_telemetry_frames",
+          "apollo26/inspect_agc_status",
+          "apollo26/plan_dsky_sequence",
+          "apollo26/verify_crc16"
+        ],
+        "effect": "allow"
+      },
+      { "capability": "mcp", "match": ["apollo26/execute_dsky_sequence"], "effect": "ask" }
+    ]
+  },
+  "resources": [
+    "file://.kiro/steering/agc-safety-rules.md",
+    "file://.kiro/steering/product.md",
+    "file://contracts/dsky-command-catalog-v1.json"
+  ],
+  "welcomeMessage": "Flight Director ready. Start the daemon in your own terminal, then say \"start Flight Watch\"."
+}

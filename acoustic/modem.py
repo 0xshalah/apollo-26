@@ -6,9 +6,9 @@ validate CRC, HMAC, sequence numbers, or otherwise accept a command.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,7 +19,7 @@ SPACE_FREQUENCY_HZ = 2_200.0
 SUPPORTED_SAMPLE_RATES = (44_100, 48_000)
 FRAME_BYTES = 34
 MIN_PREAMBLE_SYMBOLS = 75
-SYNC_BYTES = b"\xA5\x26"
+SYNC_BYTES = b"\xa5\x26"
 
 
 class ModemConfigurationError(ValueError):
@@ -126,6 +126,10 @@ class ModemFailure:
     state: ReceiverState
     sample_offset: int
     message: str
+    # Acquisition context for a qualified preamble, so a fallback decoder can retry
+    # the same burst.  ``None`` when the failure happened before a preamble qualified.
+    preamble_start: int | None = None
+    transition_guess: int | None = None
 
 
 @dataclass(frozen=True)
@@ -274,6 +278,43 @@ def goertzel_tone(
     return ToneMeasurement(tone, mark_energy, space_energy, confidence)
 
 
+def _window_tones(
+    pcm: NDArray[np.float64],
+    starts: NDArray[np.int64],
+    width: int,
+    config: DemodulatorConfig,
+) -> list[Tone]:
+    """Vectorized :func:`goertzel_tone` over ``pcm[start : start + width]`` windows.
+
+    Same math as :func:`matched_tone_energy` (oscillator phase restarts at each
+    window) and the same decision rule; only the loop moves into NumPy, which
+    keeps a full receiver pass well under the 0.25 s hop on a live stream.
+    """
+
+    if starts.size == 0:
+        return []
+    windows = np.lib.stride_tricks.sliding_window_view(pcm, width)[starts]
+    index = np.arange(width, dtype=np.float64)
+    energies: list[NDArray[np.float64]] = []
+    for frequency_hz in (MARK_FREQUENCY_HZ, SPACE_FREQUENCY_HZ):
+        phase = 2.0 * np.pi * frequency_hz * index / config.sample_rate
+        in_phase = windows @ np.cos(phase)
+        quadrature = windows @ np.sin(phase)
+        energies.append((2.0 / width) ** 2 * (in_phase * in_phase + quadrature * quadrature))
+    mark_energy, space_energy = energies
+    stronger = np.maximum(mark_energy, space_energy)
+    weaker = np.maximum(np.minimum(mark_energy, space_energy), np.finfo(np.float64).tiny)
+    unknown = (stronger < config.minimum_tone_amplitude**2) | (
+        stronger / weaker < config.confidence_ratio
+    )
+    return [
+        Tone.UNKNOWN if is_unknown else (Tone.MARK if is_mark else Tone.SPACE)
+        for is_unknown, is_mark in zip(
+            unknown.tolist(), (mark_energy > space_energy).tolist(), strict=True
+        )
+    ]
+
+
 def estimate_frequency(
     samples: NDArray[np.floating] | Iterable[float],
     sample_rate: int,
@@ -293,9 +334,7 @@ def estimate_frequency(
         return None
     trimmed = pcm[: block_count * width].reshape(block_count, width)
     local_index = np.arange(width, dtype=np.float64)
-    local_oscillator = np.exp(
-        -2j * np.pi * expected_frequency_hz * local_index / sample_rate
-    )
+    local_oscillator = np.exp(-2j * np.pi * expected_frequency_hz * local_index / sample_rate)
     correlations = trimmed @ local_oscillator
     amplitudes = 2.0 * np.abs(correlations) / width
     median_amplitude = float(np.median(amplitudes))
@@ -304,9 +343,7 @@ def estimate_frequency(
 
     # Restore each block's absolute oscillator phase before fitting its slope.
     block_start = np.arange(block_count, dtype=np.float64) * width
-    absolute_rotation = np.exp(
-        -2j * np.pi * expected_frequency_hz * block_start / sample_rate
-    )
+    absolute_rotation = np.exp(-2j * np.pi * expected_frequency_hz * block_start / sample_rate)
     phases = np.unwrap(np.angle(correlations * absolute_rotation))
     times = (block_start + (width - 1) / 2.0) / sample_rate
     slope, _ = np.polyfit(times, phases, 1)
@@ -392,7 +429,9 @@ def _sync_candidate(
         if first is None or second is None:
             continue
         if first.framing_valid and second.framing_valid:
-            framed.append((first.confidence + second.confidence, offset, bytes((first.value, second.value))))
+            framed.append(
+                (first.confidence + second.confidence, offset, bytes((first.value, second.value)))
+            )
 
     if not framed:
         return None, False, True
@@ -402,7 +441,9 @@ def _sync_candidate(
     _, coarse_best, _ = max(sync_framed)
 
     refined: list[tuple[float, int]] = []
-    for offset in range(max(lower, coarse_best - coarse_step), min(upper, coarse_best + coarse_step) + 1):
+    for offset in range(
+        max(lower, coarse_best - coarse_step), min(upper, coarse_best + coarse_step) + 1
+    ):
         first = _decode_byte(pcm, offset, config)
         second = _decode_byte(pcm, offset + 10 * width, config)
         if (
@@ -440,9 +481,7 @@ def demodulate(
     pcm = np.concatenate((pcm, np.zeros(width // 8, dtype=np.float64)))
     hop = width // 4
     starts = np.arange(0, max(0, pcm.size - width + 1), hop, dtype=np.int64)
-    decisions = [
-        goertzel_tone(pcm[int(start) : int(start) + width], config).tone for start in starts
-    ]
+    decisions = _window_tones(pcm, starts, width, config)
     minimum_duration = config.preamble_symbols * width
     candidates: list[bytes] = []
     anomalies: list[FrequencyAnomaly] = []
@@ -494,7 +533,9 @@ def demodulate(
             else:
                 code = ModemErrorCode.FRAMING
                 message = "sync bytes did not have valid 8N1 framing"
-            failure = ModemFailure(code, ReceiverState.SYNC, transition_guess, message)
+            failure = ModemFailure(
+                code, ReceiverState.SYNC, transition_guess, message, run_start, transition_guess
+            )
             break
 
         body_samples = config.frame_bytes * 10 * width
@@ -504,6 +545,8 @@ def demodulate(
                 ReceiverState.RECEIVE,
                 body_start,
                 "audio ended before the fixed 34-byte candidate completed",
+                run_start,
+                transition_guess,
             )
             break
 
@@ -523,6 +566,8 @@ def demodulate(
                 ReceiverState.RECEIVE,
                 body_start + (framing_offset or len(decoded)) * 10 * width,
                 "candidate contains an invalid UART start or stop bit",
+                run_start,
+                transition_guess,
             )
             break
 
@@ -534,6 +579,8 @@ def demodulate(
                 ReceiverState.SYNC,
                 body_start,
                 "decoded candidate does not begin with sync A5 26",
+                run_start,
+                transition_guess,
             )
             break
         candidates.append(bytes(decoded))
@@ -558,7 +605,11 @@ def demodulate(
                 if run_duration < minimum_duration
                 else ModemErrorCode.SYNC_TIMEOUT
             )
-            state = ReceiverState.PREAMBLE if code is ModemErrorCode.PREAMBLE_TIMEOUT else ReceiverState.SYNC
+            state = (
+                ReceiverState.PREAMBLE
+                if code is ModemErrorCode.PREAMBLE_TIMEOUT
+                else ReceiverState.SYNC
+            )
             failure = ModemFailure(code, state, run_start, "audio ended during acquisition")
         else:
             failure = ModemFailure(

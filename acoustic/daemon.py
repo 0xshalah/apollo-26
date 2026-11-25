@@ -63,6 +63,7 @@ from acoustic.receiver import (
     CandidateEvent,
     CandidateLoss,
     CarrierEvent,
+    DuplicateEvent,
     LostCandidateEvent,
     ReceiverEvent,
     StreamingReceiver,
@@ -148,6 +149,7 @@ class SourceSummary:
     accepted_seqs: list[int] = field(default_factory=list)
     rejected_reasons: list[str] = field(default_factory=list)
     anomalies: int = 0
+    duplicates: int = 0
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -216,7 +218,9 @@ def provision_sequence(paths: DaemonPaths, last_accepted_seq: int, new_epoch: st
     paths.inbox.mkdir(parents=True, exist_ok=True)
     old_epoch = _read_identity(paths.identity_file) or "unversioned"
     archived: Path | None = None
-    movable = [entry for entry in paths.inbox.iterdir() if entry.name.endswith((".json", ".staged"))]
+    movable = [
+        entry for entry in paths.inbox.iterdir() if entry.name.endswith((".json", ".staged"))
+    ]
     if movable or paths.executions_root.exists():
         archived = paths.archive / old_epoch
         suffix = 0
@@ -495,7 +499,9 @@ class Daemon:
             except TelemetryStoreError as error:
                 # Fail closed: nothing staged means the sequence is not committed.
                 _LOG.error("inbox staging failed for seq=%d: %s", pre.frame.seq, error)
-                pre = replace(pre, verdict=Verdict.REJECTED, reason=RejectReason.INTERNAL, frame=None)
+                pre = replace(
+                    pre, verdict=Verdict.REJECTED, reason=RejectReason.INTERNAL, frame=None
+                )
                 staged = None
             result = (
                 validate_and_commit_frame(raw, self._keys, self._sequence)
@@ -550,11 +556,23 @@ class Daemon:
     ) -> None:
         for event in events:
             if isinstance(event, CandidateEvent):
-                record = await self.process_candidate(event.raw, source, event.frequency_deviation_hz)
+                if event.recovery is not None:
+                    _LOG.info(
+                        "soft fallback produced a candidate: method=%s flipped_bits=%d copies=%d",
+                        event.recovery.method.value,
+                        event.recovery.flipped_bits,
+                        event.recovery.copies,
+                    )
+                record = await self.process_candidate(
+                    event.raw, source, event.frequency_deviation_hz
+                )
                 if record["verdict"] == "ACCEPTED":
                     summary.accepted_seqs.append(record["frame"]["seq"])
                 else:
                     summary.rejected_reasons.append(record["reason"])
+            elif isinstance(event, DuplicateEvent):
+                summary.duplicates += 1
+                _LOG.info("ignored a byte-identical repeat of a frame from the same transmission")
             elif isinstance(event, LostCandidateEvent):
                 record = self._record_loss(event, source)
                 summary.rejected_reasons.append(record["reason"])
@@ -611,7 +629,10 @@ class Daemon:
         except AudioSourceError as error:
             return {"ok": False, "error": str(error)}
         if rate != self._loopback.metadata.sample_rate:
-            return {"ok": False, "error": f"loopback expects {self._loopback.metadata.sample_rate} Hz"}
+            return {
+                "ok": False,
+                "error": f"loopback expects {self._loopback.metadata.sample_rate} Hz",
+            }
         await self._loopback.push(pcm)
         return {"ok": True, "queued_samples": int(pcm.size)}
 
@@ -685,8 +706,14 @@ class Daemon:
         if auth_seq is None:
             raise RpcError("AUTH_REQUIRED", f"COMMAND {frame_seq} is critical and has no AUTH")
         auth = self._by_seq.get(auth_seq)
-        if auth is None or auth["frame"]["frame_type"] != "AUTH" or auth["frame"]["ref_seq"] != frame_seq:
-            raise RpcError("AUTH_INVALID", f"seq {auth_seq} is not an accepted AUTH for {frame_seq}")
+        if (
+            auth is None
+            or auth["frame"]["frame_type"] != "AUTH"
+            or auth["frame"]["ref_seq"] != frame_seq
+        ):
+            raise RpcError(
+                "AUTH_INVALID", f"seq {auth_seq} is not an accepted AUTH for {frame_seq}"
+            )
         deadline = parse_timestamp(command["received_at"]) + timedelta(
             milliseconds=self._catalog.hold_expiry_ms
         )
@@ -760,7 +787,9 @@ class Daemon:
             outcome = await self.agc.press_sequence(plan.keys, self._catalog.min_cadence_ms)
             final = replace(
                 started,
-                status=ExecutionStatus.EXECUTED if outcome.error is None else ExecutionStatus.FAILED,
+                status=ExecutionStatus.EXECUTED
+                if outcome.error is None
+                else ExecutionStatus.FAILED,
                 keys_accepted=outcome.keys_accepted,
                 finished_at=format_timestamp(self._clock.now_utc()),
                 post_revision=self.agc.control_revision,
@@ -799,6 +828,11 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         help="test-runner summary published to the console as test.summary",
     )
     parser.add_argument("--sample-rate", type=int, choices=(44100, 48000), help="microphone rate")
+    parser.add_argument(
+        "--wasapi-exclusive",
+        action="store_true",
+        help="with --device: open the microphone in WASAPI exclusive mode (Windows)",
+    )
     parser.add_argument(
         "--serve-after-input",
         action="store_true",
@@ -865,6 +899,7 @@ async def _run(args: argparse.Namespace, keys: KeyMaterial) -> int:
             source = loopback or MicrophoneSource(
                 device=int(args.device) if args.device and args.device.isdigit() else args.device,
                 sample_rate=args.sample_rate,
+                wasapi_exclusive=args.wasapi_exclusive,
             )
         if args.input is not None:
             summary = await daemon.run_source(source)

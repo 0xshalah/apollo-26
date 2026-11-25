@@ -1,0 +1,21 @@
+{
+  "analyzed_at": "2026-11-24T22:26:03+00:00",
+  "files": 1,
+  "strict_accepted": 0,
+  "robust_accepted": 0,
+  "rows": [
+    {
+      "file": "listen-20261124T222408Z.wav",
+      "duration_s": 90.0,
+      "peak_abs": 0.5599,
+      "strict_ok": false,
+      "robust_ok": false,
+      "robust_method": null,
+      "candidates": 0,
+      "duplicates": 0,
+      "strict_failure": "NO_CARRIER",
+      "harmonic_2400_vs_1200_db": -13.22,
+      "space_vs_mark_db": -17.12
+    }
+  ]
+}

@@ -196,9 +196,7 @@ async def test_threat_7_noise_never_produces_frames_or_keys(
     await service.close()
 
 
-async def test_threat_8_non_canonical_plan_is_rejected(
-    daemon: Daemon, clock: ManualClock
-) -> None:
+async def test_threat_8_non_canonical_plan_is_rejected(daemon: Daemon, clock: ManualClock) -> None:
     service, _, _ = make_service(daemon.rpc_port, clock)
     await transmit(daemon, command_bytes(30))
     await _deliver(service)
@@ -206,7 +204,9 @@ async def test_threat_8_non_canonical_plan_is_rejected(
     tampered = list(plan["keys"])
     tampered[-2] = "9" if tampered[-2] != "9" else "8"
     assert _code(await service.execute_dsky_sequence(tampered, 30)) == "PLAN_MISMATCH"
-    assert _code(await service.execute_dsky_sequence([*plan["keys"], "RSET"], 30)) == "PLAN_MISMATCH"
+    assert (
+        _code(await service.execute_dsky_sequence([*plan["keys"], "RSET"], 30)) == "PLAN_MISMATCH"
+    )
     await service.close()
 
 

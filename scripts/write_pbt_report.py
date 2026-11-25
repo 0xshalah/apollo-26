@@ -37,7 +37,9 @@ def parse_statistics(log: str) -> list[dict[str, object]]:
             current["phases"][phase] = {"seconds": float(match.group(2))}  # type: ignore[index]
         elif (match := _COUNTS.match(line)) and phase:
             current["phases"][phase].update(  # type: ignore[index]
-                passing=int(match.group(1)), failing=int(match.group(2)), invalid=int(match.group(3))
+                passing=int(match.group(1)),
+                failing=int(match.group(2)),
+                invalid=int(match.group(3)),
             )
         elif match := _STOP.match(line):
             current["stop"] = match.group(1)
@@ -57,7 +59,10 @@ def junit_totals(path: Path) -> dict[str, float]:
 
 def render(log: str, totals: dict[str, float], rows: list[dict[str, object]]) -> str:
     def first(prefix: str) -> str:
-        return next((line.split("=", 1)[1].strip() for line in log.splitlines() if line.startswith(prefix)), "unknown")
+        return next(
+            (line.split("=", 1)[1].strip() for line in log.splitlines() if line.startswith(prefix)),
+            "unknown",
+        )
 
     versions = next((line for line in log.splitlines() if line.startswith("python ")), "unknown")
     exit_code = first("PYTEST_EXIT=")
@@ -96,7 +101,9 @@ def render(log: str, totals: dict[str, float], rows: list[dict[str, object]]) ->
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--log", type=Path, required=True)
     parser.add_argument("--junit", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)

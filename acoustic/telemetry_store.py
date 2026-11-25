@@ -176,7 +176,9 @@ class StagedRecord:
 class TelemetryStore:
     """Filesystem adapter for ``telemetry/inbox`` and ``telemetry/rejected``."""
 
-    def __init__(self, inbox_dir: Path, rejected_dir: Path, schemas: ContractSchemas, writer_id: str) -> None:
+    def __init__(
+        self, inbox_dir: Path, rejected_dir: Path, schemas: ContractSchemas, writer_id: str
+    ) -> None:
         self._inbox = inbox_dir
         self._rejected = rejected_dir
         self._schemas = schemas
@@ -211,7 +213,9 @@ class TelemetryStore:
         try:
             os.replace(staged.path, final)
         except OSError as error:
-            raise TelemetryStoreError("INBOX_PROMOTE", f"cannot promote seq {staged.seq}") from error
+            raise TelemetryStoreError(
+                "INBOX_PROMOTE", f"cannot promote seq {staged.seq}"
+            ) from error
         return final
 
     def write_rejected(self, record: dict[str, Any], received_at: datetime) -> Path:

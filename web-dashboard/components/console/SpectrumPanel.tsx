@@ -46,7 +46,7 @@ function SpectrumReference({ disconnected }: { disconnected: boolean }) {
             <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-tag bg-cool-soft px-2 py-0.5 font-mono text-xs text-cool">
               {frequency} Hz
             </span>
-            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-muted">
+            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-paper-3 px-1 text-xs text-muted">
               {frequency === MARK_HZ ? 'mark · bit 1' : 'space · bit 0'}
             </span>
           </div>

@@ -132,7 +132,7 @@ export function ConsoleClient() {
               </p>
             ) : null}
 
-            <div className="grid grid-cols-1 gap-6 min-[90rem]:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
+            <div className="grid grid-cols-1 items-start gap-6 min-[90rem]:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
               <SpectrumPanel spectrum={state.spectrum} disconnected={disconnected} />
               <LinkSnapshotPanel latest={latest} disconnected={disconnected} />
             </div>

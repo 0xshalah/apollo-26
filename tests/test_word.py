@@ -159,9 +159,7 @@ def test_agc_req_1_rejects_even_physical_parity() -> None:
         (-16383, ZeroSign.NOT_ZERO, 0x4000),
     ],
 )
-def test_agc_req_2_signed_conversion_boundaries(
-    value: int, zero_sign: ZeroSign, raw: int
-) -> None:
+def test_agc_req_2_signed_conversion_boundaries(value: int, zero_sign: ZeroSign, raw: int) -> None:
     word = word_from_signed(value, zero_sign)
     assert word.data_raw == raw
     assert word.signed_value == value

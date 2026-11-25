@@ -19,6 +19,10 @@ import {
 } from '@/lib/ground-form';
 import { durationMs, transmitFrame } from '@/lib/modem';
 
+/** Identical bursts per transmission; the daemon combines copies and ignores duplicates. */
+const REPEAT_CHOICES = [1, 2, 3] as const;
+const DEFAULT_REPEAT = 3;
+
 type Mode = 'COMMAND' | 'AUTH';
 type Phase = 'editing' | 'invalid' | 'signing' | 'ready' | 'transmitting' | 'completed' | 'failed';
 
@@ -129,6 +133,7 @@ export function GroundClient() {
   const [message, setMessage] = useState('');
   const [encoded, setEncoded] = useState<Encoded | null>(null);
   const [lastCommandSeq, setLastCommandSeq] = useState<number | null>(null);
+  const [repeat, setRepeat] = useState<number>(DEFAULT_REPEAT);
   const abortRef = useRef<AbortController | null>(null);
 
   const storedRaw = useSyncExternalStore(subscribeSeq, readSeqSnapshot, () => null);
@@ -200,7 +205,7 @@ export function GroundClient() {
     const Ctor =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    const outcome = await transmitFrame(encoded.bytes, Ctor, controller.signal);
+    const outcome = await transmitFrame(encoded.bytes, Ctor, controller.signal, { repeat });
     abortRef.current = null;
     if (outcome.kind === 'completed') {
       setPhase('completed');
@@ -250,7 +255,7 @@ export function GroundClient() {
 
   const busy = phase === 'signing' || phase === 'transmitting';
   const payload = CARRIES_PAYLOAD[kind];
-  const estMs = encoded ? Math.round(durationMs(encoded.bytes, 48000)) : null;
+  const estMs = encoded ? Math.round(durationMs(encoded.bytes, 48000, { repeat })) : null;
 
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
@@ -492,6 +497,31 @@ export function GroundClient() {
               </button>
             ) : null}
           </div>
+          <div className="mt-3 grid gap-1">
+            <p id="repeat-label" className="text-xs font-medium text-ink-2">
+              Repeats over the air
+            </p>
+            <div role="radiogroup" aria-labelledby="repeat-label" className="seg-group grid w-full grid-cols-3">
+              {REPEAT_CHOICES.map((n) => (
+                <label key={n} className="text-sm">
+                  <input
+                    type="radio"
+                    name="repeat"
+                    value={n}
+                    checked={repeat === n}
+                    onChange={() => setRepeat(n)}
+                    disabled={busy}
+                    className="sr-only"
+                  />
+                  {n}×
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-muted">
+              The same signed bytes are sent {repeat === 1 ? 'once' : `${repeat} times`}. The daemon combines weak
+              copies and ignores identical repeats, so one transmission is one frame.
+            </p>
+          </div>
           <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm text-ink-2">
             {message}
           </p>
@@ -503,7 +533,8 @@ export function GroundClient() {
             </ul>
           ) : null}
           <p className="mt-3 text-xs text-muted">
-            Turn the phone volume up and hold the speaker near the laptop microphone. The browser must allow audio output
+            Set the phone volume to about 70% (full volume distorts small speakers) and hold it 30–50 cm from the
+            laptop microphone. Turn off sound effects such as Dolby or equalizers. The browser must allow audio output
             from a tap; on iOS, disable silent mode.
           </p>
         </Panel>

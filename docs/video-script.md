@@ -1,21 +1,25 @@
-# Video script — Apollo-26 (target 2:45, hard limit 3:00)
+# Video script: Apollo-26 (target 2:45, hard limit 3:00)
 
 Record the screen at 1080p with system audio on, so the FSK tones are heard. No copyrighted music. Upload to YouTube as public and check the duration is under 3:00.
 
 Before recording:
-- Terminal A: `.venv\Scripts\python -m acoustic.daemon --loopback` (stays open).
+- Windows audio enhancements off for the microphone (run `scripts\acoustic_lab.py calibrate` first; `peak_abs` below about 0.8).
+- Terminal A: `.venv\Scripts\python -m acoustic.daemon --device <mic index>` (stays open), so the burst is heard over the air.
 - Kiro: `apollo26` MCP server enabled; new chat session.
-- Browser tab: http://127.0.0.1:8026/console/
-- WAVs: `p40.wav` (seq N, V37 P40) and `auth.wav` (seq N+1, `--auth-ref N`) from `scripts/make_sample_wav.py`, with N above the daemon's last accepted seq.
+- Browser tab 1: http://127.0.0.1:8026/ground/ (same laptop's speaker, repeats 3×).
+- Browser tab 2: http://127.0.0.1:8026/console/
+- Browser tab 3: http://127.0.0.1:8026/demo/ (for the 2:05 abuse cuts; reset the mission first).
+- Backup: `p40.wav` and `auth.wav` from `scripts/make_sample_wav.py --repeat 3` and Terminal B ready with `curl` to `/loopback`, in case the room is noisy (TASK 4.10). If you use the backup, say so on screen.
+- The agent part takes about 80 s live. Cut the waiting and caption it "sped up".
 
 | Time | Screen | Voice-over (say it, don't read the screen) |
 | :-- | :-- | :-- |
-| 0:00–0:15 | Title over `/console` | "Apollo-26 lets a Kiro agent fly a 1969-style guidance computer, but only through sound, and only through a safety gate written in code." |
-| 0:15–0:40 | `/ground`: fill a P40 burn, show the 34-byte frame inspector, play the tones | "The ground station signs a 34-byte frame with a sequence number, an HMAC and a CRC, and plays it as 300-baud Bell-202 audio." |
-| 0:40–1:00 | Terminal B: `curl` P40 WAV to `/loopback`; console audit row turns ACCEPTED | "The daemon demodulates and validates every frame. Forged, corrupted or replayed frames never reach the agent." |
-| 1:00–1:35 | Kiro chat: ask for Flight Watch; show await → inspect → plan; execute is refused `AUTH_REQUIRED` | "The agent waits over MCP, inspects the AGC, and asks for the canonical key plan. A burn is critical, so the gate refuses it without operator authorization." |
-| 1:35–2:05 | `curl` AUTH WAV; agent awaits AUTH, re-plans, approve execute; DSKY shows P40, R1–R3 | "The operator sends a separate AUTH frame bound to that sequence number. Only then can the agent press the 36 keys, and the DSKY shows P40 with the loaded burn." |
-| 2:05–2:30 | `.kiro/` tree: specs, steering, hooks; flash `docs/pbt-report.md` | "Kiro specs drove each subsystem, steering holds the safety rules, a hook locks the agent's shell during flight, and property tests cover the codec, modem and gate." |
-| 2:30–2:45 | `docs/metrics.json` / README "Measured so far" | "Everything shown is measured. Loopback decode takes about half a second. Over the air is still the weak link: Windows voice processing erased our preamble, and with it switched off one laptop accepted 3 of 20 frames. Making that reliable is next." |
+| 0:00–0:20 | Title card, then `/console` | "AI agents are getting buttons on real machines, like robots, lab gear, and industrial controllers. The safety rule is usually one sentence in a prompt. Apollo-26 tests a different idea: the agent orchestrates, and code decides." |
+| 0:20–0:35 | DSKY close-up on `/console` | "Our test bench is a 1969 Apollo guidance computer. It has a real control panel, a critical action in the P40 engine burn, and an input channel with no internet at all, only sound." |
+| 0:35–1:00 | `/ground`: fill a P40 burn, show the 34-byte frame inspector, press transmit, tones audible; console audit row turns ACCEPTED | "The ground station signs a 34-byte frame and plays it as 300-baud modem audio. The laptop hears it, checks CRC, HMAC and the sequence number, and only then hands it to the agent." |
+| 1:00–1:35 | Kiro chat: ask for Flight Watch; await → inspect → plan; execute refused `AUTH_REQUIRED` | "Kiro waits over MCP, reads the computer's state, and asks for the canonical key plan. A burn is critical, so the safety gate, which is code, refuses to run it." |
+| 1:35–2:05 | `/ground` AUTH for that seq; agent awaits AUTH, re-plans, approve execute; DSKY shows P40, R1 to R3 | "The operator sends a separate AUTH, bound to that one command and usable once. Only then can the agent press exactly these 36 keys." |
+| 2:05–2:25 | Quick cuts in the browser demo (`/demo`, caption "browser simulation"): Replay last frame → `REPLAY`; Execute tampered plan → `PLAN_MISMATCH` | "Replay the burst and it is rejected. Change one key in the plan and it is refused. Each layer fails closed, and you can try every one of these in the browser demo, no install." |
+| 2:25–2:45 | `.kiro/` tree: specs, steering, hooks; `docs/evidence-matrix.md` | "Kiro specs drove each subsystem, steering holds the safety rules, a hook locks the agent's shell during flight, and property tests cover the codec, modem and gate. Over the air we measured 19 of 20 frames on one laptop. The phone test is next." |
 
-Do not say "100% secure", "offline", or quote any number that is not in `docs/metrics.json` or `docs/pbt-report.md`.
+Do not say "100% secure", "offline", or quote any number that is not in `docs/metrics.json`, `docs/pbt-report.md`, or `docs/evidence-matrix.md`.

@@ -63,9 +63,7 @@ def parse_env_file(text: str) -> dict[str, str]:
     return values
 
 
-def merged_environment(
-    process_env: Mapping[str, str], env_file: Path | None
-) -> dict[str, str]:
+def merged_environment(process_env: Mapping[str, str], env_file: Path | None) -> dict[str, str]:
     """Process environment wins over values from an optional local .env file."""
 
     merged: dict[str, str] = {}
@@ -85,7 +83,8 @@ def load_key_material(env: Mapping[str, str]) -> KeyMaterial:
     if missing:
         raise ConfigError(
             ConfigErrorCode.MISSING_KEY,
-            "missing " + ", ".join(missing)
+            "missing "
+            + ", ".join(missing)
             + " (set the environment variables or copy .env.example to .env)",
         )
     return KeyMaterial(

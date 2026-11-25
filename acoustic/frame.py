@@ -9,7 +9,7 @@ from enum import IntEnum, StrEnum
 from typing import Protocol
 
 FRAME_SIZE = 34
-SYNC = b"\xA5\x26"
+SYNC = b"\xa5\x26"
 VERSION = 1
 HMAC_SIZE = 8
 MAX_SEQUENCE = 0xFFFFFFFF

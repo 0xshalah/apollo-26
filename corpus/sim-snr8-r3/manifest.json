@@ -1,0 +1,130 @@
+{
+  "created_at": "2026-11-24T12:05:56+00:00",
+  "mode": "simulate",
+  "sample_rate": 48000,
+  "amplitude": 0.6,
+  "repeat": 3,
+  "channel": {
+    "twist_db": 8.0,
+    "echoes": [
+      [
+        0.7,
+        0.45
+      ],
+      [
+        1.9,
+        0.3
+      ],
+      [
+        3.4,
+        0.2
+      ]
+    ],
+    "hum_amplitude": 0.15,
+    "drive": 1.5,
+    "snr_db": 8.0,
+    "gain": 0.5
+  },
+  "files": [
+    {
+      "file": "sim-01-seq1000.wav",
+      "seq": 1000,
+      "expected_hex": "a5260101000003e8000000000019510004e201a400000c30e685d610d848b8b9d70c"
+    },
+    {
+      "file": "sim-02-seq1001.wav",
+      "seq": 1001,
+      "expected_hex": "a5260101000003e9000000000019510004e201a400000c30fe53230299b0aad6697a"
+    },
+    {
+      "file": "sim-03-seq1002.wav",
+      "seq": 1002,
+      "expected_hex": "a5260101000003ea000000000019510004e201a400000c308472dada02ee21bd3b30"
+    },
+    {
+      "file": "sim-04-seq1003.wav",
+      "seq": 1003,
+      "expected_hex": "a5260101000003eb000000000019510004e201a400000c30a2b2f5ca860e7187293d"
+    },
+    {
+      "file": "sim-05-seq1004.wav",
+      "seq": 1004,
+      "expected_hex": "a5260101000003ec000000000019510004e201a400000c30b26163abc62691bb1316"
+    },
+    {
+      "file": "sim-06-seq1005.wav",
+      "seq": 1005,
+      "expected_hex": "a5260101000003ed000000000019510004e201a400000c308d99f157b1ca470c2aa5"
+    },
+    {
+      "file": "sim-07-seq1006.wav",
+      "seq": 1006,
+      "expected_hex": "a5260101000003ee000000000019510004e201a400000c30e659f621b1e62af611bd"
+    },
+    {
+      "file": "sim-08-seq1007.wav",
+      "seq": 1007,
+      "expected_hex": "a5260101000003ef000000000019510004e201a400000c306cc521701ed89ce992c2"
+    },
+    {
+      "file": "sim-09-seq1008.wav",
+      "seq": 1008,
+      "expected_hex": "a5260101000003f0000000000019510004e201a400000c3002f0edad71112534571e"
+    },
+    {
+      "file": "sim-10-seq1009.wav",
+      "seq": 1009,
+      "expected_hex": "a5260101000003f1000000000019510004e201a400000c30fef7cad31fe9f2c97bca"
+    },
+    {
+      "file": "sim-11-seq1010.wav",
+      "seq": 1010,
+      "expected_hex": "a5260101000003f2000000000019510004e201a400000c3089c7fe5529fc531a2b45"
+    },
+    {
+      "file": "sim-12-seq1011.wav",
+      "seq": 1011,
+      "expected_hex": "a5260101000003f3000000000019510004e201a400000c30229a0ea541c9f838a720"
+    },
+    {
+      "file": "sim-13-seq1012.wav",
+      "seq": 1012,
+      "expected_hex": "a5260101000003f4000000000019510004e201a400000c301facc32a6ed904da1b44"
+    },
+    {
+      "file": "sim-14-seq1013.wav",
+      "seq": 1013,
+      "expected_hex": "a5260101000003f5000000000019510004e201a400000c30883b110b12281a738c90"
+    },
+    {
+      "file": "sim-15-seq1014.wav",
+      "seq": 1014,
+      "expected_hex": "a5260101000003f6000000000019510004e201a400000c301d513981b7edc91721c5"
+    },
+    {
+      "file": "sim-16-seq1015.wav",
+      "seq": 1015,
+      "expected_hex": "a5260101000003f7000000000019510004e201a400000c3043dc160ca7bde258a508"
+    },
+    {
+      "file": "sim-17-seq1016.wav",
+      "seq": 1016,
+      "expected_hex": "a5260101000003f8000000000019510004e201a400000c3039a2db97732627fd2b8c"
+    },
+    {
+      "file": "sim-18-seq1017.wav",
+      "seq": 1017,
+      "expected_hex": "a5260101000003f9000000000019510004e201a400000c30f53d2f1564be9fd24ac0"
+    },
+    {
+      "file": "sim-19-seq1018.wav",
+      "seq": 1018,
+      "expected_hex": "a5260101000003fa000000000019510004e201a400000c301aca8fe58ca42f1f5622"
+    },
+    {
+      "file": "sim-20-seq1019.wav",
+      "seq": 1019,
+      "expected_hex": "a5260101000003fb000000000019510004e201a400000c30ed3cfdbbe460abcd19bd"
+    }
+  ]
+}

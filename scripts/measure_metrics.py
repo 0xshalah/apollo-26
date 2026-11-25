@@ -128,9 +128,21 @@ def _cpu_window(process: psutil.Process, seconds: float) -> dict[str, float]:
 
 
 def _acoustic_trial(
-    telemetry: Path, process: psutil.Process, frames: int, amplitude: float, link_key: bytes
+    telemetry: Path,
+    process: psutil.Process,
+    frames: int,
+    amplitude: float,
+    link_key: bytes,
+    *,
+    repeat: int = 1,
+    gap_s: float = 0.3,
+    output_device: int | None = None,
+    conditions: str = "",
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     import sounddevice as sd  # noqa: PLC0415 - hardware boundary
+
+    if output_device is not None:
+        sd.default.device = (sd.default.device[0], output_device)
 
     inbox = telemetry / "inbox"
     rejected_dir = telemetry / "rejected"
@@ -144,9 +156,13 @@ def _acoustic_trial(
             r1_centidegrees=1250, r2_centidegrees=420, delta_v_tenths_fps=3120,
         )  # fmt: skip
         tone = modulate(encode_frame(frame, link_key), SAMPLE_RATE, amplitude=amplitude)
-        pcm = np.concatenate(
-            (np.zeros(int(SAMPLE_RATE * LEAD_S)), tone, np.zeros(int(SAMPLE_RATE * TAIL_S)))
-        ).astype(np.float32)
+        parts = [np.zeros(int(SAMPLE_RATE * LEAD_S))]
+        for index in range(repeat):
+            parts.append(tone)
+            if index + 1 < repeat:
+                parts.append(np.zeros(int(SAMPLE_RATE * gap_s)))
+        parts.append(np.zeros(int(SAMPLE_RATE * TAIL_S)))
+        pcm = np.concatenate(parts).astype(np.float32)
         rejected_before = {p.name for p in rejected_dir.glob("*.json")}
         started = time.time()
         sd.play(pcm, SAMPLE_RATE)
@@ -174,7 +190,9 @@ def _acoustic_trial(
             reasons = []
             for name in new_rejects:
                 try:
-                    reasons.append(json.loads((rejected_dir / name).read_text(encoding="utf-8")).get("reason"))
+                    reasons.append(
+                        json.loads((rejected_dir / name).read_text(encoding="utf-8")).get("reason")
+                    )
                 except (OSError, json.JSONDecodeError):
                     reasons.append("UNREADABLE")
             entry.update(outcome="REJECTED" if reasons else "NOT_DETECTED", reasons=reasons)
@@ -186,13 +204,21 @@ def _acoustic_trial(
     latencies = [r["latency_first_tone_to_received_s"] for r in accepted]
     trial = {
         "status": "MEASURED",
-        "path": "same-laptop speaker -> microphone over the air (not the 0.5 m phone trial)",
+        "path": (
+            "speaker -> microphone over the air into the live daemon (not the 0.5 m phone trial)"
+        ),
+        "conditions": conditions,
+        "repeat": repeat,
+        "repeat_note": "each frame sent as identical bursts; later copies are duplicates of one "
+        "transmission, so frames_sent counts transmissions, not bursts",
         "frames_sent": frames,
         "frames_accepted": len(accepted),
         "frames_rejected": sum(r["outcome"] == "REJECTED" for r in results),
         "frames_not_detected": sum(r["outcome"] == "NOT_DETECTED" for r in results),
         "amplitude": amplitude,
-        "output_device": sd.query_devices(kind="output")["name"],
+        "output_device": sd.query_devices(
+            output_device if output_device is not None else sd.default.device[1]
+        )["name"],
         "input_device": sd.query_devices(kind="input")["name"],
         "latency_first_tone_to_received_s": {
             "min": min(latencies, default=None),
@@ -205,15 +231,21 @@ def _acoustic_trial(
     cores = psutil.cpu_count() or 1
     decode = {
         "status": "MEASURED",
-        "mean_percent_of_one_core": round(statistics.fmean(cpu_samples), 2) if cpu_samples else None,
+        "mean_percent_of_one_core": round(statistics.fmean(cpu_samples), 2)
+        if cpu_samples
+        else None,
         "max_percent_of_one_core": round(max(cpu_samples, default=0.0), 2),
-        "mean_percent_of_machine": round(statistics.fmean(cpu_samples) / cores, 2) if cpu_samples else None,
+        "mean_percent_of_machine": round(statistics.fmean(cpu_samples) / cores, 2)
+        if cpu_samples
+        else None,
         "peak_rss_mb": round(peak_rss, 1),
     }
     return trial, decode
 
 
-def _loopback_trial(telemetry: Path, process: psutil.Process, frames: int, link_key: bytes) -> dict[str, Any]:
+def _loopback_trial(
+    telemetry: Path, process: psutil.Process, frames: int, link_key: bytes
+) -> dict[str, Any]:
     """POST each frame's WAV to /loopback and time decode + validation + atomic inbox write.
 
     The daemon consumes pushed audio faster than real time, so this isolates the
@@ -236,7 +268,9 @@ def _loopback_trial(telemetry: Path, process: psutil.Process, frames: int, link_
         tone = modulate(encode_frame(frame, link_key), SAMPLE_RATE, amplitude=0.6)
         air_time = tone.size / SAMPLE_RATE
         # Trailing silence longer than one receiver hop (0.25 s), as a live microphone would supply.
-        body = encode_wav_bytes(np.concatenate((tone, np.zeros(int(SAMPLE_RATE * 0.3)))), SAMPLE_RATE)
+        body = encode_wav_bytes(
+            np.concatenate((tone, np.zeros(int(SAMPLE_RATE * 0.3)))), SAMPLE_RATE
+        )
         request = urllib.request.Request(
             f"http://127.0.0.1:{WEB_PORT}/loopback", data=body, method="POST",
             headers={"Content-Type": "audio/wav"},
@@ -253,7 +287,13 @@ def _loopback_trial(telemetry: Path, process: psutil.Process, frames: int, link_
         if target.exists():
             record = json.loads(target.read_text(encoding="utf-8"))
             received = parse_timestamp(record["received_at"]).timestamp()
-            rows.append({"seq": seq, "outcome": record["verdict"], "post_to_received_s": round(received - posted, 4)})
+            rows.append(
+                {
+                    "seq": seq,
+                    "outcome": record["verdict"],
+                    "post_to_received_s": round(received - posted, 4),
+                }
+            )
         else:
             rows.append({"seq": seq, "outcome": "NOT_DETECTED"})
         time.sleep(0.2)
@@ -265,14 +305,24 @@ def _loopback_trial(telemetry: Path, process: psutil.Process, frames: int, link_
         "path": "HTTP POST of a 48 kHz WAV to the daemon's /loopback endpoint (same pipeline as microphone input, no air channel)",
         "frames_sent": frames,
         "frames_accepted": sum(r["outcome"] == "ACCEPTED" for r in rows),
-        "processing_s": {"min": min(values, default=None), "median": median, "max": max(values, default=None)},
+        "processing_s": {
+            "min": min(values, default=None),
+            "median": median,
+            "max": max(values, default=None),
+        },
         "processing_note": "POST start -> daemon received_at; includes WAV parse, FSK demodulation of the whole burst, CRC/HMAC/sequence validation, and atomic inbox write.",
         "air_time_s": round(air_time, 3) if air_time else None,
-        "derived_over_air_latency_s": round(air_time + median, 3) if (air_time and median is not None) else None,
+        "derived_over_air_latency_s": round(air_time + median, 3)
+        if (air_time and median is not None)
+        else None,
         "derived_note": "DERIVED upper estimate, not measured over the air: air time of one frame (preamble + 34 bytes, 8N1, 300 baud) + median loopback processing. Processing already includes the upload and every demodulation pass over the burst; with a live microphone the passes run during the air time, and a frame is decoded at the first 0.25 s hop after its stop bit.",
         "cpu_during_trial": {
-            "mean_percent_of_one_core": round(statistics.fmean(cpu_samples), 2) if cpu_samples else None,
-            "mean_percent_of_machine": round(statistics.fmean(cpu_samples) / cores, 2) if cpu_samples else None,
+            "mean_percent_of_one_core": round(statistics.fmean(cpu_samples), 2)
+            if cpu_samples
+            else None,
+            "mean_percent_of_machine": round(statistics.fmean(cpu_samples) / cores, 2)
+            if cpu_samples
+            else None,
         },
         "peak_rss_mb": round(peak_rss, 1),
         "per_frame": rows,
@@ -280,13 +330,20 @@ def _loopback_trial(telemetry: Path, process: psutil.Process, frames: int, link_
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--mode", choices=("acoustic", "loopback"), default="acoustic")
     parser.add_argument("--frames", type=int, default=20)
     parser.add_argument("--idle-seconds", type=float, default=30.0)
     parser.add_argument("--amplitude", type=float, default=0.6)
-    parser.add_argument("--device", help="sounddevice input device for the daemon (default: system default)")
+    parser.add_argument(
+        "--device", help="sounddevice input device for the daemon (default: system default)"
+    )
     parser.add_argument("--skip-acoustic", action="store_true")
+    parser.add_argument("--repeat", type=int, default=1, help="identical bursts per frame")
+    parser.add_argument("--output-device", type=int, help="sounddevice output index (speaker)")
+    parser.add_argument("--conditions", default="", help="free text: speaker, distance, settings")
     parser.add_argument("--out", type=Path, default=ROOT / "docs" / "metrics.json")
     args = parser.parse_args(argv)
 
@@ -307,13 +364,32 @@ def main(argv: list[str] | None = None) -> int:
         process = _daemon_process(launcher.pid)
         time.sleep(2.0)
         if args.mode == "loopback":
-            measured["loopback_processing"] = _loopback_trial(telemetry, process, args.frames, keys.link_key)
-            print("loopback:", {k: v for k, v in measured["loopback_processing"].items() if k != "per_frame"}, flush=True)
+            measured["loopback_processing"] = _loopback_trial(
+                telemetry, process, args.frames, keys.link_key
+            )
+            print(
+                "loopback:",
+                {k: v for k, v in measured["loopback_processing"].items() if k != "per_frame"},
+                flush=True,
+            )
         else:
-            measured["resources_idle"] = {"status": "MEASURED", **_memory(process), **_cpu_window(process, args.idle_seconds)}
+            measured["resources_idle"] = {
+                "status": "MEASURED",
+                **_memory(process),
+                **_cpu_window(process, args.idle_seconds),
+            }
             print("idle:", measured["resources_idle"], flush=True)
         if args.mode == "acoustic" and not args.skip_acoustic:
-            trial, decode = _acoustic_trial(telemetry, process, args.frames, args.amplitude, keys.link_key)
+            trial, decode = _acoustic_trial(
+                telemetry,
+                process,
+                args.frames,
+                args.amplitude,
+                keys.link_key,
+                repeat=args.repeat,
+                output_device=args.output_device,
+                conditions=args.conditions,
+            )
             measured["acoustic_self_test"] = trial
             measured["resources_during_decode"] = decode
     finally:

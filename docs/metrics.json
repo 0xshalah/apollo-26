@@ -15,8 +15,18 @@
       "command_raw_hex": "a526010100000002000000000125002804e201a400000c30b3da13b5ff5d40a66c6a",
       "auth_raw_hex": "a526010200000003000000020000000000000000000000004c87a950ec58c7d8b785",
       "refused_without_auth": "AUTH_REQUIRED",
-      "critical_reasons": ["NONZERO_P40_ACTIVATION", "FRAME_CRITICAL_FLAG"],
-      "postcondition": { "program": 40, "verb": 37, "noun": 0, "r1": 1250, "r2": 420, "r3": 3120 },
+      "critical_reasons": [
+        "NONZERO_P40_ACTIVATION",
+        "FRAME_CRITICAL_FLAG"
+      ],
+      "postcondition": {
+        "program": 40,
+        "verb": 37,
+        "noun": 0,
+        "r1": 1250,
+        "r2": 420,
+        "r3": 3120
+      },
       "note": "Includes a deliberate execute attempt without AUTH (refused AUTH_REQUIRED) and the agent's model time between tool calls. Misses the 10 s target."
     },
     "v25_n81_non_critical": {
@@ -26,205 +36,203 @@
     }
   },
   "environment": {
-    "measured_at": "2026-11-12T10:48:23+00:00",
-    "platform": "Windows-10-10.0.19043-SP0",
+    "measured_at": "2026-11-24T22:40:12+00:00",
+    "platform": "Windows-10-10.0.19045-SP0",
     "python": "3.12.10",
     "cpu": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
     "logical_cpus": 8,
-    "telemetry_dir": "telemetry\\state\\metrics-run-20261112T104804Z"
+    "telemetry_dir": "telemetry\\state\\metrics-run-20261124T223735Z"
   },
   "resources_idle": {
     "status": "MEASURED",
-    "rss_mb": 53.5,
-    "private_mb": 295.5,
-    "peak_wset_mb": 53.5,
+    "rss_mb": 53.6,
+    "private_mb": 295.1,
+    "peak_wset_mb": 53.7,
     "seconds": 30.0,
-    "mean_percent_of_one_core": 3.49,
-    "max_percent_of_one_core": 7.8,
-    "mean_percent_of_machine": 0.44,
+    "mean_percent_of_one_core": 6.33,
+    "max_percent_of_one_core": 9.4,
+    "mean_percent_of_machine": 0.79,
     "logical_cpus": 8
   },
   "acoustic_self_test": {
     "status": "MEASURED",
-    "path": "same-laptop speaker -> microphone over the air (not the 0.5 m phone trial)",
+    "path": "speaker -> microphone over the air into the live daemon (not the 0.5 m phone trial)",
+    "conditions": "same laptop, default Realtek speaker and microphone array, enhancements off, repeat 3, soft fallback on",
+    "repeat": 3,
+    "repeat_note": "each frame sent as identical bursts; later copies are duplicates of one transmission, so frames_sent counts transmissions, not bursts",
     "frames_sent": 20,
-    "frames_accepted": 3,
-    "frames_rejected": 17,
-    "frames_not_detected": 0,
-    "amplitude": 0.6,
+    "frames_accepted": 19,
+    "frames_rejected": 0,
+    "frames_not_detected": 1,
+    "amplitude": 0.4,
     "output_device": "Speakers (Realtek(R) Audio)",
     "input_device": "Microphone Array (Realtek(R) Au",
     "latency_first_tone_to_received_s": {
-      "min": 1.834,
-      "median": 1.861,
-      "max": 1.929
+      "min": 1.72,
+      "median": 1.95,
+      "max": 5.188
     },
     "latency_note": "first_tone = playback call time + lead silence + PortAudio output latency; includes the frame's air time (preamble + 34 bytes at 300 baud, 8N1).",
     "per_frame": [
       {
         "seq": 1,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 2.016,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.039
       },
       {
         "seq": 2,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.72,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.033
       },
       {
         "seq": 3,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.964,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.104
       },
       {
         "seq": 4,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 3.498,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.062
       },
       {
         "seq": 5,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.848,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.034
       },
       {
         "seq": 6,
         "air_time_s": 1.383,
         "outcome": "ACCEPTED",
-        "latency_first_tone_to_received_s": 1.861,
+        "latency_first_tone_to_received_s": 5.188,
         "snr_db": null,
-        "frequency_deviation_hz": 0.032
+        "frequency_deviation_hz": 0.049
       },
       {
         "seq": 7,
         "air_time_s": 1.383,
         "outcome": "ACCEPTED",
-        "latency_first_tone_to_received_s": 1.929,
+        "latency_first_tone_to_received_s": 1.979,
         "snr_db": null,
-        "frequency_deviation_hz": 0.013
+        "frequency_deviation_hz": 0.173
       },
       {
         "seq": 8,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.801,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.061
       },
       {
         "seq": 9,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 3.687,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.009
       },
       {
         "seq": 10,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.9,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.03
       },
       {
         "seq": 11,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "NOT_DETECTED",
+        "reasons": []
       },
       {
         "seq": 12,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.972,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.02
       },
       {
         "seq": 13,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.769,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.066
       },
       {
         "seq": 14,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.95,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.009
       },
       {
         "seq": 15,
         "air_time_s": 1.383,
         "outcome": "ACCEPTED",
-        "latency_first_tone_to_received_s": 1.834,
+        "latency_first_tone_to_received_s": 1.923,
         "snr_db": null,
-        "frequency_deviation_hz": 0.06
+        "frequency_deviation_hz": 0.092
       },
       {
         "seq": 16,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.814,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.004
       },
       {
         "seq": 17,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.896,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.025
       },
       {
         "seq": 18,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 2.064,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.003
       },
       {
         "seq": 19,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.889,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.021
       },
       {
         "seq": 20,
         "air_time_s": 1.383,
-        "outcome": "REJECTED",
-        "reasons": [
-          "LENGTH"
-        ]
+        "outcome": "ACCEPTED",
+        "latency_first_tone_to_received_s": 1.95,
+        "snr_db": null,
+        "frequency_deviation_hz": 0.011
       }
-    ],
-    "measured_at": "2026-11-12T23:18:51+00:00",
-    "conditions": "Windows 'Audio enhancements' off for the microphone array; Realtek noise suppression and echo cancellation off (reported by the operator). Same laptop, speaker into its own microphone array (not the 0.5 m phone trial).",
-    "note": "All 20 frames were detected. 3 passed sync/CRC/HMAC/replay/range and were accepted; 17 were rejected LENGTH (preamble found, 34 bytes not recovered). No corrupted frame was accepted."
+    ]
   },
   "acoustic_self_test_previous": {
     "status": "MEASURED",
@@ -370,10 +378,10 @@
   },
   "resources_during_decode": {
     "status": "MEASURED",
-    "mean_percent_of_one_core": 3.08,
-    "max_percent_of_one_core": 4.1,
-    "mean_percent_of_machine": 0.38,
-    "peak_rss_mb": 54.7
+    "mean_percent_of_one_core": 48.33,
+    "max_percent_of_one_core": 57.4,
+    "mean_percent_of_machine": 6.04,
+    "peak_rss_mb": 63.5
   },
   "loopback_processing": {
     "status": "MEASURED",

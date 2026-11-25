@@ -1,0 +1,9 @@
+# Third-party, generated, and runtime output; aislop scans project source only
+.venv/
+web-dashboard/node_modules/
+web-dashboard/out/
+web-dashboard/.next/
+docs/archive/
+corpus/
+telemetry/
+powers/
