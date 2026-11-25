@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import vectors from '../../../contracts/vectors/frames.json';
+import { HoldButton } from '@/components/HoldButton';
 import { Chip, Panel, type Tone } from '@/components/Panel';
+import { ToneScope } from '@/components/ToneScope';
 import type { DemoPlan } from '@/lib/demo/catalog';
 import type { DskyKeyName, DskyView } from '@/lib/demo/dsky';
 import { DemoMission } from '@/lib/demo/mission';
@@ -20,6 +22,7 @@ interface LogEntry {
 
 const BURN = { r1: 1250, r2: 420, dv: 3120 };
 const WRONG_KEY = 'someone-elses-key';
+const STORY_PAUSE_MS = 1400;
 
 const KEY_LABEL: Record<string, string> = { PLUS: '+', MINUS: '−' };
 const keyLabel = (k: DskyKeyName) => KEY_LABEL[k] ?? (k.startsWith('DIGIT_') ? k.slice(6) : k);
@@ -47,6 +50,8 @@ function newMission() {
   );
   return { mission, signer };
 }
+
+type Session = ReturnType<typeof newMission>;
 
 function DemoDsky({ view, keysPressed }: { view: DskyView; keysPressed: number }) {
   const seg = (label: string, value: string) => (
@@ -115,54 +120,80 @@ function ActionButton({
 }
 
 export function DemoClient() {
-  const [session, setSession] = useState(newMission);
-  const [snapshot, setSnapshot] = useState(() => ({ view: session.mission.dsky.view(), keysPressed: 0 }));
+  // The mission and the sequence counter live in refs so that the story runner,
+  // which awaits between steps, always acts on the current mission.
+  const [initial] = useState<Session>(newMission);
+  const sessionRef = useRef<Session>(initial);
+  const nextSeqRef = useRef(1);
+  const lastBytesRef = useRef<Uint8Array | null>(null);
+  const idRef = useRef(0);
+  const storyRef = useRef<{ cancelled: boolean } | null>(null);
+
+  const [snapshot, setSnapshot] = useState(() => ({ view: initial.mission.dsky.view(), keysPressed: 0, halted: false }));
+  const [storyRunning, setStoryRunning] = useState(false);
   const [log, setLog] = useState<LogEntry[]>([]);
   const [busy, setBusy] = useState(false);
   const [playTones, setPlayTones] = useState(false);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [nextSeq, setNextSeq] = useState(1);
   const [commandSeq, setCommandSeq] = useState<number | null>(null);
-  const [lastBytes, setLastBytes] = useState<Uint8Array | null>(null);
+  const [hasBytes, setHasBytes] = useState(false);
   const [plan, setPlan] = useState<DemoPlan | null>(null);
   const [inspected, setInspected] = useState(false);
   const [authSent, setAuthSent] = useState(false);
   const [executed, setExecuted] = useState(false);
   const [lastCode, setLastCode] = useState<string | null>(null);
-  const idRef = useRef(0);
+  const [story, setStory] = useState<{ step: number; total: number; caption: string } | null>(null);
 
-  const get = () => session;
-  const rerender = () =>
-    setSnapshot({ view: session.mission.dsky.view(), keysPressed: session.mission.keysPressed });
+  const session = () => sessionRef.current;
+  const rerender = () => {
+    const { mission } = session();
+    setSnapshot({ view: mission.dsky.view(), keysPressed: mission.keysPressed, halted: mission.halted });
+  };
   const add = useCallback((entry: Omit<LogEntry, 'id'>) => {
     idRef.current += 1;
     const id = idRef.current;
     setLog((l) => [{ ...entry, id }, ...l].slice(0, 40));
   }, []);
+  const takeSeq = () => {
+    const seq = nextSeqRef.current;
+    nextSeqRef.current = seq + 1;
+    setNextSeq(seq + 1);
+    return seq;
+  };
+
+  useEffect(
+    () => () => {
+      if (storyRef.current) storyRef.current.cancelled = true;
+    },
+    [],
+  );
 
   async function transmit(fields: FrameFields, key: string, what: string) {
     setBusy(true);
     try {
-      const { mission, signer } = get();
+      const { mission, signer } = session();
       const bytes = await encodeFrame(fields, utf8(key), signer);
       add({ actor: 'Ground', text: `${what}, seq ${fields.seq}: ${toHex(bytes).slice(0, 24)}…`, code: 'SENT', tone: 'info' });
       if (playTones) {
         const Ctor =
           window.AudioContext ??
           (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        const played = await transmitFrame(bytes, Ctor);
+        const played = await transmitFrame(bytes, Ctor, undefined, {}, setAnalyser);
         if (played.kind === 'failed') {
           add({ actor: 'Ground', text: `Tones not played: ${played.message}`, code: played.code, tone: 'warn' });
         }
       }
       await deliver(bytes, mission);
-      setLastBytes(bytes);
+      lastBytesRef.current = bytes;
+      setHasBytes(true);
       return fields.seq;
     } finally {
       setBusy(false);
     }
   }
 
-  async function deliver(bytes: Uint8Array, mission = get().mission) {
+  async function deliver(bytes: Uint8Array, mission = session().mission) {
     const result = await mission.receive(bytes);
     if (result.verdict === 'REJECTED') {
       add({ actor: 'Daemon', text: 'Frame rejected; it never reaches the agent.', code: result.reason, tone: 'bad' });
@@ -192,8 +223,7 @@ export function DemoClient() {
   }
 
   async function sendCommand() {
-    const seq = nextSeq;
-    setNextSeq(seq + 1);
+    const seq = takeSeq();
     await transmit(burnCommand(seq), vectors.demo_keys.link, 'P40 burn COMMAND');
     setCommandSeq(seq);
     setPlan(null);
@@ -201,28 +231,28 @@ export function DemoClient() {
     setAuthSent(false);
     setExecuted(false);
     setLastCode(null);
+    return seq;
   }
 
-  async function sendAuth() {
-    if (commandSeq === null) return;
-    const seq = nextSeq;
-    setNextSeq(seq + 1);
-    await transmit(authFields(seq, commandSeq), vectors.demo_keys.operator, `Operator AUTH for ${commandSeq}`);
+  async function sendAuth(forSeq = commandSeq) {
+    if (forSeq === null) return;
+    const seq = takeSeq();
+    await transmit(authFields(seq, forSeq), vectors.demo_keys.operator, `Operator AUTH for ${forSeq}`);
     setAuthSent(true);
   }
 
   async function sendForged() {
-    const seq = nextSeq;
-    setNextSeq(seq + 1);
+    const seq = takeSeq();
     await transmit(burnCommand(seq), WRONG_KEY, 'Forged COMMAND (wrong key)');
   }
 
   async function replay() {
-    if (!lastBytes) return;
+    const bytes = lastBytesRef.current;
+    if (!bytes) return;
     setBusy(true);
     try {
       add({ actor: 'Ground', text: 'Replaying the last frame, byte for byte.', code: 'SENT', tone: 'info' });
-      await deliver(lastBytes);
+      await deliver(bytes);
     } finally {
       setBusy(false);
     }
@@ -235,18 +265,18 @@ export function DemoClient() {
   }
 
   function inspect() {
-    const snap = get().mission.inspect();
+    const snap = session().mission.inspect();
     setInspected(true);
     add({ actor: 'Agent', text: `inspect_agc_status: revision ${snap.revision}.`, code: 'OK', tone: 'muted' });
     rerender();
   }
 
-  function requestPlan() {
-    if (commandSeq === null) return;
-    const result = get().mission.plan(commandSeq);
+  function requestPlan(forSeq = commandSeq): DemoPlan | null {
+    if (forSeq === null) return null;
+    const result = session().mission.plan(forSeq);
     if (!result.ok) {
       refusal(result.error, result.message);
-      return;
+      return null;
     }
     setPlan(result.plan);
     setLastCode('PLANNED');
@@ -257,11 +287,12 @@ export function DemoClient() {
       code: 'PLANNED',
       tone: 'muted',
     });
+    return result.plan;
   }
 
-  function execute(tampered: boolean) {
-    if (!plan || commandSeq === null) return;
-    const keys = [...plan.keys];
+  function execute(tampered: boolean, forSeq = commandSeq, withPlan = plan): string | null {
+    if (!withPlan || forSeq === null) return null;
+    const keys = [...withPlan.keys];
     if (tampered) {
       const i = keys.lastIndexOf('DIGIT_0', 30);
       keys[i >= 0 ? i : 12] = 'DIGIT_9';
@@ -272,12 +303,15 @@ export function DemoClient() {
       code: 'REQUEST',
       tone: 'muted',
     });
-    const result = get().mission.execute(commandSeq, keys);
+    const result = session().mission.execute(forSeq, keys);
+    let code: string;
     if (!result.ok) {
       refusal(result.error, result.message);
+      code = result.error;
     } else if (result.idempotentReplay) {
       add({ actor: 'Gate', text: 'Already executed; no key pressed again.', code: 'IDEMPOTENT', tone: 'warn' });
       setLastCode('IDEMPOTENT');
+      code = 'IDEMPOTENT';
     } else {
       add({
         actor: 'DSKY',
@@ -289,18 +323,22 @@ export function DemoClient() {
       setLastCode('EXECUTED');
       // The gate uses up the inspection on every allowed execution, like the MCP server.
       setInspected(false);
+      code = 'EXECUTED';
     }
     rerender();
+    return code;
   }
 
   function reset() {
     const fresh = newMission();
-    setSession(fresh);
-    setSnapshot({ view: fresh.mission.dsky.view(), keysPressed: 0 });
+    sessionRef.current = fresh;
+    nextSeqRef.current = 1;
+    lastBytesRef.current = null;
+    setSnapshot({ view: fresh.mission.dsky.view(), keysPressed: 0, halted: false });
     setLog([]);
     setNextSeq(1);
     setCommandSeq(null);
-    setLastBytes(null);
+    setHasBytes(false);
     setPlan(null);
     setInspected(false);
     setAuthSent(false);
@@ -308,7 +346,79 @@ export function DemoClient() {
     setLastCode(null);
   }
 
-  const halted = session.mission.halted;
+  async function playStory() {
+    if (storyRef.current) return;
+    const run = { cancelled: false };
+    storyRef.current = run;
+    reset();
+    const pause = (ms = STORY_PAUSE_MS) => new Promise<void>((r) => window.setTimeout(r, ms));
+    const steps: Array<[string, () => Promise<void> | void]> = [];
+    let seq = 0;
+    let current: DemoPlan | null = null;
+    const planNow = () => {
+      current = requestPlan(seq);
+    };
+    steps.push(
+      ['The ground station signs a P40 burn COMMAND and transmits it. The daemon checks CRC, HMAC, sequence and ranges.', async () => {
+        seq = await sendCommand();
+      }],
+      ['The agent inspects the AGC before it does anything.', inspect],
+      ['It asks the gate for the one canonical key plan for this frame.', planNow],
+      ['Suppose the agent goes wrong and changes one digit. The gate refuses: the keys must match the plan exactly.', () => {
+        execute(true, seq, current);
+      }],
+      ['The agent inspects again and requests the plan again.', () => {
+        inspect();
+        planNow();
+      }],
+      ['Now the correct keys. A burn this large is critical, so the gate holds it until a human operator authorizes it.', () => {
+        execute(false, seq, current);
+      }],
+      ['The operator sends an AUTH frame bound to this COMMAND sequence.', () => sendAuth(seq)],
+      ['Inspect, plan, execute. This time the gate presses the keys and checks the DSKY afterwards.', () => {
+        inspect();
+        planNow();
+        execute(false, seq, current);
+      }],
+      ['An attacker replays the last frame byte for byte. The daemon rejects it before the agent sees it.', replay],
+      ['An attacker forges a COMMAND without the link key. Rejected on HMAC.', sendForged],
+    );
+    try {
+      for (let i = 0; i < steps.length; i++) {
+        if (run.cancelled) return;
+        const [caption, act] = steps[i];
+        setStory({ step: i + 1, total: steps.length, caption });
+        await pause(i === 0 ? 600 : STORY_PAUSE_MS);
+        if (run.cancelled) return;
+        await act();
+      }
+      await pause();
+      if (!run.cancelled) {
+        setStory({
+          step: steps.length,
+          total: steps.length,
+          caption: 'That is the whole story. Every refusal came from code, not from the agent’s judgment. Now try the buttons yourself.',
+        });
+      }
+    } finally {
+      if (storyRef.current === run) storyRef.current = null;
+      setStoryRunning(false);
+    }
+  }
+
+  function startStory() {
+    setStoryRunning(true);
+    void playStory();
+  }
+  function stopStory() {
+    if (storyRef.current) storyRef.current.cancelled = true;
+    storyRef.current = null;
+    setStoryRunning(false);
+    setStory(null);
+  }
+
+  const locked = busy || storyRunning;
+  const halted = snapshot.halted;
   const closed = lastCode === 'COMMAND_CLOSED' || lastCode === 'AUTH_EXPIRED';
   const next = halted
     ? 'Flight Watch is HALTED after a failed execution. Reset the mission.'
@@ -331,9 +441,39 @@ export function DemoClient() {
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="min-w-0 space-y-6">
+        <section aria-labelledby="demo-intro" className="rounded-card border border-rule-2 bg-paper-2 p-4 sm:p-5">
+          <h2 id="demo-intro" className="text-[1.125rem] text-ink">
+            An AI agent wants to fire an engine. Code decides whether it may.
+          </h2>
+          <p className="mt-2 max-w-[68ch] text-sm text-ink-2">
+            You play two roles: the ground station that sends signed commands, and the agent that tries to press the DSKY
+            keys. Watch the whole sequence first, or follow the Next step box and press the buttons yourself.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {storyRunning ? (
+              <ActionButton primary onClick={stopStory}>
+                Stop the story
+              </ActionButton>
+            ) : (
+              <ActionButton primary onClick={startStory} disabled={busy}>
+                Play the whole story
+              </ActionButton>
+            )}
+            <span className="text-xs text-muted">About 15 seconds, longer with tones on. Turn on the tones below to hear and see each frame.</span>
+          </div>
+        </section>
+
         <div className="rounded-card border border-accent/40 bg-accent-soft p-4" role="status" aria-live="polite">
-          <p className="text-xs font-medium text-accent">Next step</p>
-          <p className="mt-1 text-[1.0625rem] text-ink">{next}</p>
+          <p className="text-xs font-medium text-accent">
+            {story ? (
+              <>
+                Story <span className="font-mono tabular">{story.step}/{story.total}</span>
+              </>
+            ) : (
+              'Next step'
+            )}
+          </p>
+          <p className="mt-1 text-[1.0625rem] text-ink">{story ? story.caption : next}</p>
         </div>
 
         <Panel id="ground" title="Ground station" aside={<Chip tone="info">Public demo keys</Chip>}>
@@ -345,17 +485,21 @@ export function DemoClient() {
             In the real system the operator key lives with a human operator, apart from the link key. Here both public demo
             keys sit in this tab, so you play the operator too. Held critical commands expire after 120 s of real time.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <ActionButton primary onClick={sendCommand} disabled={busy}>
+          <div className="mt-4 flex flex-wrap items-start gap-2">
+            <ActionButton primary onClick={() => void sendCommand()} disabled={locked}>
               Send COMMAND seq {nextSeq}
             </ActionButton>
-            <ActionButton onClick={sendAuth} disabled={busy || commandSeq === null}>
-              Send AUTH for {commandSeq ?? '—'}
-            </ActionButton>
-            <ActionButton onClick={replay} disabled={busy || !lastBytes}>
+            <HoldButton
+              onConfirm={() => void sendAuth()}
+              disabled={locked || commandSeq === null}
+              hint="Press and hold for 1 s, like a deliberate operator action."
+            >
+              Hold to send AUTH for {commandSeq ?? '—'}
+            </HoldButton>
+            <ActionButton onClick={() => void replay()} disabled={locked || !hasBytes}>
               Replay last frame
             </ActionButton>
-            <ActionButton onClick={sendForged} disabled={busy}>
+            <ActionButton onClick={() => void sendForged()} disabled={locked}>
               Send forged frame
             </ActionButton>
           </div>
@@ -368,20 +512,21 @@ export function DemoClient() {
             />
             Play each frame as Bell-202 tones (1.4 s). Validation runs on the signed bytes either way.
           </label>
+          {playTones ? <ToneScope analyser={analyser} className="mt-3" /> : null}
         </Panel>
 
         <Panel id="agent" title="You are the agent" aside={<Chip tone="muted">MCP tools</Chip>}>
           <div className="flex flex-wrap gap-2">
-            <ActionButton onClick={inspect} disabled={busy}>
+            <ActionButton onClick={inspect} disabled={locked}>
               Inspect AGC
             </ActionButton>
-            <ActionButton onClick={requestPlan} disabled={busy || commandSeq === null}>
+            <ActionButton onClick={() => requestPlan()} disabled={locked || commandSeq === null}>
               Request plan
             </ActionButton>
-            <ActionButton primary onClick={() => execute(false)} disabled={busy || !plan}>
+            <ActionButton primary onClick={() => execute(false)} disabled={locked || !plan}>
               Execute plan
             </ActionButton>
-            <ActionButton onClick={() => execute(true)} disabled={busy || !plan}>
+            <ActionButton onClick={() => execute(true)} disabled={locked || !plan}>
               Execute tampered plan
             </ActionButton>
           </div>
@@ -407,7 +552,7 @@ export function DemoClient() {
           id="log"
           title="Daemon and gate log"
           aside={
-            <button type="button" className="btn" onClick={reset} disabled={busy}>
+            <button type="button" className="btn" onClick={reset} disabled={locked}>
               Reset mission
             </button>
           }

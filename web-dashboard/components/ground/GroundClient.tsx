@@ -4,6 +4,7 @@ import { useId, useRef, useState, useSyncExternalStore, type InputHTMLAttributes
 import vectors from '../../../contracts/vectors/frames.json';
 import { Chip, Panel } from '@/components/Panel';
 import { FrameInspector } from '@/components/ground/FrameInspector';
+import { ToneScope } from '@/components/ToneScope';
 import { encodeFrame, toHex, utf8, webCryptoSigner, type FrameFields } from '@/lib/frame';
 import {
   ALWAYS_CRITICAL,
@@ -130,6 +131,7 @@ export function GroundClient() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [warnings, setWarnings] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>('editing');
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [message, setMessage] = useState('');
   const [encoded, setEncoded] = useState<Encoded | null>(null);
   const [lastCommandSeq, setLastCommandSeq] = useState<number | null>(null);
@@ -205,7 +207,7 @@ export function GroundClient() {
     const Ctor =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    const outcome = await transmitFrame(encoded.bytes, Ctor, controller.signal, { repeat });
+    const outcome = await transmitFrame(encoded.bytes, Ctor, controller.signal, { repeat }, setAnalyser);
     abortRef.current = null;
     if (outcome.kind === 'completed') {
       setPhase('completed');
@@ -525,6 +527,7 @@ export function GroundClient() {
           <p role="status" aria-live="polite" className="mt-3 min-h-5 text-sm text-ink-2">
             {message}
           </p>
+          <ToneScope analyser={analyser} className="mt-3" />
           {warnings.length > 0 ? (
             <ul className="mt-2 space-y-1 text-xs text-accent" aria-label="Warnings">
               {warnings.map((w) => (

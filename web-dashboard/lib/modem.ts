@@ -170,6 +170,13 @@ export type TransmitOutcome =
 type AudioContextCtor = new (options?: AudioContextOptions) => AudioContext;
 
 /**
+ * Receives the AnalyserNode that sits between the frame source and the speakers
+ * while a frame plays, then `null` once playback ends. Visualizers read only this
+ * node, so what they draw is the audio actually being played.
+ */
+export type AnalyserTap = (analyser: AnalyserNode | null) => void;
+
+/**
  * Plays the frame through Web Audio. Must be called from a user gesture.
  * Resolves `completed` only from the source `ended` event.
  */
@@ -178,6 +185,7 @@ export async function transmitFrame(
   Ctor: AudioContextCtor | undefined,
   signal?: AbortSignal,
   opts: ModulateOptions = {},
+  tap?: AnalyserTap,
 ): Promise<TransmitOutcome> {
   if (!Ctor) return { kind: 'failed', code: 'UNAVAILABLE', message: 'Web Audio is not available in this browser.' };
   const bytes = frame.slice(); // immutable copy of the exact previewed bytes
@@ -205,7 +213,16 @@ export async function transmitFrame(
     buffer.copyToChannel(pcm, 0);
     const src = ctx.createBufferSource();
     src.buffer = buffer;
-    src.connect(ctx.destination);
+    if (tap) {
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 4096;
+      analyser.smoothingTimeConstant = 0.55;
+      src.connect(analyser);
+      analyser.connect(ctx.destination);
+      tap(analyser);
+    } else {
+      src.connect(ctx.destination);
+    }
     const result = await new Promise<TransmitOutcome>((resolve) => {
       const onAbort = () => {
         try {
@@ -228,6 +245,7 @@ export async function transmitFrame(
   } catch (e) {
     return { kind: 'failed', code: 'PLAYBACK', message: `Playback failed: ${String(e)}` };
   } finally {
+    tap?.(null);
     void ctx.close().catch(() => undefined);
   }
 }

@@ -62,7 +62,7 @@ function SectionHeading({
     <div className="grid gap-5 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-12">
       <p className="font-mono text-xs text-accent tabular">{eyebrow}</p>
       <div>
-        <h2 id={id} className="max-w-[24ch] text-[2rem] leading-[1.08] text-ink sm:text-[2.75rem]">{title}</h2>
+        <h2 id={id} data-flap className="max-w-[24ch] text-[2rem] leading-[1.08] text-ink sm:text-[2.75rem]">{title}</h2>
         <p className="mt-4 max-w-[62ch] text-[1.0625rem] text-muted">{lead}</p>
       </div>
     </div>
@@ -87,6 +87,29 @@ function Section({
       <div className="mx-auto max-w-[78rem] px-4 sm:px-6">
         <SectionHeading id={`${id}-head`} eyebrow={eyebrow} title={title} lead={lead} />
         <div className="mt-12 lg:mt-16">{children}</div>
+      </div>
+    </section>
+  );
+}
+
+const MANIFESTO =
+  'When an AI agent can press buttons on a machine that moves, burns, or doses something, the prompt cannot be the safety layer. Apollo-26 lets the agent orchestrate and lets code decide.';
+
+function Manifesto() {
+  return (
+    <section aria-label="Why this exists" className="border-t border-rule py-24 sm:py-32">
+      <div className="mx-auto max-w-[78rem] px-4 sm:px-6">
+        <p className="font-mono text-xs text-accent">00 / WHY</p>
+        <p
+          data-manifesto
+          className="mt-6 max-w-[30ch] text-[1.9rem] font-medium leading-[1.15] tracking-[-0.03em] text-ink sm:text-[3.1rem]"
+        >
+          {MANIFESTO.split(' ').map((word, i) => (
+            <span key={i} data-word>
+              {word}{' '}
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );
@@ -252,6 +275,14 @@ const PIPELINE = [
   },
 ];
 
+// One caption per pipeline stage, shown only in the pinned scene (screen readers get the cards above).
+const SCENE_CAPTIONS = [
+  `The frame leaves as sound: ${MARK_HZ} and ${SPACE_HZ} Hz tones at ${BAUD} baud.`,
+  'The daemon drops anything that fails CRC, HMAC, sequence or range checks.',
+  'The agent may only request the canonical plan. It cannot write its own.',
+  'Keys go in 100 ms apart, and the DSKY is checked afterwards.',
+];
+
 const GATE_STEPS = [
   ['01', 'Await', 'Only daemon-accepted COMMAND and AUTH frames enter Flight Watch.'],
   ['02', 'Inspect', 'Read one coherent AGC snapshot. KEY REL and OPR ERR must be clear.'],
@@ -356,7 +387,7 @@ const FAQ: Array<[string, ReactNode]> = [
 
 function EvidenceCard({ row }: { row: EvidenceRow }) {
   return (
-    <article className="flex h-full flex-col rounded-card border border-rule-2 bg-paper-2 p-5">
+    <article data-spotlight className="flex h-full flex-col rounded-card border border-rule-2 bg-paper-2 p-5">
       <div className="flex items-start justify-between gap-3">
         <h3 className="max-w-[24ch] text-[1.0625rem] text-ink">{row.label}</h3>
         <Chip tone={STATUS_TONE[row.status]}>{row.status}</Chip>
@@ -414,7 +445,7 @@ export function Landing() {
           <OrbitDiagram />
           <div data-hero-item className="max-w-[38rem]">
             <p className="font-mono text-xs text-accent">KIROWEEN 2026 / FRANKENSTEIN</p>
-            <h1 id="hero-head" className="mt-5 max-w-[14ch] text-[3.25rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[4.75rem]">
+            <h1 id="hero-head" data-flap className="mt-5 max-w-[14ch] text-[3.25rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[4.75rem]">
               The agent flies. Code decides.
             </h1>
             <p className="mt-6 max-w-[42ch] text-[1.125rem] leading-relaxed text-ink-2">
@@ -460,15 +491,29 @@ export function Landing() {
           </div>
         </section>
 
+        <Manifesto />
+
         <Section
           id="system"
           eyebrow="01 / SYSTEM"
           title="The network ends at the operator. The command continues as sound."
           lead="Apollo-26 separates transmission, validation, agent planning and execution. Each boundary receives typed data and checks what it owns."
         >
+          <div data-scene>
+          <div data-scene-track aria-hidden className="relative mb-5 hidden h-7 xl:block">
+            <span className="absolute inset-x-0 top-1/2 h-px bg-rule" />
+            <span data-scene-fill className="absolute inset-x-0 top-1/2 h-px origin-left scale-x-0 bg-accent" />
+            <span
+              data-scene-packet
+              className="invisible absolute left-0 top-0 inline-flex h-7 items-center whitespace-nowrap rounded-tag border border-accent bg-paper-3 px-2 font-mono text-xs text-accent tabular"
+            >
+              COMMAND · 34 B
+            </span>
+          </div>
           <ol className="landing-pipeline grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {PIPELINE.map((item, index) => (
-              <li key={item.key} className="relative rounded-card border border-rule-2 bg-paper-2 p-5">
+              <li key={item.key} data-scene-step data-spotlight className="relative rounded-card border border-rule-2 bg-paper-2 p-5">
+                <span data-scene-glow aria-hidden className="pointer-events-none absolute inset-0 rounded-card border border-accent opacity-0" />
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-xs text-muted">{String(index + 1).padStart(2, '0')}</span>
                   <span className="rounded-tag bg-paper-3 px-2 py-1 font-mono text-xs text-accent">{item.key}</span>
@@ -478,6 +523,19 @@ export function Landing() {
               </li>
             ))}
           </ol>
+          <div data-scene-captions aria-hidden className="relative mt-10 hidden h-28">
+            {SCENE_CAPTIONS.map((caption, index) => (
+              <p
+                key={caption}
+                data-scene-caption
+                className="absolute inset-x-0 top-0 max-w-[34ch] text-[2.1rem] font-medium leading-[1.15] tracking-[-0.03em] text-ink opacity-0"
+              >
+                <span className="mr-4 font-mono text-sm text-accent">{String(index + 1).padStart(2, '0')}</span>
+                {caption}
+              </p>
+            ))}
+          </div>
+          </div>
           <ProtocolDrawing rawHex={metrics.agent_path_live.p40_critical_with_auth.command_raw_hex} />
         </Section>
 
@@ -526,7 +584,7 @@ export function Landing() {
             </div>
             <ol className="grid gap-3">
               {CAUGHT.map((item, index) => (
-                <li key={item.key} className="grid gap-4 rounded-card border border-rule-2 bg-paper-2 p-5 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
+                <li key={item.key} data-spotlight className="grid gap-4 rounded-card border border-rule-2 bg-paper-2 p-5 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
                   <span className="font-mono text-xs text-accent">0{index + 1}</span>
                   <div>
                     <p className="font-mono text-xs text-bad">{item.key}</p>
@@ -595,6 +653,7 @@ export function Landing() {
               <li key={item.key}>
                 <a
                   href={item.href}
+                  data-spotlight
                   className="group flex h-full min-h-11 flex-col rounded-card border border-rule-2 bg-paper-2 p-5 transition-colors hover:border-ink-2 hover:bg-paper-3"
                 >
                   <span className="font-mono text-xs text-accent">{item.key}</span>
@@ -661,7 +720,7 @@ copy .env.example .env
             <div className="landing-closing relative isolate overflow-hidden rounded-card border border-rule-2 bg-paper-3 p-7 sm:p-12">
               <OrbitDiagram />
               <p className="font-mono text-xs text-accent">END OF BRIEFING</p>
-              <h2 id="closing-head" className="mt-4 max-w-[18ch] text-[2.25rem] leading-[1.06] text-ink sm:text-[3.25rem]">
+              <h2 id="closing-head" data-flap className="mt-4 max-w-[18ch] text-[2.25rem] leading-[1.06] text-ink sm:text-[3.25rem]">
                 Send the frame. Inspect the state. Let the gate decide.
               </h2>
               <div className="mt-8 flex flex-wrap gap-3">
